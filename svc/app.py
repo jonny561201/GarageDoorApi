@@ -18,5 +18,10 @@ def garage_door_status():
     return Response(body, status=200, headers=DEFAULT_HEADERS)
 
 
+@app.route('/garageDoor/state', methods=['POST'])
+def update_garage_door_state():
+    return Response(status=200)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

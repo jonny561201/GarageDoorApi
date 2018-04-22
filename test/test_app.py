@@ -1,4 +1,4 @@
-from app import garage_door_status
+from app import garage_door_status, update_garage_door_state
 
 
 def test_garage_door_status__should_return_success_status_code():
@@ -22,3 +22,8 @@ def test_garage_door_status__should_return_response_body():
 
     assert actual.data == expected_body
 
+
+def test_update_garage_door_state__should_return_success_status_code():
+    actual = update_garage_door_state()
+
+    assert actual.status_code == 200
