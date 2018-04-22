@@ -27,3 +27,11 @@ def test_update_garage_door_state__should_return_success_status_code():
     actual = update_garage_door_state()
 
     assert actual.status_code == 200
+
+
+def test_update_garage_door_state__should_return_success_header():
+    expected_headers = 'text/json'
+
+    actual = update_garage_door_state()
+
+    assert actual.content_type == expected_headers
