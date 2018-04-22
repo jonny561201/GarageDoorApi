@@ -1,5 +1,5 @@
 #!/Users/jonathongraf/.pyenv/versions/garage_door_env/bin/python
-from flask import Flask
+from flask import Flask, json
 from flask import Response
 
 app = Flask(__name__)
@@ -14,7 +14,8 @@ def index():
 
 @app.route('/garageDoor/status', methods=['GET'])
 def garage_door_status():
-    return Response(status=200, headers=DEFAULT_HEADERS)
+    body = json.dumps({'garageStatus': True})
+    return Response(body, status=200, headers=DEFAULT_HEADERS)
 
 
 if __name__ == '__main__':

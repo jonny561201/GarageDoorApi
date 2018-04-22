@@ -9,6 +9,16 @@ def test_garage_door_status__should_return_success_status_code():
 
 def test_garage_door_status__should_return_success_header():
     expected_headers = 'text/json'
+
     actual = garage_door_status()
 
     assert actual.content_type == expected_headers
+
+
+def test_garage_door_status__should_return_response_body():
+    expected_body = '{"garageStatus": true}'
+
+    actual = garage_door_status()
+
+    assert actual.data == expected_body
+
