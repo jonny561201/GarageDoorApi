@@ -4,6 +4,8 @@ from flask import Response
 
 app = Flask(__name__)
 
+DEFAULT_HEADERS = {'Content-Type': 'text/json'}
+
 
 @app.route('/')
 def index():
@@ -12,7 +14,7 @@ def index():
 
 @app.route('/garageDoor/status', methods=['GET'])
 def garage_door_status():
-    return Response(status=200)
+    return Response(status=200, headers=DEFAULT_HEADERS)
 
 
 if __name__ == '__main__':
