@@ -1,3 +1,6 @@
+from flask import json
+from mock import patch
+
 from app import garage_door_status, update_garage_door_state
 
 
@@ -23,15 +26,29 @@ def test_garage_door_status__should_return_response_body():
     assert actual.data == expected_body
 
 
-def test_update_garage_door_state__should_return_success_status_code():
+@patch('app.request')
+def test_update_garage_door_state__should_return_success_status_code(mock_request):
+    mock_request.data = {}
     actual = update_garage_door_state()
 
     assert actual.status_code == 200
 
 
-def test_update_garage_door_state__should_return_success_header():
+@patch('app.request')
+def test_update_garage_door_state__should_return_success_header(mock_request):
+    mock_request.data = {}
     expected_headers = 'text/json'
 
     actual = update_garage_door_state()
 
     assert actual.content_type == expected_headers
+
+
+@patch('app.request')
+def test_update_garage_door_state__should_check_state_with_request(mock_request):
+    post_body = {"testBody": "testValues"}
+    mock_request.data = post_body
+
+    actual = update_garage_door_state()
+
+    assert actual.data == '{}'.format(json.dumps(post_body))

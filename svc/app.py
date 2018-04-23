@@ -1,6 +1,7 @@
 #!/Users/jonathongraf/.pyenv/versions/garage_door_env/bin/python
 from flask import Flask, json
 from flask import Response
+from flask import request
 
 app = Flask(__name__)
 
@@ -20,7 +21,8 @@ def garage_door_status():
 
 @app.route('/garageDoor/state', methods=['POST'])
 def update_garage_door_state():
-    return Response(status=200, headers=DEFAULT_HEADERS)
+    request_body = request.data
+    return Response(json.dumps(request_body), status=200, headers=DEFAULT_HEADERS)
 
 
 if __name__ == '__main__':
