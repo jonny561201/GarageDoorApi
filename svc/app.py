@@ -6,6 +6,8 @@ from flask import Flask, json
 from flask import Response
 from flask import request
 
+from db.user_credentials import user_credentials_are_valid
+
 app = Flask(__name__)
 
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
@@ -18,9 +20,12 @@ def index():
 
 @app.route('/garageDoor/login', methods=['POST'])
 def garage_door_login():
-    jwt_secret = os.environ.get('JWT_SECRET')
-    jwt_token = jwt.encode({'user_id': 12345}, jwt_secret, algorithm='HS256')
-    return Response(jwt_token, status=200)
+    if user_credentials_are_valid():
+        jwt_secret = os.environ.get('JWT_SECRET')
+        jwt_token = jwt.encode({'user_id': 12345}, jwt_secret, algorithm='HS256')
+        return Response(jwt_token, status=200)
+    else:
+        return Response(status=401)
 
 
 @app.route('/garageDoor/status', methods=['GET'])

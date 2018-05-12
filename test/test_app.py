@@ -60,14 +60,24 @@ class TestAppRoutes():
 
         assert actual.data == '{}'.format(json.dumps(post_body))
 
-    def test_garage_door_login__should_respond_with_success_status_code(self):
+    @patch('app.user_credentials_are_valid')
+    def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials):
+        mock_credentials.return_value = True
         actual = garage_door_login()
 
         assert actual.status_code == 200
 
-    @patch('app.request')
-    def test_garage_door_login__should_respond_with_jwt_token(self, mock_request):
+    @patch('app.user_credentials_are_valid')
+    def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials):
+        mock_credentials.return_value = True
         expected_token = {'user_id': 12345}
         actual = garage_door_login()
 
         assert jwt.decode(actual.data, self.JWT_SECRET, algorithms=["HS256"]) == expected_token
+
+    @patch('app.user_credentials_are_valid')
+    def test_garage_door_login__should_respond_with_unauthorized_when_user_not_valid(self, mock_credentials):
+        mock_credentials.return_value = False
+        actual = garage_door_login()
+
+        assert actual.status_code == 401
