@@ -33,4 +33,5 @@ class UserDatabase(object):
 
     def user_credentials_are_valid(self, credentials):
         user_name = credentials['username']
-        self.session.query(UserCredentials).filter_by(user_name=user_name)
+        user = self.session.query(UserCredentials).filter_by(user_name=user_name).first()
+        return user.password == credentials['password']
