@@ -33,5 +33,13 @@ class TestUserDatabase():
 
         assert actual is True
 
-    def _create_database_user(self):
-        return UserCredentials(user_key=uuid.uuid4(), user_name=self.FAKE_USER, password=self.FAKE_PASS)
+    def test_user_credentials_are_valid__should_return_false_if_password_does_not_match_queried_user(self):
+        user = self._create_database_user(password='mismatchedPass')
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
+
+        actual = self.DATABASE.user_credentials_are_valid(self.CREDENTIALS)
+
+        assert actual is False
+
+    def _create_database_user(self, user=FAKE_USER, password=FAKE_PASS):
+        return UserCredentials(user_key=uuid.uuid4(), user_name=user, password=password)
