@@ -20,7 +20,8 @@ def index():
 
 @app.route('/garageDoor/login', methods=['POST'])
 def garage_door_login():
-    if user_credentials_are_valid():
+    post_body = request.data
+    if user_credentials_are_valid(post_body):
         jwt_secret = os.environ.get('JWT_SECRET')
         jwt_token = jwt.encode({'user_id': 12345}, jwt_secret, algorithm='HS256')
         return Response(jwt_token, status=200)
