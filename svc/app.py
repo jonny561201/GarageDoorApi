@@ -6,7 +6,7 @@ from flask import Flask, json
 from flask import Response
 from flask import request
 
-from db.user_credentials import user_credentials_are_valid
+from db.user_credentials import UserDatabaseManager
 
 app = Flask(__name__)
 
@@ -21,12 +21,13 @@ def index():
 @app.route('/garageDoor/login', methods=['POST'])
 def garage_door_login():
     post_body = request.data
-    if user_credentials_are_valid(post_body):
-        jwt_secret = os.environ.get('JWT_SECRET')
-        jwt_token = jwt.encode({'user_id': 12345}, jwt_secret, algorithm='HS256')
-        return Response(jwt_token, status=200)
-    else:
-        return Response(status=401)
+    with UserDatabaseManager() as user_database:
+        if user_database.user_credentials_are_valid(post_body):
+            jwt_secret = os.environ.get('JWT_SECRET')
+            jwt_token = jwt.encode({'user_id': 12345}, jwt_secret, algorithm='HS256')
+            return Response(jwt_token, status=200)
+        else:
+            return Response(status=401)
 
 
 @app.route('/garageDoor/status', methods=['GET'])

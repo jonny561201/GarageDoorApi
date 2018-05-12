@@ -61,35 +61,35 @@ class TestAppRoutes():
         assert actual.data == '{}'.format(json.dumps(post_body))
 
     @patch('app.request')
-    @patch('app.user_credentials_are_valid')
+    @patch('app.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):
-        mock_credentials.return_value = True
+        mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
         actual = garage_door_login()
 
         assert actual.status_code == 200
 
     @patch('app.request')
-    @patch('app.user_credentials_are_valid')
+    @patch('app.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials, mock_request):
-        mock_credentials.return_value = True
+        mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
         expected_token = {'user_id': 12345}
         actual = garage_door_login()
 
         assert jwt.decode(actual.data, self.JWT_SECRET, algorithms=["HS256"]) == expected_token
 
     @patch('app.request')
-    @patch('app.user_credentials_are_valid')
+    @patch('app.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_unauthorized_when_user_not_valid(self, mock_credentials, mock_request):
-        mock_credentials.return_value = False
+        mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = False
         actual = garage_door_login()
 
         assert actual.status_code == 401
 
     @patch('app.request')
-    @patch('app.user_credentials_are_valid')
+    @patch('app.UserDatabaseManager')
     def test_garage_door_login__should_call_validate_credentials_with_post_body(self, mock_credentials, mock_request):
         post_body = {"username": "fakeUser", "password": "fakePass"}
         mock_request.data = post_body
         garage_door_login()
 
-        mock_credentials.assert_called_with(post_body)
+        mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.assert_called_with(post_body)
