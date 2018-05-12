@@ -13,6 +13,11 @@ def index():
     return "Hello, World!"
 
 
+@app.route('/garageDoor/login', methods=['POST'])
+def garage_door_login():
+    return Response(status=200)
+
+
 @app.route('/garageDoor/status', methods=['GET'])
 def garage_door_status():
     body = json.dumps({'garageStatus': True})
