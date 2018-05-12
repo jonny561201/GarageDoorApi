@@ -1,6 +1,8 @@
 import os
 from sqlalchemy import orm, create_engine
 
+from svc.db.models.user_models import UserCredentials
+
 
 class UserDatabaseManager(object):
     def __init__(self):
@@ -29,5 +31,6 @@ class UserDatabase(object):
         super(UserDatabase, self).__init__()
         self.session = session
 
-    def user_credentials_are_valid(self):
-        pass
+    def user_credentials_are_valid(self, credentials):
+        user_name = credentials['username']
+        self.session.query(UserCredentials).filter_by(user_name=user_name)
