@@ -64,3 +64,10 @@ class TestAppRoutes():
         actual = garage_door_login()
 
         assert actual.status_code == 200
+
+    @patch('app.request')
+    def test_garage_door_login__should_respond_with_jwt_token(self, mock_request):
+        expected_token = {'user_id': 12345}
+        actual = garage_door_login()
+
+        assert jwt.decode(actual.data, self.JWT_SECRET, algorithms=["HS256"]) == expected_token

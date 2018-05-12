@@ -1,4 +1,7 @@
 #!/Users/jonathongraf/.pyenv/versions/garage_door_env/bin/python
+import os
+
+import jwt
 from flask import Flask, json
 from flask import Response
 from flask import request
@@ -15,7 +18,9 @@ def index():
 
 @app.route('/garageDoor/login', methods=['POST'])
 def garage_door_login():
-    return Response(status=200)
+    jwt_secret = os.environ.get('JWT_SECRET')
+    jwt_token = jwt.encode({'user_id': 12345}, jwt_secret, algorithm='HS256')
+    return Response(jwt_token, status=200)
 
 
 @app.route('/garageDoor/status', methods=['GET'])
