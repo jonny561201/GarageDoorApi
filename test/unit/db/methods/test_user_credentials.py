@@ -41,5 +41,6 @@ class TestUserDatabase():
 
         assert actual is False
 
-    def _create_database_user(self, user=FAKE_USER, password=FAKE_PASS):
+    @staticmethod
+    def _create_database_user(user=FAKE_USER, password=FAKE_PASS):
         return UserCredentials(user_key=uuid.uuid4(), user_name=user, password=password)
