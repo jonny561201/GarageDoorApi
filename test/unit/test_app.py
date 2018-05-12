@@ -4,7 +4,7 @@ import jwt
 from flask import json
 from mock import patch
 
-from app import garage_door_status, update_garage_door_state, garage_door_login
+from svc.app import garage_door_status, update_garage_door_state, garage_door_login
 
 
 class TestAppRoutes():
@@ -35,14 +35,14 @@ class TestAppRoutes():
 
         assert actual.data == expected_body
 
-    @patch('app.request')
+    @patch('svc.app.request')
     def test_update_garage_door_state__should_return_success_status_code(self, mock_request):
         mock_request.data = {}
         actual = update_garage_door_state()
 
         assert actual.status_code == 200
 
-    @patch('app.request')
+    @patch('svc.app.request')
     def test_update_garage_door_state__should_return_success_header(self, mock_request):
         mock_request.data = {}
         expected_headers = 'text/json'
@@ -51,7 +51,7 @@ class TestAppRoutes():
 
         assert actual.content_type == expected_headers
 
-    @patch('app.request')
+    @patch('svc.app.request')
     def test_update_garage_door_state__should_check_state_with_request(self, mock_request):
         post_body = {"testBody": "testValues"}
         mock_request.data = post_body
@@ -60,16 +60,16 @@ class TestAppRoutes():
 
         assert actual.data == '{}'.format(json.dumps(post_body))
 
-    @patch('app.request')
-    @patch('app.UserDatabaseManager')
+    @patch('svc.app.request')
+    @patch('svc.app.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
         actual = garage_door_login()
 
         assert actual.status_code == 200
 
-    @patch('app.request')
-    @patch('app.UserDatabaseManager')
+    @patch('svc.app.request')
+    @patch('svc.app.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials, mock_request):
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
         expected_token = {'user_id': 12345}
@@ -77,16 +77,16 @@ class TestAppRoutes():
 
         assert jwt.decode(actual.data, self.JWT_SECRET, algorithms=["HS256"]) == expected_token
 
-    @patch('app.request')
-    @patch('app.UserDatabaseManager')
+    @patch('svc.app.request')
+    @patch('svc.app.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_unauthorized_when_user_not_valid(self, mock_credentials, mock_request):
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = False
         actual = garage_door_login()
 
         assert actual.status_code == 401
 
-    @patch('app.request')
-    @patch('app.UserDatabaseManager')
+    @patch('svc.app.request')
+    @patch('svc.app.UserDatabaseManager')
     def test_garage_door_login__should_call_validate_credentials_with_post_body(self, mock_credentials, mock_request):
         post_body = {"username": "fakeUser", "password": "fakePass"}
         mock_request.data = post_body

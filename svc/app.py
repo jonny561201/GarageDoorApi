@@ -6,7 +6,7 @@ from flask import Flask, json
 from flask import Response
 from flask import request
 
-from db.methods.user_credentials import UserDatabaseManager
+from svc.db.methods.user_credentials import UserDatabaseManager
 
 app = Flask(__name__)
 
