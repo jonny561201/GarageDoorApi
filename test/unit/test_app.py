@@ -1,6 +1,8 @@
 import os
+from datetime import datetime, timedelta
 
 import jwt
+import pytz
 from flask import json
 from mock import patch
 
@@ -64,23 +66,30 @@ class TestAppRoutes():
     @patch('svc.app.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
+
         actual = garage_door_login()
 
         assert actual.status_code == 200
 
+    @patch('svc.app.datetime')
     @patch('svc.app.request')
     @patch('svc.app.UserDatabaseManager')
-    def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials, mock_request):
+    def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials, mock_request, mock_datetime):
+        now = datetime.now(tz=pytz.timezone('US/Central'))
+        mock_datetime.now.return_value = now
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
-        expected_token = {'user_id': 12345}
+        expected_expire = now + timedelta(hours=2)
+        expected_token = {'user_id': 12345, 'exp': int(expected_expire.strftime('%s'))}
+
         actual = garage_door_login()
 
         assert jwt.decode(actual.data, self.JWT_SECRET, algorithms=["HS256"]) == expected_token
 
     @patch('svc.app.request')
     @patch('svc.app.UserDatabaseManager')
-    def test_garage_door_login__should_respond_with_unauthorized_when_user_not_valid(self, mock_credentials, mock_request):
+    def test_garage_door_login__should_respond_with_unauthorized_status_code_when_user_not_valid(self, mock_credentials, mock_request):
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = False
+
         actual = garage_door_login()
 
         assert actual.status_code == 401

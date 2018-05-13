@@ -2,6 +2,9 @@
 import os
 
 import jwt
+from datetime import datetime, timedelta
+
+import pytz
 from flask import Flask, json
 from flask import Response
 from flask import request
@@ -23,8 +26,9 @@ def garage_door_login():
     post_body = request.data
     with UserDatabaseManager() as user_database:
         if user_database.user_credentials_are_valid(post_body):
+            expire_time = datetime.now(tz=pytz.timezone('US/Central')) + timedelta(hours=2)
             jwt_secret = os.environ.get('JWT_SECRET')
-            jwt_token = jwt.encode({'user_id': 12345}, jwt_secret, algorithm='HS256')
+            jwt_token = jwt.encode({'user_id': 12345, 'exp': expire_time}, jwt_secret, algorithm='HS256')
             return Response(jwt_token, status=200)
         else:
             return Response(status=401)
