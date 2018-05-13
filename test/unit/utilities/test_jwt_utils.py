@@ -1,14 +1,16 @@
 import os
+from datetime import datetime, timedelta
 
 import jwt
 from svc.utilities.jwt_utils import is_jwt_valid
 
 
 class TestJwt():
-    JWT_BODY = {'fakeBody': 'valueValue'}
+    JWT_BODY = None
     JWT_SECRET = 'testSecret'
 
     def setup_method(self, _):
+        self.JWT_BODY = {'fakeBody': 'valueValue'}
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
 
     def teardown_method(self, _):
@@ -24,6 +26,15 @@ class TestJwt():
     def test_is_jwt_valid__should_return_false_if_it_cannot_be_decrypted(self):
         jwt_token = jwt.encode(self.JWT_BODY, 'badSecret', algorithm='HS256')
 
-        acutal = is_jwt_valid(jwt_token)
+        actual = is_jwt_valid(jwt_token)
 
-        assert acutal is False
+        assert actual is False
+
+    def test_is_jwt_valid__should_return_false_if_token_has_expired(self):
+        expired_date = datetime.now() - timedelta(hours=1)
+        self.JWT_BODY['exp'] = expired_date
+        jwt_token = jwt.encode(self.JWT_BODY, self.JWT_SECRET, algorithm='HS256')
+
+        actual = is_jwt_valid(jwt_token)
+
+        assert actual is False
