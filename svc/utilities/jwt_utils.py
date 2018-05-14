@@ -3,8 +3,7 @@ from datetime import timedelta, datetime
 
 import jwt
 import pytz
-from jwt import ExpiredSignatureError
-from jwt import InvalidSignatureError
+from jwt import DecodeError, ExpiredSignatureError, InvalidSignatureError
 
 
 def is_jwt_valid(jwt_token):
@@ -12,7 +11,7 @@ def is_jwt_valid(jwt_token):
     try:
         decrypted_token = jwt.decode(jwt_token, os.environ['JWT_SECRET'], algorithms=["HS256"])
         return True
-    except (InvalidSignatureError, ExpiredSignatureError) as er:
+    except (InvalidSignatureError, ExpiredSignatureError, DecodeError) as er:
         return False
 
 

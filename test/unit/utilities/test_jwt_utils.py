@@ -42,6 +42,13 @@ class TestJwt():
 
         assert actual is False
 
+    def test_is_jwt_valid__should_return_false_if_token_is_none(self):
+        jwt_token = None
+
+        actual = is_jwt_valid(jwt_token)
+
+        assert actual == False
+
     @patch('svc.utilities.jwt_utils.datetime')
     def test_create_jwt_token__should_return_a_valid_token(self, mock_date):
         now = datetime.now(pytz.timezone('US/Central'))
