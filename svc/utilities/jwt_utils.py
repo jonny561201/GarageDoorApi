@@ -8,7 +8,7 @@ from jwt import InvalidSignatureError
 
 
 def is_jwt_valid(jwt_token):
-    #test for token not provided!!!!!
+    #test for None or invalid string!!!!!
     try:
         decrypted_token = jwt.decode(jwt_token, os.environ['JWT_SECRET'], algorithms=["HS256"])
         return True

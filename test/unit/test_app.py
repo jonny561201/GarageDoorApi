@@ -42,7 +42,7 @@ class TestAppRoutes():
 
         assert actual.data == expected_body
 
-    def test_garage_door_status__should_return_unauthorized_if_provided_bad_jwt_token(self, mock_request):
+    def test_garage_door_status__should_return_unauthorized_if_provided_bad_jwt(self, mock_request):
         jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256')
         mock_request.headers = {'Authorization': jwt_token}
 
@@ -51,12 +51,14 @@ class TestAppRoutes():
         assert actual.status_code == 401
 
     def test_update_garage_door_state__should_return_success_status_code(self, mock_request):
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
         mock_request.data = {}
         actual = update_garage_door_state()
 
         assert actual.status_code == 200
 
     def test_update_garage_door_state__should_return_success_header(self, mock_request):
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
         mock_request.data = {}
         expected_headers = 'text/json'
 
@@ -65,12 +67,22 @@ class TestAppRoutes():
         assert actual.content_type == expected_headers
 
     def test_update_garage_door_state__should_check_state_with_request(self, mock_request):
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
         post_body = {"testBody": "testValues"}
         mock_request.data = post_body
 
         actual = update_garage_door_state()
 
         assert actual.data == '{}'.format(json.dumps(post_body))
+
+    def test_update_garage_door_state__should_return_unauthorized_if_provided_bad_jwt(self, mock_request):
+        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256')
+        mock_request.headers = {'Authorization': jwt_token}
+        mock_request.data = {}
+
+        actual = update_garage_door_state()
+
+        assert actual.status_code == 401
 
     @patch('svc.app.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):

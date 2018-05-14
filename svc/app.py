@@ -38,6 +38,8 @@ def garage_door_status():
 
 @app.route('/garageDoor/state', methods=['POST'])
 def update_garage_door_state():
+    if not is_jwt_valid(request.headers.get('Authorization')):
+        return Response(status=401)
     request_body = request.data
     return Response(json.dumps(request_body), status=200, headers=DEFAULT_HEADERS)
 
