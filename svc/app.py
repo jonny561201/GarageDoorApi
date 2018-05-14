@@ -4,8 +4,8 @@ from flask import Flask, json
 from flask import Response
 from flask import request
 
-from svc.db.methods.user_credentials import UserDatabaseManager
-from utilities.jwt_utils import create_jwt_token
+from db.methods.user_credentials import UserDatabaseManager
+from utilities.jwt_utils import create_jwt_token, is_jwt_valid
 
 app = Flask(__name__)
 
@@ -30,6 +30,8 @@ def garage_door_login():
 
 @app.route('/garageDoor/status', methods=['GET'])
 def garage_door_status():
+    if not is_jwt_valid(request.headers.get('Authorization')):
+        return Response(status=401)
     body = json.dumps({'garageStatus': True})
     return Response(body, status=200, headers=DEFAULT_HEADERS)
 

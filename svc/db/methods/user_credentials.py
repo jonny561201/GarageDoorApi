@@ -1,7 +1,7 @@
 import os
 from sqlalchemy import orm, create_engine
 
-from svc.db.models.user_models import UserCredentials
+from db.models.user_models import UserCredentials
 
 
 class UserDatabaseManager(object):
