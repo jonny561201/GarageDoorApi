@@ -4,8 +4,8 @@ from flask import Flask, json
 from flask import Response
 from flask import request
 
-from db.methods.user_credentials import UserDatabaseManager
-from utilities.jwt_utils import create_jwt_token, is_jwt_valid
+from svc.db.methods.user_credentials import UserDatabaseManager
+from svc.utilities.jwt_utils import create_jwt_token, is_jwt_valid
 
 app = Flask(__name__)
 

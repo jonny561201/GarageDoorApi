@@ -3,8 +3,8 @@ import uuid
 from mock import mock
 from sqlalchemy import orm
 
-from svc.db.models.user_models import UserCredentials
 from svc.db.methods.user_credentials import UserDatabase
+from svc.db.models.user_models import UserCredentials
 
 
 class TestUserDatabase():
