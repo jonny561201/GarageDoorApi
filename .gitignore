@@ -1,3 +1,4 @@
 /.python-version
 /.idea
 **/.pytest_cache
+*venv
