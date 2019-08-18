@@ -101,7 +101,8 @@ class TestAppRoutes():
         mock_datetime.now.return_value = now
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
         expected_expire = now + timedelta(hours=2)
-        expected_token = {'user_id': 12345, 'exp': int(expected_expire.strftime('%s'))}
+        truncated_date = (str(expected_expire.timestamp() * 1000))[:10]
+        expected_token = {'user_id': 12345, 'exp': int(truncated_date)}
 
         actual = garage_door_login()
 

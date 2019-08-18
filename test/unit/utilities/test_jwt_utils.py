@@ -61,7 +61,8 @@ class TestJwt():
         now = datetime.now(pytz.timezone('US/Central'))
         mock_date.now.return_value = now
         expected_expiration = now + timedelta(hours=2)
-        expected_token_body = {'user_id': 12345, 'exp': int(expected_expiration.strftime('%s'))}
+        truncated_expiration = (str(expected_expiration.timestamp() * 1000))[:10]
+        expected_token_body = {'user_id': 12345, 'exp': int(truncated_expiration)}
 
         actual = create_jwt_token()
 
