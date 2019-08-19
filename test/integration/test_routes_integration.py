@@ -34,3 +34,11 @@ class TestRouteIntegration:
         actual = self.test_client.get('garageDoor/status', headers=headers)
 
         assert actual.status_code == 200
+
+    def test_update_garage_door_state__should_return_unauthorized_without_jwt(self):
+        post_body = {}
+        headers = {}
+        
+        actual = self.test_client.post('garageDoor/state', data=post_body, headers=headers)
+
+        assert actual.status_code == 401
