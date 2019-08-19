@@ -1,0 +1,19 @@
+version: "3"
+services:
+  db:
+    image: "postgres:11.2-alpine"
+    container_name: "postgres-test"
+    ports:
+    - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=garage_door
+
+  flyway:
+    build: ./docker/flyway
+    command: -url=jdbc:postgresql://db:5432/garage_door -user=postgres -password=password -connectRetries=20 migrate
+    volumes:
+      - ./docker/flyway/db/migration:/flyway/sql
+    depends_on:
+    - db
