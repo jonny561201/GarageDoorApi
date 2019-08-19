@@ -60,14 +60,14 @@ class TestAppRoutes:
 
     def test_update_garage_door_state__should_return_success_status_code(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        mock_request.data = {}
+        mock_request.data = '{}'.encode()
         actual = update_garage_door_state()
 
         assert actual.status_code == 200
 
     def test_update_garage_door_state__should_return_success_header(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        mock_request.data = {}
+        mock_request.data = '{}'.encode()
         expected_headers = 'text/json'
 
         actual = update_garage_door_state()
@@ -76,8 +76,8 @@ class TestAppRoutes:
 
     def test_update_garage_door_state__should_check_state_with_request(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        post_body = {"testBody": "testValues"}
-        mock_request.data = post_body
+        post_body = '{"testBody": "testValues"}'
+        mock_request.data = post_body.encode()
 
         actual = update_garage_door_state()
         json_actual = json.loads(actual.data)
@@ -95,7 +95,7 @@ class TestAppRoutes:
 
     @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):
-        mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
+        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = True
 
         actual = garage_door_login()
 
@@ -106,7 +106,7 @@ class TestAppRoutes:
     def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials, mock_datetime, mock_request):
         now = datetime.now(tz=pytz.timezone('US/Central'))
         mock_datetime.now.return_value = now
-        mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
+        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = True
         expected_expire = now + timedelta(hours=2)
         truncated_date = (str(expected_expire.timestamp() * 1000))[:10]
         expected_token = {'user_id': 12345, 'exp': int(truncated_date)}
@@ -117,7 +117,7 @@ class TestAppRoutes:
 
     @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_unauthorized_status_code_when_user_not_valid(self, mock_credentials, mock_request):
-        mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = False
+        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = False
 
         actual = garage_door_login()
 
@@ -129,4 +129,4 @@ class TestAppRoutes:
         mock_request.data = post_body
         garage_door_login()
 
-        mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.assert_called_with(post_body)
+        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.assert_called_with(post_body)

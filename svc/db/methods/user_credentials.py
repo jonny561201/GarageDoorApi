@@ -1,4 +1,3 @@
-import os
 from sqlalchemy import orm, create_engine
 
 from svc.db.models.user_models import UserCredentials
@@ -9,11 +8,6 @@ class UserDatabaseManager:
 
     def __enter__(self):
         connection = 'postgres://postgres:password@localhost:5432/garage_door'
-        # connection = 'postgres://{0}:{1}@{2}:{3}/{4}'.format(os.environ["DB_USER"],
-        #                                                      os.environ["DB_PASS"],
-        #                                                      os.environ["DB_HOST"],
-        #                                                      os.environ["DB_PORT"],
-        #                                                      os.environ["DB_NAME"])
 
         db_engine = create_engine(connection)
         session = orm.sessionmaker(bind=db_engine)
@@ -30,7 +24,7 @@ class UserDatabase:
     def __init__(self, session):
         self.session = session
 
-    def user_credentials_are_valid(self, credentials):
+    def are_credentials_valid(self, credentials):
         user_name = credentials['username']
         user = self.session.query(UserCredentials).filter_by(user_name=user_name).first()
         return user.password == credentials['password']

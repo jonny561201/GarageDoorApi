@@ -18,7 +18,7 @@ def health_check():
 def garage_door_login():
     post_body = request.data
     with UserDatabaseManager() as user_database:
-        if user_database.user_credentials_are_valid(post_body):
+        if user_database.are_credentials_valid(post_body):
             jwt_token = create_jwt_token()
             return Response(jwt_token, status=200)
         else:
