@@ -51,6 +51,13 @@ class TestAppRoutes():
 
         assert actual.status_code == 401
 
+    def test_garage_door_status__should_return_unauthorized_if_provided_no_header(self, mock_request):
+        # mock_request.headers = {}
+
+        actual = get_garage_door_status()
+
+        assert actual.status_code == 401
+
     def test_update_garage_door_state__should_return_success_status_code(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
         mock_request.data = {}

@@ -13,3 +13,8 @@ class TestRouteIntegration:
 
         assert actual.status_code == 200
         assert actual.data.decode('UTF-8') == 'Success'
+
+    def test_garage_door_status__should_return_unauthorized(self):
+        actual = self.test_client.get('garageDoor/status')
+
+        assert actual.status_code == 401
