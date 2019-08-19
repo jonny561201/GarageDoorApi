@@ -8,15 +8,15 @@ from mock import patch
 from svc.utilities.jwt_utils import is_jwt_valid, create_jwt_token
 
 
-class TestJwt():
+class TestJwt:
     JWT_BODY = None
     JWT_SECRET = 'testSecret'
 
-    def setup_method(self, _):
+    def setup_method(self):
         self.JWT_BODY = {'fakeBody': 'valueValue'}
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
 
-    def teardown_method(self, _):
+    def teardown_method(self):
         os.environ.pop('JWT_SECRET')
 
     def test_is_jwt_valid__should_return_true_if_it_can_be_decrypted(self):
@@ -67,3 +67,13 @@ class TestJwt():
         actual = create_jwt_token()
 
         assert jwt.decode(actual, self.JWT_SECRET, algorithms='HS256') == expected_token_body
+
+
+def test_is_jwt_valid__should_return_false_if_secret_is_not_set():
+    jwt_body = {'fakeBody': 'valueValue'}
+    jwt_secret = 'testSecret'
+    jwt_token = jwt.encode(jwt_body, jwt_secret, algorithm='HS256')
+
+    actual = is_jwt_valid(jwt_token)
+
+    assert actual is False

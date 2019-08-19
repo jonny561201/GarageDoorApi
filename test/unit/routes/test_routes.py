@@ -6,7 +6,7 @@ import pytz
 from flask import json
 from mock import patch
 
-from svc.routes.routes import garage_door_status, update_garage_door_state, garage_door_login
+from svc.routes.routes import get_garage_door_status, update_garage_door_state, garage_door_login
 
 
 @patch('svc.routes.routes.request')
@@ -22,7 +22,7 @@ class TestAppRoutes():
 
     def test_garage_door_status__should_return_success_status_code(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        actual = garage_door_status()
+        actual = get_garage_door_status()
 
         assert actual.status_code == 200
 
@@ -30,7 +30,7 @@ class TestAppRoutes():
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
         expected_headers = 'text/json'
 
-        actual = garage_door_status()
+        actual = get_garage_door_status()
 
         assert actual.content_type == expected_headers
 
@@ -38,7 +38,7 @@ class TestAppRoutes():
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
         expected_body = {"garageStatus": True}
 
-        actual = garage_door_status()
+        actual = get_garage_door_status()
         json_actual = json.loads(actual.data)
 
         assert json_actual == expected_body
@@ -47,7 +47,7 @@ class TestAppRoutes():
         jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256')
         mock_request.headers = {'Authorization': jwt_token}
 
-        actual = garage_door_status()
+        actual = get_garage_door_status()
 
         assert actual.status_code == 401
 

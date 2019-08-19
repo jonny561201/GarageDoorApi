@@ -8,9 +8,10 @@ from jwt import DecodeError, ExpiredSignatureError, InvalidSignatureError
 
 def is_jwt_valid(jwt_token):
     try:
-        jwt.decode(jwt_token, os.environ['JWT_SECRET'], algorithms=["HS256"])
+        secret = os.environ['JWT_SECRET']
+        jwt.decode(jwt_token, secret, algorithms=["HS256"])
         return True
-    except (InvalidSignatureError, ExpiredSignatureError, DecodeError) as er:
+    except (InvalidSignatureError, ExpiredSignatureError, DecodeError, KeyError) as er:
         return False
 
 
