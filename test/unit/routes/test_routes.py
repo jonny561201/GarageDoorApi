@@ -10,7 +10,7 @@ from svc.routes.routes import get_garage_door_status, update_garage_door_state, 
 
 
 @patch('svc.routes.routes.request')
-class TestAppRoutes():
+class TestAppRoutes:
     JWT_SECRET = 'fake_jwt_secret'
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256')
 
@@ -52,7 +52,7 @@ class TestAppRoutes():
         assert actual.status_code == 401
 
     def test_garage_door_status__should_return_unauthorized_if_provided_no_header(self, mock_request):
-        # mock_request.headers = {}
+        mock_request.headers = {}
 
         actual = get_garage_door_status()
 
