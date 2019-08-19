@@ -9,7 +9,7 @@ route_blueprint = Blueprint('route_blueprint', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
 
 
-@route_blueprint.route('/healthcheck')
+@route_blueprint.route('/healthCheck')
 def health_check():
     return "Success"
 
