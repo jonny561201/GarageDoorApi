@@ -6,10 +6,10 @@ import pytz
 from flask import json
 from mock import patch
 
-from app import garage_door_status, update_garage_door_state, garage_door_login
+from svc.routes.routes import garage_door_status, update_garage_door_state, garage_door_login
 
 
-@patch('app.request')
+@patch('svc.routes.routes.request')
 class TestAppRoutes():
     JWT_SECRET = 'fake_jwt_secret'
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256')
@@ -86,7 +86,7 @@ class TestAppRoutes():
 
         assert actual.status_code == 401
 
-    @patch('app.UserDatabaseManager')
+    @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = True
 
@@ -95,7 +95,7 @@ class TestAppRoutes():
         assert actual.status_code == 200
 
     @patch('svc.utilities.jwt_utils.datetime')
-    @patch('app.UserDatabaseManager')
+    @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials, mock_datetime, mock_request):
         now = datetime.now(tz=pytz.timezone('US/Central'))
         mock_datetime.now.return_value = now
@@ -108,7 +108,7 @@ class TestAppRoutes():
 
         assert jwt.decode(actual.data, self.JWT_SECRET, algorithms=["HS256"]) == expected_token
 
-    @patch('app.UserDatabaseManager')
+    @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_unauthorized_status_code_when_user_not_valid(self, mock_credentials, mock_request):
         mock_credentials.return_value.__enter__.return_value.user_credentials_are_valid.return_value = False
 
@@ -116,7 +116,7 @@ class TestAppRoutes():
 
         assert actual.status_code == 401
 
-    @patch('app.UserDatabaseManager')
+    @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_call_validate_credentials_with_post_body(self, mock_credentials, mock_request):
         post_body = {"username": "fakeUser", "password": "fakePass"}
         mock_request.data = post_body
