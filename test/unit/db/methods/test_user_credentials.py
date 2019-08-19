@@ -41,6 +41,14 @@ class TestUserDatabase:
 
         assert actual is False
 
+    def test_are_credentials_valid__should_return_false_if_user_not_found(self):
+        user = None
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
+
+        actual = self.DATABASE.are_credentials_valid(self.CREDENTIALS)
+
+        assert actual is False
+
     @staticmethod
     def _create_database_user(user=FAKE_USER, password=FAKE_PASS):
         return UserCredentials(id=uuid.uuid4(), user_name=user, password=password)

@@ -27,4 +27,4 @@ class UserDatabase:
     def are_credentials_valid(self, credentials):
         user_name = credentials['username']
         user = self.session.query(UserCredentials).filter_by(user_name=user_name).first()
-        return user.password == credentials['password']
+        return False if user is None else user.password == credentials['password']
