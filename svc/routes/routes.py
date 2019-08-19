@@ -36,7 +36,8 @@ def get_garage_door_status():
 
 @route_blueprint.route('/garageDoor/state', methods=['POST'])
 def update_garage_door_state():
-    if not is_jwt_valid(request.headers.get('Authorization')):
+    bearer_token = request.headers.get('Authorization')
+    if not is_jwt_valid(bearer_token):
         return Response(status=401)
-    request_body = request.data
+    request_body = request.data.decode('UTF-8')
     return Response(json.dumps(request_body), status=200, headers=DEFAULT_HEADERS)

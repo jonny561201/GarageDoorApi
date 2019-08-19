@@ -1,6 +1,7 @@
 import os
 
 import jwt
+from flask import json
 
 from svc.manager import create_app
 
@@ -38,7 +39,16 @@ class TestRouteIntegration:
     def test_update_garage_door_state__should_return_unauthorized_without_jwt(self):
         post_body = {}
         headers = {}
-        
+
         actual = self.test_client.post('garageDoor/state', data=post_body, headers=headers)
 
         assert actual.status_code == 401
+
+    def test_update_garage_door_state__should_return_success(self):
+        post_body = {'test': 'fake'}
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        headers = {'Authorization': bearer_token}
+
+        actual = self.test_client.post('garageDoor/state', data=json.dumps(post_body), headers=headers)
+
+        assert actual.status_code == 200
