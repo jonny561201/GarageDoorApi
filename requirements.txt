@@ -1,6 +1,5 @@
 flask>0.0.1
-virtualenv==15.2.0
-RPi.GPIO>=0.6.3
 PyJWT>=1.6.1
 SQLAlchemy>=1.2.7
 pytz
+psycopg2

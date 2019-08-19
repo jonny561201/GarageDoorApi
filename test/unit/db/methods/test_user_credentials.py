@@ -7,7 +7,7 @@ from svc.db.methods.user_credentials import UserDatabase
 from svc.db.models.user_models import UserCredentials
 
 
-class TestUserDatabase():
+class TestUserDatabase:
     FAKE_USER = 'testName'
     FAKE_PASS = 'testPass'
     CREDENTIALS = {'username': FAKE_USER, 'password': FAKE_PASS}
