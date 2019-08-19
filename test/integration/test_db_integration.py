@@ -15,3 +15,11 @@ def test_are_credentials_valid__should_return_false_when_user_does_not_exist():
         response = database.are_credentials_valid(credentials)
 
         assert response is False
+
+
+def test_are_credentials_valid__should_return_false_when_password_does_not_match():
+    with UserDatabaseManager() as database:
+        credentials = {'username': 'l33t', 'password': 'wrongPassword'}
+        response = database.are_credentials_valid(credentials)
+
+        assert response is False
