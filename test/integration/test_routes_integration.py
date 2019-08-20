@@ -52,3 +52,11 @@ class TestRouteIntegration:
         actual = self.test_client.post('garageDoor/state', data=json.dumps(post_body), headers=headers)
 
         assert actual.status_code == 200
+
+    def test_garage_door_login__should_return_401_when_user_invalid(self):
+        post_body = {'username': 'Jonny561201', 'password': 'wrongPass'}
+        json_post = json.dumps(post_body)
+
+        actual = self.test_client.post('garageDoor/login', data=json_post)
+
+        assert actual.status_code == 401
