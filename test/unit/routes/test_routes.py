@@ -12,7 +12,7 @@ from svc.routes.routes import get_garage_door_status, update_garage_door_state, 
 @patch('svc.routes.routes.request')
 class TestAppRoutes:
     JWT_SECRET = 'fake_jwt_secret'
-    JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256')
+    JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')
 
     def setup_method(self, _):
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
@@ -44,7 +44,7 @@ class TestAppRoutes:
         assert json_actual == expected_body
 
     def test_garage_door_status__should_return_unauthorized_if_provided_bad_jwt(self, mock_request):
-        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256')
+        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256').decode('UTF-8')
         mock_request.headers = {'Authorization': jwt_token}
 
         actual = get_garage_door_status()
@@ -85,7 +85,7 @@ class TestAppRoutes:
         assert json_actual == post_body
 
     def test_update_garage_door_state__should_return_unauthorized_if_provided_bad_jwt(self, mock_request):
-        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256')
+        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256').decode('UTF-8')
         mock_request.headers = {'Authorization': jwt_token}
         mock_request.data = {}
 
