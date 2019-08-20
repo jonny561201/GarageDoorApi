@@ -8,10 +8,16 @@ WHITE='\033[0m'
 function runUnitTests {
     echo -e "${YELLOW}---------------Running Unit Tests---------------${WHITE}"
     pytest -s $(pwd)/test/unit
+    UNIT_TEST=$?
+    if [[ ${UNIT_TEST} -ne 0 ]]; then
+        echo -e "${RED}ERROR: Unit Tests Failed!!!${WHITE}"
+        exit 1
+    fi
+    echo -e "${GREEN}---------------Unit Tests Passed---------------${WHITE}"
 }
 
 function startPostgresDocker {
-    echo -e "${YELLOW}---------------Running Integration Tests---------------${WHITE}"
+    echo -e "${YELLOW}---------------Starting Postgres Docker---------------${WHITE}"
     docker-compose up -d
 }
 
@@ -26,6 +32,12 @@ function waitForContainerToBeHealthy {
 function runIntegrationTests {
     echo -e "${YELLOW}---------------Running Integration Tests---------------${WHITE}"
     pytest -s $(pwd)/test/integration
+    INTEGRATION_EXIT=$?
+    if [[ ${INTEGRATION_EXIT} -ne 0 ]]; then
+        echo -e "${RED}ERROR: Integration Tests Failed!!!${RED}"
+        exit 1
+    fi
+    echo -e "${GREEN}---------------Integration Tests Passed---------------${WHITE}"
 }
 
 function teardownDocker {
