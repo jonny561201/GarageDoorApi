@@ -5,9 +5,11 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 WHITE='\033[0m'
 
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 function runUnitTests {
     echo -e "${YELLOW}---------------Running Unit Tests---------------${WHITE}"
-    pytest -s $(pwd)/test/unit
+    pytest -s ${CURRENT_DIR}/test/unit
     UNIT_TEST=$?
     if [[ ${UNIT_TEST} -ne 0 ]]; then
         echo -e "${RED}ERROR: Unit Tests Failed!!!${WHITE}"
@@ -18,7 +20,9 @@ function runUnitTests {
 
 function startPostgresDocker {
     echo -e "${YELLOW}---------------Starting Postgres Docker---------------${WHITE}"
+    pushd ${CURRENT_DIR}
     docker-compose up -d
+    popd
 }
 
 function waitForContainerToBeHealthy {
@@ -31,7 +35,7 @@ function waitForContainerToBeHealthy {
 
 function runIntegrationTests {
     echo -e "${YELLOW}---------------Running Integration Tests---------------${WHITE}"
-    pytest -s $(pwd)/test/integration
+    pytest -s ${CURRENT_DIR}/test/integration
     INTEGRATION_EXIT=$?
     if [[ ${INTEGRATION_EXIT} -ne 0 ]]; then
         echo -e "${RED}ERROR: Integration Tests Failed!!!${RED}"
@@ -42,7 +46,9 @@ function runIntegrationTests {
 
 function teardownDocker {
     echo -e "${YELLOW}---------------Cleaning up Container---------------${WHITE}"
+    pushd ${CURRENT_DIR}
     docker-compose down
+    popd
 }
 
 runUnitTests
