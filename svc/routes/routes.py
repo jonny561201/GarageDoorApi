@@ -3,6 +3,7 @@ from flask import json
 from flask import request
 
 from svc.db.methods.user_credentials import UserDatabaseManager
+from svc.utilities.gpio import garage_door_status
 from svc.utilities.jwt_utils import create_jwt_token, is_jwt_valid
 
 route_blueprint = Blueprint('route_blueprint', __name__)
@@ -30,7 +31,7 @@ def get_garage_door_status():
     bearer_token = request.headers.get('Authorization')
     if not is_jwt_valid(bearer_token):
         return Response(status=401)
-    body = json.dumps({'garageStatus': True})
+    body = json.dumps(garage_door_status())
     return Response(body, status=200, headers=DEFAULT_HEADERS)
 
 

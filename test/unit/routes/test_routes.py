@@ -20,6 +20,14 @@ class TestAppRoutes:
     def teardown_method(self, _):
         os.environ.pop('JWT_SECRET')
 
+    @patch('svc.routes.routes.garage_door_status')
+    def test_garage_door_status__should_call_get_garage_door_status(self, mock_gpio, mock_request):
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        mock_gpio.return_value = {}
+        get_garage_door_status()
+
+        mock_gpio.assert_called()
+
     def test_garage_door_status__should_return_success_status_code(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
         actual = get_garage_door_status()
@@ -36,7 +44,7 @@ class TestAppRoutes:
 
     def test_garage_door_status__should_return_response_body(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        expected_body = {"garageStatus": True}
+        expected_body = {"isGarageOpen": True}
 
         actual = get_garage_door_status()
         json_actual = json.loads(actual.data)
