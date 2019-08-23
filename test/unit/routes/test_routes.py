@@ -1,3 +1,4 @@
+import base64
 import os
 from datetime import datetime, timedelta
 
@@ -13,6 +14,11 @@ from svc.routes.routes import get_garage_door_status, update_garage_door_state, 
 class TestAppRoutes:
     JWT_SECRET = 'fake_jwt_secret'
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')
+    USER = 'user_name'
+    PWORD = 'password'
+    CREDS = ('%s:%s' % (USER, PWORD)).encode()
+    ENCODED_CREDS = base64.b64encode(CREDS).decode('UTF-8')
+    AUTH_HEADER = {"Authorization": "Basic " + ENCODED_CREDS}
 
     def setup_method(self, _):
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
@@ -112,7 +118,7 @@ class TestAppRoutes:
 
     @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):
-        mock_request.data = '{}'
+        mock_request.headers = self.AUTH_HEADER
         mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = True
 
         actual = garage_door_login()
@@ -122,7 +128,7 @@ class TestAppRoutes:
     @patch('svc.utilities.jwt_utils.datetime')
     @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials, mock_datetime, mock_request):
-        mock_request.data = '{}'
+        mock_request.headers = self.AUTH_HEADER
         now = datetime.now(tz=pytz.timezone('US/Central'))
         mock_datetime.now.return_value = now
         mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = True
@@ -136,7 +142,7 @@ class TestAppRoutes:
 
     @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_unauthorized_status_code_when_user_not_valid(self, mock_credentials, mock_request):
-        mock_request.data = '{}'
+        mock_request.headers = self.AUTH_HEADER
         mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = False
 
         actual = garage_door_login()
@@ -145,8 +151,7 @@ class TestAppRoutes:
 
     @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_call_validate_credentials_with_post_body(self, mock_credentials, mock_request):
-        post_body = '{"username": "fakeUser", "password": "fakePass"}'
-        mock_request.data = post_body
+        mock_request.headers = self.AUTH_HEADER
         garage_door_login()
 
-        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.assert_called_with(json.loads(post_body))
+        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.assert_called_with(self.USER, self.PWORD)

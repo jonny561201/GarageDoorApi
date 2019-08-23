@@ -17,9 +17,9 @@ def health_check():
 
 @route_blueprint.route('/garageDoor/login', methods=['POST'])
 def garage_door_login():
-    post_body = json.loads(request.data)
+    credentials = request.headers.get('Authorization')
     with UserDatabaseManager() as user_database:
-        if user_database.are_credentials_valid(post_body):
+        if user_database.are_credentials_valid(credentials):
             jwt_token = create_jwt_token()
             return Response(jwt_token, status=200)
         else:

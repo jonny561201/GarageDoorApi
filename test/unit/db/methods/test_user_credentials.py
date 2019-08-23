@@ -10,7 +10,6 @@ from svc.db.models.user_models import UserCredentials
 class TestUserDatabase:
     FAKE_USER = 'testName'
     FAKE_PASS = 'testPass'
-    CREDENTIALS = {'username': FAKE_USER, 'password': FAKE_PASS}
     SESSION = None
     DATABASE = None
 
@@ -20,16 +19,15 @@ class TestUserDatabase:
 
     def test_are_credentials_valid__should_query_database_by_user_name(self):
 
-        self.DATABASE.are_credentials_valid(self.CREDENTIALS)
+        self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
-        expected_user_name = self.CREDENTIALS['username']
-        self.SESSION.query.return_value.filter_by.assert_called_with(user_name=expected_user_name)
+        self.SESSION.query.return_value.filter_by.assert_called_with(user_name=self.FAKE_USER)
 
     def test_are_credentials_valid__should_return_true_if_password_matches_queried_user(self):
         user = self._create_database_user()
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        actual = self.DATABASE.are_credentials_valid(self.CREDENTIALS)
+        actual = self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
         assert actual is True
 
@@ -37,7 +35,7 @@ class TestUserDatabase:
         user = self._create_database_user(password='mismatchedPass')
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        actual = self.DATABASE.are_credentials_valid(self.CREDENTIALS)
+        actual = self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
         assert actual is False
 
@@ -45,7 +43,7 @@ class TestUserDatabase:
         user = None
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        actual = self.DATABASE.are_credentials_valid(self.CREDENTIALS)
+        actual = self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
         assert actual is False
 
