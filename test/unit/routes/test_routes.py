@@ -101,6 +101,15 @@ class TestAppRoutes:
 
         assert actual.status_code == 401
 
+    @patch('svc.routes.routes.update_garage_door')
+    def test_update_garage_door_state__should_call_update_gpio(self, mock_gpio, mock_request):
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        request = {"Test": "abc"}
+        mock_request.data = json.dumps(request).encode()
+        update_garage_door_state()
+
+        mock_gpio.assert_called_with(request)
+
     @patch('svc.routes.routes.UserDatabaseManager')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):
         mock_request.data = '{}'
