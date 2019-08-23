@@ -3,6 +3,7 @@ from flask import json
 from flask import request
 
 from svc.db.methods.user_credentials import UserDatabaseManager
+from svc.utilities.credentials import extract_credentials
 from svc.utilities.gpio import garage_door_status, update_garage_door
 from svc.utilities.jwt_utils import create_jwt_token, is_jwt_valid
 
@@ -17,9 +18,10 @@ def health_check():
 
 @route_blueprint.route('/garageDoor/login', methods=['POST'])
 def garage_door_login():
-    credentials = request.headers.get('Authorization')
+    get = request.headers.get('Authorization')
+    user, pword = extract_credentials(get)
     with UserDatabaseManager() as user_database:
-        if user_database.are_credentials_valid(credentials):
+        if user_database.are_credentials_valid(user, pword):
             jwt_token = create_jwt_token()
             return Response(jwt_token, status=200)
         else:

@@ -155,3 +155,12 @@ class TestAppRoutes:
         garage_door_login()
 
         mock_credentials.return_value.__enter__.return_value.are_credentials_valid.assert_called_with(self.USER, self.PWORD)
+
+    @patch('svc.routes.routes.extract_credentials')
+    @patch('svc.routes.routes.UserDatabaseManager')
+    def test_garage_door_login__should_call_extract_credentials(self, mock_credentials, mock_extract, mock_request):
+        mock_request.headers = self.AUTH_HEADER
+        mock_extract.return_value = (self.USER, self.PWORD)
+        garage_door_login()
+
+        mock_extract.assert_called_with(self.AUTH_HEADER['Authorization'])
