@@ -2,10 +2,9 @@ from flask import Response, Blueprint
 from flask import json
 from flask import request
 
-from svc.db.methods.user_credentials import UserDatabaseManager
-from svc.utilities.credentials import extract_credentials
-from svc.utilities.gpio import garage_door_status, update_garage_door
-from svc.utilities.jwt_utils import create_jwt_token, is_jwt_valid
+from svc.controllers.garage_door_controller import get_login
+from svc.utilities.gpio import update_garage_door, garage_door_status
+from svc.utilities.jwt_utils import is_jwt_valid
 
 route_blueprint = Blueprint('route_blueprint', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
@@ -18,14 +17,9 @@ def health_check():
 
 @route_blueprint.route('/garageDoor/login', methods=['POST'])
 def garage_door_login():
-    get = request.headers.get('Authorization')
-    user, pword = extract_credentials(get)
-    with UserDatabaseManager() as user_database:
-        if user_database.are_credentials_valid(user, pword):
-            jwt_token = create_jwt_token()
-            return Response(jwt_token, status=200)
-        else:
-            return Response(status=401)
+    bearer_token = request.headers.get('Authorization')
+    jwt_token = get_login(bearer_token)
+    return Response(jwt_token, status=200, headers=DEFAULT_HEADERS)
 
 
 @route_blueprint.route('/garageDoor/status', methods=['GET'])

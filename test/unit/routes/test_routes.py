@@ -1,9 +1,7 @@
 import base64
 import os
-from datetime import datetime, timedelta
 
 import jwt
-import pytz
 from flask import json
 from mock import patch
 
@@ -116,51 +114,28 @@ class TestAppRoutes:
 
         mock_gpio.assert_called_with(request)
 
-    @patch('svc.routes.routes.UserDatabaseManager')
-    def test_garage_door_login__should_respond_with_success_status_code(self, mock_credentials, mock_request):
+    @patch('svc.routes.routes.get_login')
+    def test_garage_door_login__should_respond_with_success_status_code(self, mock_login, mock_request):
         mock_request.headers = self.AUTH_HEADER
-        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = True
 
         actual = garage_door_login()
 
         assert actual.status_code == 200
 
-    @patch('svc.utilities.jwt_utils.datetime')
-    @patch('svc.routes.routes.UserDatabaseManager')
-    def test_garage_door_login__should_respond_with_jwt_token(self, mock_credentials, mock_datetime, mock_request):
+    @patch('svc.routes.routes.get_login')
+    def test_garage_door_login__should_respond_with_success_login_response(self, mock_login, mock_request):
+        jwt_token = 'fakeJwtToken'
         mock_request.headers = self.AUTH_HEADER
-        now = datetime.now(tz=pytz.timezone('US/Central'))
-        mock_datetime.now.return_value = now
-        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = True
-        expected_expire = now + timedelta(hours=2)
-        truncated_date = (str(expected_expire.timestamp() * 1000))[:10]
-        expected_token = {'user_id': 12345, 'exp': int(truncated_date)}
+        mock_login.return_value = jwt_token
 
         actual = garage_door_login()
 
-        assert jwt.decode(actual.data, self.JWT_SECRET, algorithms=["HS256"]) == expected_token
+        assert actual.data == jwt_token.encode()
 
-    @patch('svc.routes.routes.UserDatabaseManager')
-    def test_garage_door_login__should_respond_with_unauthorized_status_code_when_user_not_valid(self, mock_credentials, mock_request):
-        mock_request.headers = self.AUTH_HEADER
-        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = False
-
-        actual = garage_door_login()
-
-        assert actual.status_code == 401
-
-    @patch('svc.routes.routes.UserDatabaseManager')
-    def test_garage_door_login__should_call_validate_credentials_with_post_body(self, mock_credentials, mock_request):
+    @patch('svc.routes.routes.get_login')
+    def test_garage_door_login__should_call_get_login(self, mock_login, mock_request):
         mock_request.headers = self.AUTH_HEADER
         garage_door_login()
 
-        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.assert_called_with(self.USER, self.PWORD)
-
-    @patch('svc.routes.routes.extract_credentials')
-    @patch('svc.routes.routes.UserDatabaseManager')
-    def test_garage_door_login__should_call_extract_credentials(self, mock_credentials, mock_extract, mock_request):
-        mock_request.headers = self.AUTH_HEADER
-        mock_extract.return_value = (self.USER, self.PWORD)
-        garage_door_login()
-
-        mock_extract.assert_called_with(self.AUTH_HEADER['Authorization'])
+        expected_bearer = "Basic " + self.ENCODED_CREDS
+        mock_login.assert_called_with(expected_bearer)
