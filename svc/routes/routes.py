@@ -24,7 +24,7 @@ def garage_door_login():
 def get_garage_door_status():
     bearer_token = request.headers.get('Authorization')
     status = get_status(bearer_token)
-    return Response(status, status=200, headers=DEFAULT_HEADERS)
+    return Response(json.dumps(status), status=200, headers=DEFAULT_HEADERS)
 
 
 @route_blueprint.route('/garageDoor/state', methods=['POST'])

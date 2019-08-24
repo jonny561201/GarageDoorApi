@@ -20,7 +20,8 @@ def get_login(bearer_token):
 def get_status(bearer_token):
     if not is_jwt_valid(bearer_token):
         raise Unauthorized
-    return json.dumps(garage_door_status())
+    status = garage_door_status()
+    return {'isGarageOpen': status}
 
 
 def update_state(bearer_token, request):

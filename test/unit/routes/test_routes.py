@@ -29,6 +29,7 @@ class TestAppRoutes:
     @patch('svc.routes.routes.get_status')
     def test_garage_door_status__should_call_get_status(self, mock_controller, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        mock_controller.return_value = {}
 
         get_garage_door_status()
 

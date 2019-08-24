@@ -8,7 +8,7 @@ OUTPUT_PIN = 8
 
 # assumes connection to output pin and ground with GPIO.PUD_UP
 def garage_door_status():
-    return {'isGarageOpen': True}
+    return True
     # GPIO.setup(INPUT_PIN, GPIO.IN, GPIO.PUD_UP)
     #
     # status = GPIO.input(INPUT_PIN)

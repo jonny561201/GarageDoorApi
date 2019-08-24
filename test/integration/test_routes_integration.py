@@ -69,7 +69,7 @@ class TestRouteIntegration:
         creds = "%s:%s" % (user_name, user_pass)
         headers = {'Authorization': base64.b64encode(creds.encode())}
 
-        actual = self.test_client.post('garageDoor/login', headers=headers)
+        actual = self.test_client.get('garageDoor/login', headers=headers)
 
         assert actual.status_code == 401
 
@@ -79,7 +79,7 @@ class TestRouteIntegration:
         creds = "%s:%s" % (user_name, user_pass)
         headers = {'Authorization': base64.b64encode(creds.encode())}
 
-        actual = self.test_client.post('garageDoor/login', headers=headers)
+        actual = self.test_client.get('garageDoor/login', headers=headers)
 
         assert actual.status_code == 401
 
@@ -89,6 +89,6 @@ class TestRouteIntegration:
         creds = "%s:%s" % (user_name, user_pass)
         headers = {'Authorization': base64.b64encode(creds.encode())}
 
-        actual = self.test_client.post('garageDoor/login', headers=headers)
+        actual = self.test_client.get('garageDoor/login', headers=headers)
 
         assert actual.status_code == 200

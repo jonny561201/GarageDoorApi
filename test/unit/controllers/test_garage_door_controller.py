@@ -100,9 +100,8 @@ class TestStatusController:
         expected_body = {"isGarageOpen": True}
 
         actual = get_status(self.JWT_TOKEN)
-        json_actual = json.loads(actual)
 
-        assert json_actual == expected_body
+        assert actual == expected_body
 
     @patch('svc.controllers.garage_door_controller.is_jwt_valid')
     def test_garage_door_status__should_call_is_jwt_valid(self, mock_validate):
