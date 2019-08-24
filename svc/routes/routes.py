@@ -13,7 +13,7 @@ def health_check():
     return "Success"
 
 
-@route_blueprint.route('/garageDoor/login', methods=['POST'])
+@route_blueprint.route('/garageDoor/login', methods=['GET'])
 def garage_door_login():
     bearer_token = request.headers.get('Authorization')
     jwt_token = get_login(bearer_token)
