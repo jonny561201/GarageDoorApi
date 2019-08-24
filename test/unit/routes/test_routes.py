@@ -2,8 +2,10 @@ import base64
 import os
 
 import jwt
+import pytest
 from flask import json
 from mock import patch
+from werkzeug.exceptions import Unauthorized
 
 from svc.routes.routes import get_garage_door_status, update_garage_door_state, garage_door_login
 
@@ -24,13 +26,13 @@ class TestAppRoutes:
     def teardown_method(self, _):
         os.environ.pop('JWT_SECRET')
 
-    @patch('svc.routes.routes.garage_door_status')
-    def test_garage_door_status__should_call_get_garage_door_status(self, mock_gpio, mock_request):
+    @patch('svc.routes.routes.get_status')
+    def test_garage_door_status__should_call_get_status(self, mock_controller, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        mock_gpio.return_value = {}
+
         get_garage_door_status()
 
-        mock_gpio.assert_called()
+        mock_controller.assert_called_with(self.JWT_TOKEN)
 
     def test_garage_door_status__should_return_success_status_code(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
@@ -55,20 +57,11 @@ class TestAppRoutes:
 
         assert json_actual == expected_body
 
-    def test_garage_door_status__should_return_unauthorized_if_provided_bad_jwt(self, mock_request):
-        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256').decode('UTF-8')
-        mock_request.headers = {'Authorization': jwt_token}
-
-        actual = get_garage_door_status()
-
-        assert actual.status_code == 401
-
-    def test_garage_door_status__should_return_unauthorized_if_provided_no_header(self, mock_request):
+    def test_garage_door_status__should_raises_when_unauthorized(self, mock_request):
         mock_request.headers = {}
 
-        actual = get_garage_door_status()
-
-        assert actual.status_code == 401
+        with pytest.raises(Unauthorized):
+            get_garage_door_status()
 
     def test_update_garage_door_state__should_return_success_status_code(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}

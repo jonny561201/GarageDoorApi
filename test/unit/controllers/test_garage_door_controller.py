@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime, timedelta
 
@@ -7,7 +8,7 @@ import pytz
 from mock import patch
 from werkzeug.exceptions import Unauthorized
 
-from svc.controllers.garage_door_controller import get_login
+from svc.controllers.garage_door_controller import get_login, get_status
 
 
 @patch('svc.controllers.garage_door_controller.extract_credentials')
@@ -76,3 +77,33 @@ class TestAppRoutes:
         actual = get_login("junkToken")
 
         assert jwt.decode(actual, self.JWT_SECRET, algorithms=["HS256"]) == expected_token
+
+    @patch('svc.controllers.garage_door_controller.garage_door_status')
+    def test_garage_door_status__should_call_get_garage_door_status(self, mock_gpio, mock_extract):
+        mock_gpio.return_value = {}
+        get_status(self.JWT_TOKEN)
+
+        mock_gpio.assert_called()
+
+    def test_garage_door_status__should_return_status(self, mock_extract):
+        expected_body = {"isGarageOpen": True}
+
+        actual = get_status(self.JWT_TOKEN)
+        json_actual = json.loads(actual)
+
+        assert json_actual == expected_body
+
+    @patch('svc.controllers.garage_door_controller.is_jwt_valid')
+    def test_garage_door_status__should_call_is_jwt_valid(self, mock_validate, mock_extract):
+        get_status(self.JWT_TOKEN)
+
+        mock_validate.assert_called_with(self.JWT_TOKEN)
+
+    def test_garage_door_status__should_raise_unauthorized_if_provided_bad_jwt(self, mock_extract):
+        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256').decode('UTF-8')
+        with pytest.raises(Unauthorized):
+            get_status(jwt_token)
+
+    def test_garage_door_status__should_raise_unauthorized_if_provided_no_token(self, mock_extract):
+        with pytest.raises(Unauthorized):
+            get_status(None)

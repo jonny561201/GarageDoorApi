@@ -2,8 +2,8 @@ from flask import Response, Blueprint
 from flask import json
 from flask import request
 
-from svc.controllers.garage_door_controller import get_login
-from svc.utilities.gpio import update_garage_door, garage_door_status
+from svc.controllers.garage_door_controller import get_login, get_status
+from svc.utilities.gpio import update_garage_door
 from svc.utilities.jwt_utils import is_jwt_valid
 
 route_blueprint = Blueprint('route_blueprint', __name__)
@@ -25,10 +25,8 @@ def garage_door_login():
 @route_blueprint.route('/garageDoor/status', methods=['GET'])
 def get_garage_door_status():
     bearer_token = request.headers.get('Authorization')
-    if not is_jwt_valid(bearer_token):
-        return Response(status=401)
-    body = json.dumps(garage_door_status())
-    return Response(body, status=200, headers=DEFAULT_HEADERS)
+    status = get_status(bearer_token)
+    return Response(status, status=200, headers=DEFAULT_HEADERS)
 
 
 @route_blueprint.route('/garageDoor/state', methods=['POST'])
