@@ -5,7 +5,7 @@ import jwt
 import pytest
 from flask import json
 from mock import patch
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, BadRequest
 
 from svc.routes.routes import get_garage_door_status, update_garage_door_state, garage_door_login
 
@@ -65,47 +65,48 @@ class TestAppRoutes:
 
     def test_update_garage_door_state__should_return_success_status_code(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        mock_request.data = '{}'.encode()
+        mock_request.data = '{"garageDoorOpen": "False"}'.encode()
         actual = update_garage_door_state()
 
         assert actual.status_code == 200
 
     def test_update_garage_door_state__should_return_success_header(self, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        mock_request.data = '{}'.encode()
+        mock_request.data = '{"garageDoorOpen": "True"}'.encode()
         expected_headers = 'text/json'
 
         actual = update_garage_door_state()
 
         assert actual.content_type == expected_headers
 
-    def test_update_garage_door_state__should_check_state_with_request(self, mock_request):
+    @patch('svc.routes.routes.update_state')
+    def test_update_garage_door_state__should_check_state_with_request(self, mock_state, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        post_body = '{"testBody": "testValues"}'
+        post_body = '{"garageDoorOpen": "True"}'
         mock_request.data = post_body.encode()
+        expected_response = {'fakeResponse': True}
+        mock_state.return_value = expected_response
 
         actual = update_garage_door_state()
         json_actual = json.loads(actual.data)
 
-        assert json_actual == post_body
+        assert json_actual == expected_response
 
-    def test_update_garage_door_state__should_return_unauthorized_if_provided_bad_jwt(self, mock_request):
+    def test_update_garage_door_state__should_raise_unauthorized_if_provided_bad_jwt(self, mock_request):
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        post_body = '{"testBody": "testValues"}'
+        mock_request.data = post_body.encode()
+
+        with pytest.raises(BadRequest):
+            update_garage_door_state()
+
+    def test_update_garage_door_state__should_raise_bad_request_when_provided_bad_json(self, mock_request):
         jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256').decode('UTF-8')
         mock_request.headers = {'Authorization': jwt_token}
         mock_request.data = {}
 
-        actual = update_garage_door_state()
-
-        assert actual.status_code == 401
-
-    @patch('svc.routes.routes.update_garage_door')
-    def test_update_garage_door_state__should_call_update_gpio(self, mock_gpio, mock_request):
-        mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        request = {"Test": "abc"}
-        mock_request.data = json.dumps(request).encode()
-        update_garage_door_state()
-
-        mock_gpio.assert_called_with(request)
+        with pytest.raises(Unauthorized):
+            update_garage_door_state()
 
     @patch('svc.routes.routes.get_login')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_login, mock_request):

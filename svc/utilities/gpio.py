@@ -1,5 +1,5 @@
 # import RPi.GPIO as GPIO
-
+from werkzeug.exceptions import BadRequest
 
 INPUT_PIN = 7
 OUTPUT_PIN = 8
@@ -17,9 +17,14 @@ def garage_door_status():
     # return {'isGarageOpen': True if status == 1 else False}
 
 
+# return true for open and false for closed
 def update_garage_door(requested_state):
-    pass
+    try:
+        requested_state['garageDoorOpen']
+    except KeyError:
+        raise BadRequest
+    return True
     # status = garage_door_status()
-    # if requested_state['openGarageDoor'] is True and status['isGarageOpen'] is True:
+    # if requested_state['garageDoorOpen'] is True and status['isGarageOpen'] is False:
     #     GPIO.setup(OUTPUT_PIN, GPIO.HIGH)
     #     GPIO.cleanup()
