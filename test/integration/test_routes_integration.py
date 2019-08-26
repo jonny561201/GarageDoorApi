@@ -25,7 +25,7 @@ class TestRouteIntegration:
         assert actual.status_code == 200
         assert actual.data.decode('UTF-8') == 'Success'
 
-    def test_get_garage_door_status__should_return_unauthorized(self):
+    def test_get_garage_door_status__should_return_unauthorized_with_no_header(self):
         actual = self.test_client.get('garageDoor/status')
 
         assert actual.status_code == 401
@@ -60,6 +60,11 @@ class TestRouteIntegration:
         headers = {'Authorization': bearer_token}
 
         actual = self.test_client.post('garageDoor/state', data=json.dumps(post_body), headers=headers)
+
+        assert actual.status_code == 400
+
+    def test_garage_door_login__should_return_400_when_no_header(self):
+        actual = self.test_client.get('garageDoor/login')
 
         assert actual.status_code == 400
 

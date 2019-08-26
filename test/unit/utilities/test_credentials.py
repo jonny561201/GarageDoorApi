@@ -1,5 +1,8 @@
 import base64
 
+import pytest
+from werkzeug.exceptions import BadRequest
+
 from svc.utilities.credentials import extract_credentials
 
 
@@ -27,3 +30,8 @@ def test_extract_credentials__should_return_valid_credentials_when_missing_basic
 
     assert actual_pass == pword
     assert actual_user == user
+
+
+def test_extract_credentials__should_throw_bad_request_when_no_token():
+    with pytest.raises(BadRequest):
+        extract_credentials(None)
