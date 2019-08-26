@@ -35,3 +35,8 @@ def test_extract_credentials__should_return_valid_credentials_when_missing_basic
 def test_extract_credentials__should_throw_bad_request_when_no_token():
     with pytest.raises(BadRequest):
         extract_credentials(None)
+
+
+def test_extract_credentials__should():
+    with pytest.raises(BadRequest):
+        extract_credentials("")
