@@ -10,11 +10,11 @@ OUTPUT_PIN = 8
 def garage_door_status():
     return True
     # GPIO.setup(INPUT_PIN, GPIO.IN, GPIO.PUD_UP)
-    #
+
     # status = GPIO.input(INPUT_PIN)
     # GPIO.cleanup()
-    #
-    # return {'isGarageOpen': True if status == 1 else False}
+
+    # return True if status == 1 else False
 
 
 # return true for open and false for closed
@@ -26,5 +26,6 @@ def update_garage_door(requested_state):
     return True
     # status = garage_door_status()
     # if requested_state['garageDoorOpen'] is True and status['isGarageOpen'] is False:
-    #     GPIO.setup(OUTPUT_PIN, GPIO.HIGH)
+    #     GPIO.setup(OUTPUT_PIN, GPIO.OUT, initial=0)
+    #     GPIO.output(OUTPUT_PIN, GPIO.HIGH)
     #     GPIO.cleanup()
