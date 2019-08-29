@@ -30,3 +30,10 @@ def update_garage_door(requested_state):
     #     GPIO.output(OUTPUT_PIN, GPIO.LOW)
     #     time.sleep(.5)
     #     GPIO.output(OUTPUT_PIN, GPIO.HIGH)
+
+
+def read_temperature_file():
+    return '''
+    72 01 4b 46 7f ff 0e 10 57 : crc=57 YES
+    72 01 4b 46 7f ff 0e 10 57 t=23125
+    '''
