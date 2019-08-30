@@ -7,10 +7,10 @@ from flask import json
 from mock import patch
 from werkzeug.exceptions import Unauthorized, BadRequest
 
-from svc.routes.routes import get_garage_door_status, update_garage_door_state, garage_door_login
+from svc.routes.garage_door_routes import get_garage_door_status, update_garage_door_state, garage_door_login
 
 
-@patch('svc.routes.routes.request')
+@patch('svc.routes.garage_door_routes.request')
 class TestAppRoutes:
     JWT_SECRET = 'fake_jwt_secret'
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')
@@ -26,7 +26,7 @@ class TestAppRoutes:
     def teardown_method(self, _):
         os.environ.pop('JWT_SECRET')
 
-    @patch('svc.routes.routes.get_status')
+    @patch('svc.routes.garage_door_routes.get_status')
     def test_garage_door_status__should_call_get_status(self, mock_controller, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
         mock_controller.return_value = {}
@@ -80,7 +80,7 @@ class TestAppRoutes:
 
         assert actual.content_type == expected_headers
 
-    @patch('svc.routes.routes.update_state')
+    @patch('svc.routes.garage_door_routes.update_state')
     def test_update_garage_door_state__should_check_state_with_request(self, mock_state, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
         post_body = '{"garageDoorOpen": "True"}'
@@ -109,7 +109,7 @@ class TestAppRoutes:
         with pytest.raises(Unauthorized):
             update_garage_door_state()
 
-    @patch('svc.routes.routes.get_login')
+    @patch('svc.routes.garage_door_routes.get_login')
     def test_garage_door_login__should_respond_with_success_status_code(self, mock_login, mock_request):
         mock_request.headers = self.AUTH_HEADER
 
@@ -117,7 +117,7 @@ class TestAppRoutes:
 
         assert actual.status_code == 200
 
-    @patch('svc.routes.routes.get_login')
+    @patch('svc.routes.garage_door_routes.get_login')
     def test_garage_door_login__should_respond_with_success_login_response(self, mock_login, mock_request):
         jwt_token = 'fakeJwtToken'
         mock_request.headers = self.AUTH_HEADER
@@ -127,7 +127,7 @@ class TestAppRoutes:
 
         assert actual.data == jwt_token.encode()
 
-    @patch('svc.routes.routes.get_login')
+    @patch('svc.routes.garage_door_routes.get_login')
     def test_garage_door_login__should_call_get_login(self, mock_login, mock_request):
         mock_request.headers = self.AUTH_HEADER
         garage_door_login()

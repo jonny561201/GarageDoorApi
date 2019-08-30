@@ -5,6 +5,8 @@ from werkzeug.exceptions import BadRequest
 
 INPUT_PIN = 7
 OUTPUT_PIN = 8
+
+
 # GPIO.cleanup()
 # GPIO.setmode(GPIO.BOARD)
 # GPIO.setup(INPUT_PIN, GPIO.IN, GPIO.PUD_UP)
@@ -34,5 +36,4 @@ def update_garage_door(requested_state):
 
 def read_temperature_file():
     return ['72 01 4b 46 7f ff 0e 10 57 : crc=57 YES',
-    '72 01 4b 46 7f ff 0e 10 57 t=23125']
-
+            '72 01 4b 46 7f ff 0e 10 57 t=23125']

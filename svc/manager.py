@@ -1,6 +1,6 @@
 from flask import Flask
 
-from svc.routes.routes import route_blueprint
+from svc.routes.garage_door_routes import route_blueprint
 
 
 def create_app(app_name):
