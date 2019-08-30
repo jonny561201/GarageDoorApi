@@ -4,30 +4,30 @@ from flask import request
 
 from svc.controllers.garage_door_controller import get_login, get_status, update_state
 
-route_blueprint = Blueprint('route_blueprint', __name__)
+GARAGE_BLUEPRINT = Blueprint('garage_blueprint', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
 
 
-@route_blueprint.route('/healthCheck')
+@GARAGE_BLUEPRINT.route('/healthCheck')
 def health_check():
     return "Success"
 
 
-@route_blueprint.route('/garageDoor/login', methods=['GET'])
+@GARAGE_BLUEPRINT.route('/garageDoor/login', methods=['GET'])
 def garage_door_login():
     bearer_token = request.headers.get('Authorization')
     jwt_token = get_login(bearer_token)
     return Response(jwt_token, status=200, headers=DEFAULT_HEADERS)
 
 
-@route_blueprint.route('/garageDoor/status', methods=['GET'])
+@GARAGE_BLUEPRINT.route('/garageDoor/status', methods=['GET'])
 def get_garage_door_status():
     bearer_token = request.headers.get('Authorization')
     status = get_status(bearer_token)
     return Response(json.dumps(status), status=200, headers=DEFAULT_HEADERS)
 
 
-@route_blueprint.route('/garageDoor/state', methods=['POST'])
+@GARAGE_BLUEPRINT.route('/garageDoor/state', methods=['POST'])
 def update_garage_door_state():
     bearer_token = request.headers.get('Authorization')
     updated_state = update_state(bearer_token, request.data)

@@ -3,7 +3,7 @@ import re
 from werkzeug.exceptions import Conflict
 
 
-def get_temperature(temp_text, isFahrenheit):
+def get_temperature(temp_text, is_fahrenheit):
     if temp_text[0][-3:] != 'YES':
         raise Conflict
     temp_string = re.search('(t=\d*)', temp_text[1])
@@ -11,7 +11,7 @@ def get_temperature(temp_text, isFahrenheit):
         raise Conflict
 
     celsius = _get_celsius_value(temp_string.group())
-    return _convert_temp(celsius, isFahrenheit)
+    return _convert_to_fahrenheit(celsius, is_fahrenheit)
 
 
 def _get_celsius_value(temp_row):
@@ -20,7 +20,7 @@ def _get_celsius_value(temp_row):
     return round(temp_celsius / 1000, 2)
 
 
-def _convert_temp(celsius, isFahrenheit):
-    if isFahrenheit:
+def _convert_to_fahrenheit(celsius, is_fahrenheit):
+    if is_fahrenheit:
         return celsius * 1.8 + 32
     return celsius
