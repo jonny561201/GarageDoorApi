@@ -2,19 +2,25 @@ import re
 
 from werkzeug.exceptions import Conflict
 
-from svc.utilities.gpio import read_temperature_file
 
-
-def get_temperature():
-    temp_file_results = read_temperature_file()
-    if temp_file_results[0][-3:] != 'YES':
+def get_temperature(temp_text, isFahrenheit):
+    if temp_text[0][-3:] != 'YES':
         raise Conflict
-    return _get_temp_value(temp_file_results[1])
+    temp_string = re.search('(t=\d*)', temp_text[1])
+    if temp_string is None:
+        raise Conflict
+
+    celsius = _get_celsius_value(temp_string.group())
+    return _convert_temp(celsius, isFahrenheit)
 
 
-def _get_temp_value(temp_row):
-    temp_text = re.search('(t=\d*)', temp_row).group()
-
-    cleaned_text = temp_text.replace('t=', '')
+def _get_celsius_value(temp_row):
+    cleaned_text = temp_row.replace('t=', '')
     temp_celsius = int(cleaned_text)
     return round(temp_celsius / 1000, 2)
+
+
+def _convert_temp(celsius, isFahrenheit):
+    if isFahrenheit:
+        return celsius * 1.8 + 32
+    return celsius
