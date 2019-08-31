@@ -1,10 +1,10 @@
-from mock import patch
-
 from svc.utilities.depth import get_depth_by_intervals
 
 
-@patch('svc.utilities.depth.get_sump_pump_times')
-def test_get_depth_by_intervals__should_call_get_sump_pump_times(mock_gpio):
-    get_depth_by_intervals(None, None)
+def test_get_depth_by_intervals__should_calculate_distance_with_times():
+    start_time = 1567284125516
+    stop_time = 1567284128379
 
-    mock_gpio.assert_called()
+    actual = get_depth_by_intervals(start_time, stop_time)
+
+    assert actual == 49100450.0

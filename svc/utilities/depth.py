@@ -1,5 +1,9 @@
-from svc.utilities.gpio import get_sump_pump_times
+SPEED_OF_SOUND = 34300
 
 
 def get_depth_by_intervals(start, stop):
-    get_sump_pump_times()
+    interval = stop - start
+
+    distance = (interval * SPEED_OF_SOUND) / 2
+
+    return distance
