@@ -25,3 +25,15 @@ def test_get_user_temp__should_call_get_user_temperature(mock_user_temp, mock_te
     get_user_temp(user_id)
 
     mock_user_temp.assert_called_with(temp_text, False)
+
+
+@patch('svc.controllers.thermostat_controller.read_temperature_file')
+@patch('svc.controllers.thermostat_controller.get_user_temperature')
+def test_get_user_temp__should_return_response_from_get_user_temperature(mock_user_temp, mock_temp_file):
+    user_id = uuid.uuid4().hex
+    expected_temp = 23.45
+    mock_user_temp.return_value = expected_temp
+
+    actual = get_user_temp(user_id)
+
+    assert actual == expected_temp
