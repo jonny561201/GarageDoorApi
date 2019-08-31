@@ -1,39 +1,52 @@
 import uuid
 
+import jwt
 from mock import patch
 
 from svc.controllers.thermostat_controller import get_user_temp
 
 
-@patch('svc.controllers.thermostat_controller.get_user_temperature')
-@patch('svc.controllers.thermostat_controller.read_temperature_file')
-def test_get_user_temp__should_call_read_temperature_file(mock_temp_file, mock_user_temp):
-    user_id = uuid.uuid4().hex
-
-    get_user_temp(user_id)
-
-    mock_temp_file.assert_called()
-
-
+@patch('svc.controllers.thermostat_controller.is_jwt_valid')
 @patch('svc.controllers.thermostat_controller.read_temperature_file')
 @patch('svc.controllers.thermostat_controller.get_user_temperature')
-def test_get_user_temp__should_call_get_user_temperature(mock_user_temp, mock_temp_file):
-    user_id = uuid.uuid4().hex
-    temp_text = 'fake response'
-    mock_temp_file.return_value = temp_text
+class TestThermostatController:
 
-    get_user_temp(user_id)
+    JWT_TOKEN = jwt.encode({}, 'JWT_SECRET', algorithm='HS256').decode('UTF-8')
+    USER_ID = uuid.uuid4().hex
 
-    mock_user_temp.assert_called_with(temp_text, False)
+    def test_get_user_temp__should_call_read_temperature_file(self, mock_user, mock_file, mock_jwt):
+        get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
+        mock_file.assert_called()
 
-@patch('svc.controllers.thermostat_controller.read_temperature_file')
-@patch('svc.controllers.thermostat_controller.get_user_temperature')
-def test_get_user_temp__should_return_response_from_get_user_temperature(mock_user_temp, mock_temp_file):
-    user_id = uuid.uuid4().hex
-    expected_temp = 23.45
-    mock_user_temp.return_value = expected_temp
+    def test_get_user_temp__should_call_get_user_temperature(self, mock_user, mock_file, mock_jwt):
+        temp_text = 'fake response'
+        mock_file.return_value = temp_text
 
-    actual = get_user_temp(user_id)
+        get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-    assert actual == expected_temp
+        mock_user.assert_called_with(temp_text, False)
+
+    def test_get_user_temp__should_call_get_user_temperature(self, mock_user, mock_file, mock_jwt):
+        temp_text = 'fake response'
+        mock_file.return_value = temp_text
+
+        get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        mock_user.assert_called_with(temp_text, False)
+
+    def test_get_user_temp__should_call_is_jwt_valid(self, mock_user, mock_file, mock_jwt):
+        temp_text = 'fake response'
+        mock_file.return_value = temp_text
+
+        get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        mock_jwt.assert_called_with(self.JWT_TOKEN)
+
+    def test_get_user_temp__should_return_response_from_get_user_temperature(self, mock_user, mock_file, mock_jwt):
+        expected_temp = 23.45
+        mock_user.return_value = expected_temp
+
+        actual = get_user_temp(self.USER_ID,self.JWT_TOKEN)
+
+        assert actual == expected_temp
