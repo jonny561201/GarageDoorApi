@@ -49,3 +49,6 @@ class TestThermostatController:
         actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
         assert actual == {'currentTemp': expected_temp}
+
+        #TODO: add test for calling database with arguments
+        #TODO: add test for database returning response and using it to call get_user_temp
