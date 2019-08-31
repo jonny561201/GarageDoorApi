@@ -1,7 +1,9 @@
 import uuid
 
+import pytest
 from mock import mock
 from sqlalchemy import orm
+from werkzeug.exceptions import BadRequest
 
 from svc.db.methods.user_credentials import UserDatabase
 from svc.db.models.user_information_model import UserPreference
@@ -56,6 +58,12 @@ class TestUserDatabase:
         actual = self.DATABASE.get_preferences_by_user(uuid.uuid4())
 
         assert actual == preference
+
+    def test_get_preferences_by_user__should_throw_bad_request_when_no_preferences(self):
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = None
+
+        with pytest.raises(BadRequest):
+            self.DATABASE.get_preferences_by_user(uuid.uuid4().hex)
 
     @staticmethod
     def _create_user_preference(user):

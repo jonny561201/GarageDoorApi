@@ -1,3 +1,8 @@
+import uuid
+
+import pytest
+from werkzeug.exceptions import BadRequest
+
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.db.models.user_information_model import UserInformation
 
@@ -37,3 +42,10 @@ def test_get_preferences_by_user__should_return_preferences_for_valid_user():
 
         assert response.is_fahrenheit is True
         assert response.user_id == user_info.id
+
+
+def test_get_preferences_by_user__should_raise_bad_request_when_no_preferences():
+    with pytest.raises(BadRequest):
+        with UserDatabaseManager() as database:
+            bad_user_id = uuid.uuid4().hex
+            database.get_preferences_by_user(bad_user_id)
