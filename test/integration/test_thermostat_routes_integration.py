@@ -1,5 +1,8 @@
 import os
 
+import jwt
+from flask import json
+
 from svc.manager import create_app
 
 
@@ -16,3 +19,12 @@ class TestThermostatRoutesIntegration:
         actual = self.TEST_CLIENT.get('thermostat/temperature')
 
         assert actual.status_code == 401
+
+    def test_get_temperature__should_return_temperature(self):
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        headers = {'Authorization': bearer_token}
+
+        actual = self.TEST_CLIENT.get('thermostat/temperature', headers=headers)
+
+        assert actual.status_code == 200
+        assert json.loads(actual.data) == {'currentTemp': 23.12}
