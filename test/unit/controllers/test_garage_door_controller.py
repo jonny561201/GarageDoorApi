@@ -109,15 +109,6 @@ class TestStatusController:
 
         mock_validate.assert_called_with(self.JWT_TOKEN)
 
-    def test_garage_door_status__should_raise_unauthorized_if_provided_bad_jwt(self):
-        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256').decode('UTF-8')
-        with pytest.raises(Unauthorized):
-            get_status(jwt_token)
-
-    def test_garage_door_status__should_raise_unauthorized_if_provided_no_token(self):
-        with pytest.raises(Unauthorized):
-            get_status(None)
-
 
 class TestStateController:
     JWT_SECRET = 'fake_jwt_secret'
@@ -137,12 +128,6 @@ class TestStateController:
         actual = update_state(self.JWT_TOKEN, self.REQUEST)
 
         assert actual == {'garageDoorOpen': False}
-
-    def test_update_garage_door_state__should_raise_unauthorized_when_invalid_jwt(self):
-        jwt_token = jwt.encode({'user_id': 12345}, 'bad_secret', algorithm='HS256').decode('UTF-8')
-
-        with pytest.raises(Unauthorized):
-            update_state(jwt_token, self.REQUEST)
 
     @patch('svc.controllers.garage_door_controller.update_garage_door')
     def test_update_garage_door_state__should_call_update_gpio(self, mock_gpio):

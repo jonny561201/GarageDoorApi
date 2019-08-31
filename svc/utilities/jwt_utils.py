@@ -4,10 +4,13 @@ from datetime import timedelta, datetime
 import jwt
 import pytz
 from jwt import DecodeError, ExpiredSignatureError, InvalidSignatureError
+from werkzeug.exceptions import Unauthorized
 
 
 def is_jwt_valid(jwt_token):
-    return False if jwt_token is None else _parse_jwt_token(jwt_token)
+    if jwt_token is None:
+        raise Unauthorized
+    _parse_jwt_token(jwt_token)
 
 
 def create_jwt_token():
@@ -21,6 +24,5 @@ def _parse_jwt_token(jwt_token):
         stripped_token = jwt_token.replace('Bearer ', '')
         secret = os.environ['JWT_SECRET']
         jwt.decode(stripped_token, secret, algorithms=["HS256"])
-        return True
     except (InvalidSignatureError, ExpiredSignatureError, DecodeError, KeyError) as er:
-        return False
+        raise Unauthorized
