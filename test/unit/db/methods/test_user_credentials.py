@@ -4,6 +4,7 @@ from mock import mock
 from sqlalchemy import orm
 
 from svc.db.methods.user_credentials import UserDatabase
+from svc.db.models.user_information_model import UserPreference
 from svc.db.models.user_login import UserCredentials
 
 
@@ -46,6 +47,21 @@ class TestUserDatabase:
         actual = self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
         assert actual is False
+
+    def test_get_preferences_by_user__should_return_user_preferences(self):
+        user = TestUserDatabase._create_database_user()
+        preference = TestUserDatabase._create_user_preference(user)
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = preference
+
+        actual = self.DATABASE.get_preferences_by_user(uuid.uuid4())
+
+        assert actual == preference
+
+    @staticmethod
+    def _create_user_preference(user):
+        preference = UserPreference()
+        preference.user = user
+        return preference
 
     @staticmethod
     def _create_database_user(user=FAKE_USER, password=FAKE_PASS):
