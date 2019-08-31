@@ -10,7 +10,6 @@ from svc.controllers.thermostat_controller import get_user_temp
 @patch('svc.controllers.thermostat_controller.read_temperature_file')
 @patch('svc.controllers.thermostat_controller.get_user_temperature')
 class TestThermostatController:
-
     JWT_TOKEN = jwt.encode({}, 'JWT_SECRET', algorithm='HS256').decode('UTF-8')
     USER_ID = uuid.uuid4().hex
 
@@ -47,6 +46,6 @@ class TestThermostatController:
         expected_temp = 23.45
         mock_user.return_value = expected_temp
 
-        actual = get_user_temp(self.USER_ID,self.JWT_TOKEN)
+        actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-        assert actual == expected_temp
+        assert actual == {'currentTemp': expected_temp}

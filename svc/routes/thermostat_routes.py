@@ -8,5 +8,4 @@ THERMOSTAT_BLUEPRINT = Blueprint('thermostat_blueprint', __name__)
 @THERMOSTAT_BLUEPRINT.route('/thermostat/temperature', methods=['GET'])
 def get_temperature():
     bearer_token = request.headers.get('Authorization')
-    get_user_temp(None, bearer_token)
-    return '32.15'
+    return get_user_temp(None, bearer_token)

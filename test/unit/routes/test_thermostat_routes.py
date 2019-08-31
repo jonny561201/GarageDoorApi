@@ -21,3 +21,11 @@ class TestThermostatRoutes:
         get_temperature()
 
         mock_controller.assert_called_with(None, self.BEARER_TOKEN)
+
+    def test_get_temperature__should_return_response_from_controller(self, mock_controller, mock_request):
+        expected_temp = {'currentTemp': 34.12}
+        mock_controller.return_value = expected_temp
+
+        actual = get_temperature()
+
+        assert actual == expected_temp
