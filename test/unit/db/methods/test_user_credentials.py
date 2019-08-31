@@ -4,7 +4,7 @@ from mock import mock
 from sqlalchemy import orm
 
 from svc.db.methods.user_credentials import UserDatabase
-from svc.db.models.user_models import UserCredentials
+from svc.db.models.user_login import UserCredentials
 
 
 class TestUserDatabase:
