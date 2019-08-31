@@ -3,7 +3,7 @@ import re
 from werkzeug.exceptions import Conflict
 
 
-def get_temperature(temp_text, is_fahrenheit):
+def get_user_temperature(temp_text, is_fahrenheit):
     if temp_text[0][-3:] != 'YES':
         raise Conflict
     temp_string = re.search('(t=\d*)', temp_text[1])
