@@ -2,22 +2,10 @@ from flask import Response, Blueprint
 from flask import json
 from flask import request
 
-from svc.controllers.garage_door_controller import get_login, get_status, update_state
+from svc.controllers.garage_door_controller import get_status, update_state
 
 GARAGE_BLUEPRINT = Blueprint('garage_blueprint', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
-
-
-@GARAGE_BLUEPRINT.route('/healthCheck')
-def health_check():
-    return "Success"
-
-
-@GARAGE_BLUEPRINT.route('/garageDoor/login', methods=['GET'])
-def garage_door_login():
-    bearer_token = request.headers.get('Authorization')
-    jwt_token = get_login(bearer_token)
-    return Response(jwt_token, status=200, headers=DEFAULT_HEADERS)
 
 
 @GARAGE_BLUEPRINT.route('/garageDoor/status', methods=['GET'])

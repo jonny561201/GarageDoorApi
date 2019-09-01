@@ -1,4 +1,3 @@
-import base64
 import os
 
 import jwt
@@ -18,12 +17,6 @@ class TestGarageDoorRoutesIntegration:
 
     def teardown_method(self):
         os.environ.pop('JWT_SECRET')
-
-    def test_health_check__should_return_success(self):
-        actual = self.TEST_CLIENT.get('healthCheck')
-
-        assert actual.status_code == 200
-        assert actual.data.decode('UTF-8') == 'Success'
 
     def test_get_garage_door_status__should_return_unauthorized_with_no_header(self):
         actual = self.TEST_CLIENT.get('garageDoor/status')
@@ -62,38 +55,3 @@ class TestGarageDoorRoutesIntegration:
         actual = self.TEST_CLIENT.post('garageDoor/state', data=json.dumps(post_body), headers=headers)
 
         assert actual.status_code == 400
-
-    def test_garage_door_login__should_return_400_when_no_header(self):
-        actual = self.TEST_CLIENT.get('garageDoor/login')
-
-        assert actual.status_code == 400
-
-    def test_garage_door_login__should_return_401_when_invalid_user(self):
-        user_name = 'not_real_user'
-        user_pass = 'wrongPass'
-        creds = "%s:%s" % (user_name, user_pass)
-        headers = {'Authorization': base64.b64encode(creds.encode())}
-
-        actual = self.TEST_CLIENT.get('garageDoor/login', headers=headers)
-
-        assert actual.status_code == 401
-
-    def test_garage_door_login__should_return_401_when_invalid_password(self):
-        user_name = 'Jonny561201'
-        user_pass = 'wrongPass'
-        creds = "%s:%s" % (user_name, user_pass)
-        headers = {'Authorization': base64.b64encode(creds.encode())}
-
-        actual = self.TEST_CLIENT.get('garageDoor/login', headers=headers)
-
-        assert actual.status_code == 401
-
-    def test_garage_door_login__should_return_200_when_user_valid(self):
-        user_name = 'Jonny561201'
-        user_pass = 'password'
-        creds = "%s:%s" % (user_name, user_pass)
-        headers = {'Authorization': base64.b64encode(creds.encode())}
-
-        actual = self.TEST_CLIENT.get('garageDoor/login', headers=headers)
-
-        assert actual.status_code == 200
