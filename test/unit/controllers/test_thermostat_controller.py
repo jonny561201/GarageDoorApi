@@ -1,9 +1,10 @@
 import uuid
 
 import jwt
-from mock import patch
+from mock import patch, ANY
 
 from svc.controllers.thermostat_controller import get_user_temp
+from svc.db.models.user_information_model import UserPreference
 
 
 @patch('svc.controllers.thermostat_controller.UserDatabaseManager')
@@ -33,7 +34,7 @@ class TestThermostatController:
 
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-        mock_user.assert_called_with(temp_text, False)
+        mock_user.assert_called_with(temp_text, ANY)
 
     def test_get_user_temp__should_call_is_jwt_valid(self, mock_user, mock_file, mock_jwt, mock_db):
         temp_text = 'fake response'
@@ -54,6 +55,15 @@ class TestThermostatController:
     def test_get_user_temp__should_call_get_preferences_by_user(self, mock_user, mock_file, mock_jwt, mock_db):
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-        mock_db.return_value.__enter__.return_value.get_preferences_by_user.assert_called()
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.assert_called_with(self.USER_ID)
 
-        #TODO: add test for database returning response and using it to call get_user_temp
+    def test_get_user_temp__should_call_get_user_temperature_with_user_id(self, mock_user, mock_file, mock_jwt, mock_db):
+        preference = UserPreference()
+        expected_text = 'fake text'
+        preference.is_fahrenheit = True
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = preference
+        mock_file.return_value = expected_text
+
+        get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        mock_user.assert_called_with(expected_text, True)

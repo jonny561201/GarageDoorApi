@@ -3,10 +3,8 @@ import os
 from datetime import datetime, timedelta
 
 import jwt
-import pytest
 import pytz
 from mock import patch
-from werkzeug.exceptions import Unauthorized
 
 from svc.controllers.garage_door_controller import get_login, get_status, update_state
 
@@ -23,14 +21,6 @@ class TestLoginController:
 
     def teardown_method(self, _):
         os.environ.pop('JWT_SECRET')
-
-    @patch('svc.controllers.garage_door_controller.UserDatabaseManager')
-    def test_garage_door_login__should_raise_unauthorized_exception(self, mock_credentials, mock_extract):
-        mock_extract.return_value = (self.USER, self.PWORD)
-        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = False
-
-        with pytest.raises(Unauthorized):
-            get_login(self.JWT_TOKEN)
 
     @patch('svc.controllers.garage_door_controller.UserDatabaseManager')
     def test_garage_door_login__should_call_validate_credentials_with_post_body(self, mock_credentials, mock_extract):

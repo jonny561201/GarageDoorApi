@@ -1,5 +1,5 @@
 from sqlalchemy import orm, create_engine
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.models.user_information_model import UserPreference
 from svc.db.models.user_login import UserCredentials
@@ -26,10 +26,10 @@ class UserDatabase:
     def __init__(self, session):
         self.session = session
 
-    #TODO: move throw down here and return user id
     def are_credentials_valid(self, user, pword):
         user = self.session.query(UserCredentials).filter_by(user_name=user).first()
-        return False if user is None else user.password == pword
+        if user is None or user.password != pword:
+            raise Unauthorized
 
     def get_preferences_by_user(self, user_id):
         preference = self.session.query(UserPreference).filter_by(user_id=user_id).first()

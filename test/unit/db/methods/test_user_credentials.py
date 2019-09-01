@@ -3,7 +3,7 @@ import uuid
 import pytest
 from mock import mock
 from sqlalchemy import orm
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.methods.user_credentials import UserDatabase
 from svc.db.models.user_information_model import UserPreference
@@ -21,6 +21,8 @@ class TestUserDatabase:
         self.DATABASE = UserDatabase(self.SESSION)
 
     def test_are_credentials_valid__should_query_database_by_user_name(self):
+        user = self._create_database_user()
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
         self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
@@ -30,25 +32,21 @@ class TestUserDatabase:
         user = self._create_database_user()
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        actual = self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
+        self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
-        assert actual is True
-
-    def test_are_credentials_valid__should_return_false_if_password_does_not_match_queried_user(self):
+    def test_are_credentials_valid__should_raise_unauthorized_if_password_does_not_match_queried_user(self):
         user = self._create_database_user(password='mismatchedPass')
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        actual = self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
+        with pytest.raises(Unauthorized):
+            self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
-        assert actual is False
-
-    def test_are_credentials_valid__should_return_false_if_user_not_found(self):
+    def test_are_credentials_valid__should_raise_unauthorized_if_user_not_found(self):
         user = None
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        actual = self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
-
-        assert actual is False
+        with pytest.raises(Unauthorized):
+            self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
 
     def test_get_preferences_by_user__should_return_user_preferences(self):
         user = TestUserDatabase._create_database_user()
