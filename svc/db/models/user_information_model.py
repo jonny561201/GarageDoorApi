@@ -23,3 +23,14 @@ class UserPreference(Base):
     is_fahrenheit = Column(Boolean, nullable=False)
 
     user = relationship('UserInformation', foreign_keys='UserPreference.user_id')
+
+
+class UserCredentials(Base):
+    __tablename__ = 'user_login'
+
+    id = Column(UUID, nullable=False, primary_key=True)
+    user_name = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    user_id = Column(UUID, ForeignKey(UserInformation.id))
+
+    user = relationship('UserInformation', foreign_keys='UserCredentials.user_id')

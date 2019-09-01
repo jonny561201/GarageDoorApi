@@ -13,10 +13,10 @@ def is_jwt_valid(jwt_token):
     _parse_jwt_token(jwt_token)
 
 
-def create_jwt_token():
+def create_jwt_token(user_id):
     expire_time = datetime.now(tz=pytz.timezone('US/Central')) + timedelta(hours=2)
     jwt_secret = os.environ['JWT_SECRET']
-    return jwt.encode({'user_id': 12345, 'exp': expire_time}, jwt_secret, algorithm='HS256')
+    return jwt.encode({'user_id': user_id, 'exp': expire_time}, jwt_secret, algorithm='HS256')
 
 
 def _parse_jwt_token(jwt_token):

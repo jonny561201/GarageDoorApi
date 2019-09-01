@@ -11,7 +11,7 @@ def health_check():
     return "Success"
 
 
-# TODO: Login should return role and user id
+# TODO: Login should return role
 @APP_BLUEPRINT.route('/login', methods=['GET'])
 def app_login():
     bearer_token = request.headers.get('Authorization')

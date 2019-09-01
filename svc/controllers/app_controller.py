@@ -4,7 +4,7 @@ from svc.utilities.jwt_utils import create_jwt_token
 
 
 def get_login(bearer_token):
-    user, pword = extract_credentials(bearer_token)
+    user_name, pword = extract_credentials(bearer_token)
     with UserDatabaseManager() as user_database:
-        user_database.validate_credentials(user, pword)
-    return create_jwt_token()
+        user_id = user_database.validate_credentials(user_name, pword)
+        return create_jwt_token(user_id)

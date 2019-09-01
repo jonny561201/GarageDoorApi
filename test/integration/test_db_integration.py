@@ -7,14 +7,17 @@ from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.db.models.user_information_model import UserInformation
 
 
-def test_are_credentials_valid__should_not_throw_when_user_exists():
+def test_validate_credentials__should_return_user_id_when_user_exists():
     with UserDatabaseManager() as database:
+        user_info = database.session.query(UserInformation).filter_by(last_name='Tester').first()
         user_name = 'Jonny561201'
         user_pass = 'password'
-        database.validate_credentials(user_name, user_pass)
+        actual = database.validate_credentials(user_name, user_pass)
+
+        assert actual == user_info.id
 
 
-def test_are_credentials_valid__should_raise_unauthorized_when_user_does_not_exist():
+def test_validate_credentials__should_raise_unauthorized_when_user_does_not_exist():
     with UserDatabaseManager() as database:
         user_name = 'missingUser'
         user_pass = 'fakePassword'
@@ -22,7 +25,7 @@ def test_are_credentials_valid__should_raise_unauthorized_when_user_does_not_exi
             database.validate_credentials(user_name, user_pass)
 
 
-def test_are_credentials_valid__should_raise_unauthorized_when_password_does_not_match():
+def test_validate_credentials__should_raise_unauthorized_when_password_does_not_match():
     with UserDatabaseManager() as database:
         user_name = 'l33t'
         user_pass = 'wrongPassword'

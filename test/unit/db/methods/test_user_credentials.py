@@ -6,8 +6,7 @@ from sqlalchemy import orm
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.methods.user_credentials import UserDatabase
-from svc.db.models.user_information_model import UserPreference
-from svc.db.models.user_login import UserCredentials
+from svc.db.models.user_information_model import UserPreference, UserCredentials
 
 
 class TestUserDatabase:
@@ -20,7 +19,7 @@ class TestUserDatabase:
         self.SESSION = mock.create_autospec(orm.scoped_session)
         self.DATABASE = UserDatabase(self.SESSION)
 
-    def test_are_credentials_valid__should_query_database_by_user_name(self):
+    def test_validate_credentials__should_query_database_by_user_name(self):
         user = self._create_database_user()
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
@@ -28,20 +27,23 @@ class TestUserDatabase:
 
         self.SESSION.query.return_value.filter_by.assert_called_with(user_name=self.FAKE_USER)
 
-    def test_are_credentials_valid__should_return_true_if_password_matches_queried_user(self):
+    def test_validate_credentials__should_return_user_id_if_password_matches_queried_user(self):
         user = self._create_database_user()
+        user.user_id = '123455'
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        self.DATABASE.validate_credentials(self.FAKE_USER, self.FAKE_PASS)
+        actual = self.DATABASE.validate_credentials(self.FAKE_USER, self.FAKE_PASS)
 
-    def test_are_credentials_valid__should_raise_unauthorized_if_password_does_not_match_queried_user(self):
+        assert actual == user.user_id
+
+    def test_validate_credentials__should_raise_unauthorized_if_password_does_not_match_queried_user(self):
         user = self._create_database_user(password='mismatchedPass')
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
         with pytest.raises(Unauthorized):
             self.DATABASE.validate_credentials(self.FAKE_USER, self.FAKE_PASS)
 
-    def test_are_credentials_valid__should_raise_unauthorized_if_user_not_found(self):
+    def test_validate_credentials__should_raise_unauthorized_if_user_not_found(self):
         user = None
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
