@@ -24,7 +24,7 @@ class TestUserDatabase:
         user = self._create_database_user()
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
+        self.DATABASE.validate_credentials(self.FAKE_USER, self.FAKE_PASS)
 
         self.SESSION.query.return_value.filter_by.assert_called_with(user_name=self.FAKE_USER)
 
@@ -32,21 +32,21 @@ class TestUserDatabase:
         user = self._create_database_user()
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
-        self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
+        self.DATABASE.validate_credentials(self.FAKE_USER, self.FAKE_PASS)
 
     def test_are_credentials_valid__should_raise_unauthorized_if_password_does_not_match_queried_user(self):
         user = self._create_database_user(password='mismatchedPass')
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
         with pytest.raises(Unauthorized):
-            self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
+            self.DATABASE.validate_credentials(self.FAKE_USER, self.FAKE_PASS)
 
     def test_are_credentials_valid__should_raise_unauthorized_if_user_not_found(self):
         user = None
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = user
 
         with pytest.raises(Unauthorized):
-            self.DATABASE.are_credentials_valid(self.FAKE_USER, self.FAKE_PASS)
+            self.DATABASE.validate_credentials(self.FAKE_USER, self.FAKE_PASS)
 
     def test_get_preferences_by_user__should_return_user_preferences(self):
         user = TestUserDatabase._create_database_user()

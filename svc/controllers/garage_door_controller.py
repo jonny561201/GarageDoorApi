@@ -9,7 +9,7 @@ from svc.utilities.jwt_utils import create_jwt_token, is_jwt_valid
 def get_login(bearer_token):
     user, pword = extract_credentials(bearer_token)
     with UserDatabaseManager() as user_database:
-        user_database.are_credentials_valid(user, pword)
+        user_database.validate_credentials(user, pword)
     return create_jwt_token()
 
 

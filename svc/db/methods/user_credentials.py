@@ -26,7 +26,7 @@ class UserDatabase:
     def __init__(self, session):
         self.session = session
 
-    def are_credentials_valid(self, user, pword):
+    def validate_credentials(self, user, pword):
         user = self.session.query(UserCredentials).filter_by(user_name=user).first()
         if user is None or user.password != pword:
             raise Unauthorized

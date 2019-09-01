@@ -27,7 +27,7 @@ class TestLoginController:
         mock_extract.return_value = (self.USER, self.PWORD)
         get_login(self.JWT_TOKEN)
 
-        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.assert_called_with(self.USER, self.PWORD)
+        mock_credentials.return_value.__enter__.return_value.validate_credentials.assert_called_with(self.USER, self.PWORD)
 
     @patch('svc.controllers.garage_door_controller.UserDatabaseManager')
     def test_garage_door_login__should_call_extract_credentials(self, mock_credentials, mock_extract):
@@ -59,7 +59,7 @@ class TestLoginController:
         mock_extract.return_value = (self.USER, self.PWORD)
         now = datetime.now(tz=pytz.timezone('US/Central'))
         mock_datetime.now.return_value = now
-        mock_credentials.return_value.__enter__.return_value.are_credentials_valid.return_value = True
+        mock_credentials.return_value.__enter__.return_value.validate_credentials.return_value = True
         expected_expire = now + timedelta(hours=2)
         truncated_date = (str(expected_expire.timestamp() * 1000))[:10]
         expected_token = {'user_id': 12345, 'exp': int(truncated_date)}
