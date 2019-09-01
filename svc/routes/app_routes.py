@@ -1,6 +1,6 @@
 from flask import Blueprint, request, Response
 
-from svc.controllers.garage_door_controller import get_login
+from svc.controllers.app_controller import get_login
 
 APP_BLUEPRINT = Blueprint('app_routes', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
