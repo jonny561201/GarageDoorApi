@@ -38,7 +38,7 @@ function runIntegrationTests {
     pytest -s ${CURRENT_DIR}/test/integration
     INTEGRATION_EXIT=$?
     if [[ ${INTEGRATION_EXIT} -ne 0 ]]; then
-        echo -e "${RED}ERROR: Integration Tests Failed!!!${RED}"
+        echo -e "${RED}ERROR: Integration Tests Failed!!!${WHITE}"
         exit 1
     fi
     echo -e "${GREEN}---------------Integration Tests Passed---------------${WHITE}"
