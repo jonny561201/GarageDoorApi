@@ -11,5 +11,5 @@ def get_user_temp(user_id, bearer_token):
         temp_text = read_temperature_file()
         temperature = get_user_temperature(temp_text, preference.is_fahrenheit)
 
-    return {'currentTemp': temperature}
-# TODO: return temperature unit of measure
+        return {'currentTemp': temperature,
+                'isFahrenheit': preference.is_fahrenheit}

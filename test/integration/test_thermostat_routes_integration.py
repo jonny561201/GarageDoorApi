@@ -34,4 +34,4 @@ class TestThermostatRoutesIntegration:
             actual = self.TEST_CLIENT.get(url, headers=headers)
 
             assert actual.status_code == 200
-            assert json.loads(actual.data) == {'currentTemp': 73.616}
+            assert json.loads(actual.data) == {'currentTemp': 73.616, 'isFahrenheit': True}
