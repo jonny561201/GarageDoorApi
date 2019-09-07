@@ -48,4 +48,4 @@ class UserDatabase:
         average = self.session.query(AverageSumpPumpLevel).filter_by(user_id=user_id).order_by(AverageSumpPumpLevel.id.desc()).first()
         if average is None:
             raise BadRequest
-        return {'latestDate': average.create_day, 'averageDepth': average.distance}
+        return {'latestDate': str(average.create_day), 'averageDepth': float(average.distance)}

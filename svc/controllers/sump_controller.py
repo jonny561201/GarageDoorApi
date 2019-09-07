@@ -7,4 +7,8 @@ def get_sump_level(user_id, bearer_token):
     with UserDatabaseManager() as database:
         depth = database.get_current_sump_level_by_user(user_id)
         average = database.get_average_sump_level_by_user(user_id)
-        return {'currentDepth': depth, 'userId': user_id}
+
+        response = {'currentDepth': depth, 'userId': user_id}
+        response.update(average)
+
+        return response

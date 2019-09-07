@@ -116,7 +116,7 @@ def test_get_average_sump_level_by_user__should_return_latest_record_for_single_
         database.session.delete(first_sump)
         database.session.delete(second_sump)
 
-        assert actual == {'averageDepth': expected_depth,'latestDate': date}
+        assert actual == {'averageDepth': expected_depth, 'latestDate': str(date)}
 
 
 def test_get_average_sump_level_by_user__should_raise_bad_request_when_user_not_found():
