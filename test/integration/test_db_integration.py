@@ -5,7 +5,7 @@ import pytest
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.methods.user_credentials import UserDatabaseManager
-from svc.db.models.user_information_model import UserInformation, DailySumpPumpLevel
+from svc.db.models.user_information_model import UserInformation, DailySumpPumpLevel, AverageSumpPumpLevel
 
 
 def test_validate_credentials__should_return_user_id_when_user_exists():
@@ -65,12 +65,12 @@ def test_get_current_sump_level_by_user__should_return_valid_sump_level():
 
         actual = database.get_current_sump_level_by_user(second_user.id)
 
-        assert actual == expected_distance
-
         database.session.delete(first_sump)
         database.session.delete(first_user)
         database.session.delete(second_sump)
         database.session.delete(second_user)
+
+        assert actual == expected_distance
 
 
 def test_get_current_sump_level_by_user__should_return_latest_record_for_single_user():
@@ -85,14 +85,41 @@ def test_get_current_sump_level_by_user__should_return_latest_record_for_single_
 
         actual = database.get_current_sump_level_by_user(first_user.id)
 
-        assert actual == 8.0
-
         database.session.delete(first_user)
         database.session.delete(first_sump)
         database.session.delete(second_sump)
+
+        assert actual == 8.0
 
 
 def test_get_current_sump_level_by_user__should_raise_bad_request_when_user_not_found():
     with UserDatabaseManager() as database:
         with pytest.raises(BadRequest):
             database.get_current_sump_level_by_user(uuid.uuid4().hex)
+
+
+def test_get_average_sump_level_by_user__should_return_latest_record_for_single_user():
+    expected_depth = 8.0
+    first_user = UserInformation(id=uuid.uuid4().hex, first_name='Jon', last_name='Test')
+
+    date = datetime.date(datetime.now())
+    first_sump = AverageSumpPumpLevel(id=1, user=first_user, distance=12.0, create_day=date)
+    second_sump = AverageSumpPumpLevel(id=2, user=first_user, distance=expected_depth, create_day=date)
+
+    with UserDatabaseManager() as database:
+        database.session.add_all([first_sump, second_sump])
+        database.session.flush()
+
+        actual = database.get_average_sump_level_by_user(first_user.id)
+
+        database.session.delete(first_user)
+        database.session.delete(first_sump)
+        database.session.delete(second_sump)
+
+        assert actual == {'averageDepth': expected_depth,'latestDate': date}
+
+
+def test_get_average_sump_level_by_user__should_raise_bad_request_when_user_not_found():
+    with UserDatabaseManager() as database:
+        with pytest.raises(BadRequest):
+            database.get_average_sump_level_by_user(uuid.uuid4().hex)
