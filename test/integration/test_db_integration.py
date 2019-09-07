@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 import pytest
-from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
+from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.db.models.user_information_model import UserInformation, DailySumpPumpLevel
@@ -94,5 +94,5 @@ def test_get_current_sump_level_by_user__should_return_latest_record_for_single_
 
 def test_get_current_sump_level_by_user__should_raise_bad_request_when_user_not_found():
     with UserDatabaseManager() as database:
-        with pytest.raises(NotFound):
+        with pytest.raises(BadRequest):
             database.get_current_sump_level_by_user(uuid.uuid4().hex)

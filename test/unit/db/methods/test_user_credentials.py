@@ -3,7 +3,7 @@ import uuid
 import pytest
 from mock import mock
 from sqlalchemy import orm
-from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
+from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.methods.user_credentials import UserDatabase
 from svc.db.models.user_information_model import UserPreference, UserCredentials, DailySumpPumpLevel
@@ -77,7 +77,7 @@ class TestUserDatabase:
 
     def test_get_current_sump_level_by_user__should_raise_not_found_error_when_missing_record(self):
         self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = None
-        with pytest.raises(NotFound):
+        with pytest.raises(BadRequest):
             self.DATABASE.get_current_sump_level_by_user(uuid.uuid4().hex)
 
     @staticmethod
