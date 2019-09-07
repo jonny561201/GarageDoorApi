@@ -46,4 +46,6 @@ class UserDatabase:
 
     def get_average_sump_level_by_user(self, user_id):
         average = self.session.query(AverageSumpPumpLevel).filter_by(user_id=user_id).order_by(AverageSumpPumpLevel.id.desc()).first()
+        if average is None:
+            raise BadRequest
         return {'latestDate': average.create_day, 'averageDepth': average.distance}

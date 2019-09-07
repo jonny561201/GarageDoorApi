@@ -77,7 +77,7 @@ class TestUserDatabase:
 
         assert actual == expected_distance
 
-    def test_get_current_sump_level_by_user__should_raise_not_found_error_when_missing_record(self):
+    def test_get_current_sump_level_by_user__should_raise_bad_request_error_when_missing_record(self):
         self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = None
         with pytest.raises(BadRequest):
             self.DATABASE.get_current_sump_level_by_user(uuid.uuid4().hex)
@@ -93,6 +93,11 @@ class TestUserDatabase:
 
         assert actual['latestDate'] == date
         assert actual['averageDepth'] == expected_depth
+
+    def test_get_average_sump_level_by_user__should_raise_bad_request_error_when_no_records(self):
+        self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = None
+        with pytest.raises(BadRequest):
+            self.DATABASE.get_average_sump_level_by_user('12345')
 
     @staticmethod
     def _create_user_preference(user):
