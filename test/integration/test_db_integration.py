@@ -1,10 +1,11 @@
 import uuid
+from datetime import datetime
 
 import pytest
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.methods.user_credentials import UserDatabaseManager
-from svc.db.models.user_information_model import UserInformation
+from svc.db.models.user_information_model import UserInformation, DailySumpPumpLevel
 
 
 def test_validate_credentials__should_return_user_id_when_user_exists():
@@ -48,3 +49,43 @@ def test_get_preferences_by_user__should_raise_bad_request_when_no_preferences()
         with UserDatabaseManager() as database:
             bad_user_id = uuid.uuid4().hex
             database.get_preferences_by_user(bad_user_id)
+
+
+def test_get_current_sump_level_by_user__should_return_valid_sump_level():
+    first_user = UserInformation(id=uuid.uuid4().hex, first_name='Jon', last_name='Test')
+    second_user = UserInformation(id=uuid.uuid4().hex, first_name='Dylan', last_name='Fake')
+
+    first_sump = DailySumpPumpLevel(id=1, user=first_user, distance=12.0, create_date=datetime.now())
+    second_sump = DailySumpPumpLevel(id=2, user=second_user, distance=8.0, create_date=datetime.now())
+
+    with UserDatabaseManager() as database:
+        database.session.add_all([first_sump, second_sump])
+        database.session.flush()
+
+        actual = database.get_current_sump_level_by_user(second_user.id)
+
+        assert actual.user.id == second_user.id
+
+        database.session.delete(first_sump)
+        database.session.delete(first_user)
+        database.session.delete(second_sump)
+        database.session.delete(second_user)
+
+
+def test_get_current_sump_level_by_user__should_return_latest_record_for_single_user():
+    first_user = UserInformation(id=uuid.uuid4().hex, first_name='Jon', last_name='Test')
+
+    first_sump = DailySumpPumpLevel(id=1, user=first_user, distance=12.0, create_date=datetime.now())
+    second_sump = DailySumpPumpLevel(id=2, user=first_user, distance=8.0, create_date=datetime.now())
+
+    with UserDatabaseManager() as database:
+        database.session.add_all([first_sump, second_sump])
+        database.session.flush()
+
+        actual = database.get_current_sump_level_by_user(first_user.id)
+
+        assert actual.distance == 8.0
+
+        database.session.delete(first_user)
+        database.session.delete(first_sump)
+        database.session.delete(second_sump)

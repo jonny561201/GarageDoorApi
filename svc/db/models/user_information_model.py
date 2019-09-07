@@ -39,7 +39,7 @@ class UserCredentials(Base):
 class DailySumpPumpLevel(Base):
     __tablename__ = 'daily_sump_level'
 
-    id = Column(UUID, nullable=False, primary_key=True)
+    id = Column(Integer, nullable=False, primary_key=True)
     user_id = Column(UUID, ForeignKey(UserInformation.id))
     distance = Column(DECIMAL, nullable=False)
     create_date = Column(TIMESTAMP, nullable=False)
