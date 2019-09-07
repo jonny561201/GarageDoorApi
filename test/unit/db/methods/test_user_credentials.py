@@ -6,7 +6,7 @@ from sqlalchemy import orm
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.methods.user_credentials import UserDatabase
-from svc.db.models.user_information_model import UserPreference, UserCredentials
+from svc.db.models.user_information_model import UserPreference, UserCredentials, DailySumpPumpLevel
 
 
 class TestUserDatabase:
@@ -64,6 +64,15 @@ class TestUserDatabase:
 
         with pytest.raises(BadRequest):
             self.DATABASE.get_preferences_by_user(uuid.uuid4().hex)
+
+    def test_get_current_sump_level_by_user__should_return_sump_levels(self):
+        user = TestUserDatabase._create_database_user()
+        sump = DailySumpPumpLevel(user=user)
+        self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = sump
+
+        actual = self.DATABASE.get_current_sump_level_by_user(user.user_id)
+
+        assert actual == sump
 
     @staticmethod
     def _create_user_preference(user):

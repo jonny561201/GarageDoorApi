@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, Integer, ForeignKey
+from sqlalchemy import Column, String, Boolean, Integer, ForeignKey, DECIMAL, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext import declarative
 from sqlalchemy.orm import relationship
@@ -34,3 +34,15 @@ class UserCredentials(Base):
     user_id = Column(UUID, ForeignKey(UserInformation.id))
 
     user = relationship('UserInformation', foreign_keys='UserCredentials.user_id')
+
+
+class DailySumpPumpLevel(Base):
+    __tablename__ = 'daily_sump_level'
+
+    id = Column(UUID, nullable=False, primary_key=True)
+    user_id = Column(UUID, ForeignKey(UserInformation.id))
+    distance = Column(DECIMAL, nullable=False)
+    create_date = Column(TIMESTAMP, nullable=False)
+
+    user = relationship('UserInformation', foreign_keys='DailySumpPumpLevel.user_id')
+
