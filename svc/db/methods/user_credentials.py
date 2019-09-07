@@ -41,4 +41,4 @@ class UserDatabase:
         sump_level = self.session.query(DailySumpPumpLevel).filter_by(user_id=user_id).order_by(DailySumpPumpLevel.id.desc()).first()
         if sump_level is None:
             raise NotFound
-        return sump_level
+        return sump_level.distance

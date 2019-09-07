@@ -52,11 +52,12 @@ def test_get_preferences_by_user__should_raise_bad_request_when_no_preferences()
 
 
 def test_get_current_sump_level_by_user__should_return_valid_sump_level():
+    expected_distance = 8.0
     first_user = UserInformation(id=uuid.uuid4().hex, first_name='Jon', last_name='Test')
     second_user = UserInformation(id=uuid.uuid4().hex, first_name='Dylan', last_name='Fake')
 
     first_sump = DailySumpPumpLevel(id=1, user=first_user, distance=12.0, create_date=datetime.now())
-    second_sump = DailySumpPumpLevel(id=2, user=second_user, distance=8.0, create_date=datetime.now())
+    second_sump = DailySumpPumpLevel(id=2, user=second_user, distance=expected_distance, create_date=datetime.now())
 
     with UserDatabaseManager() as database:
         database.session.add_all([first_sump, second_sump])
@@ -64,7 +65,7 @@ def test_get_current_sump_level_by_user__should_return_valid_sump_level():
 
         actual = database.get_current_sump_level_by_user(second_user.id)
 
-        assert actual.user.id == second_user.id
+        assert actual == expected_distance
 
         database.session.delete(first_sump)
         database.session.delete(first_user)
@@ -84,7 +85,7 @@ def test_get_current_sump_level_by_user__should_return_latest_record_for_single_
 
         actual = database.get_current_sump_level_by_user(first_user.id)
 
-        assert actual.distance == 8.0
+        assert actual == 8.0
 
         database.session.delete(first_user)
         database.session.delete(first_sump)

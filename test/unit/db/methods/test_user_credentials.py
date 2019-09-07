@@ -66,13 +66,14 @@ class TestUserDatabase:
             self.DATABASE.get_preferences_by_user(uuid.uuid4().hex)
 
     def test_get_current_sump_level_by_user__should_return_sump_levels(self):
+        expected_distance = 43.9
         user = TestUserDatabase._create_database_user()
-        sump = DailySumpPumpLevel(user=user)
+        sump = DailySumpPumpLevel(user=user, distance=expected_distance)
         self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = sump
 
         actual = self.DATABASE.get_current_sump_level_by_user(user.user_id)
 
-        assert actual == sump
+        assert actual == expected_distance
 
     def test_get_current_sump_level_by_user__should_raise_not_found_error_when_missing_record(self):
         self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = None
