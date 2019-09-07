@@ -1,7 +1,8 @@
 from sqlalchemy import orm, create_engine
 from werkzeug.exceptions import BadRequest, Unauthorized
 
-from svc.db.models.user_information_model import UserPreference, UserCredentials, DailySumpPumpLevel
+from svc.db.models.user_information_model import UserPreference, UserCredentials, DailySumpPumpLevel, \
+    AverageSumpPumpLevel
 
 
 class UserDatabaseManager:
@@ -42,3 +43,7 @@ class UserDatabase:
         if sump_level is None:
             raise BadRequest
         return float(sump_level.distance)
+
+    def get_average_sump_level_by_user(self, user_id):
+        average = self.session.query(AverageSumpPumpLevel).filter_by(user_id=user_id).order_by(AverageSumpPumpLevel.id.desc()).first()
+        return {'latestDate': average.create_day, 'averageDepth': average.distance}

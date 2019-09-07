@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 import pytest
 from mock import mock
@@ -6,7 +7,8 @@ from sqlalchemy import orm
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.db.methods.user_credentials import UserDatabase
-from svc.db.models.user_information_model import UserPreference, UserCredentials, DailySumpPumpLevel
+from svc.db.models.user_information_model import UserPreference, UserCredentials, DailySumpPumpLevel, \
+    AverageSumpPumpLevel
 
 
 class TestUserDatabase:
@@ -79,6 +81,18 @@ class TestUserDatabase:
         self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = None
         with pytest.raises(BadRequest):
             self.DATABASE.get_current_sump_level_by_user(uuid.uuid4().hex)
+
+    def test_get_average_sump_level_by_user__should_return_sump_levels(self):
+        expected_depth = 12.23
+        user = TestUserDatabase._create_database_user()
+        date = datetime.date(datetime.now())
+        average = AverageSumpPumpLevel(user=user, distance=expected_depth, create_day=date)
+        self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = average
+
+        actual = self.DATABASE.get_average_sump_level_by_user(user.user_id)
+
+        assert actual['latestDate'] == date
+        assert actual['averageDepth'] == expected_depth
 
     @staticmethod
     def _create_user_preference(user):

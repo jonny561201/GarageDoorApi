@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, Integer, ForeignKey, DECIMAL, TIMESTAMP
+from sqlalchemy import Column, String, Boolean, Integer, ForeignKey, DECIMAL, TIMESTAMP, DATE
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext import declarative
 from sqlalchemy.orm import relationship
@@ -46,3 +46,13 @@ class DailySumpPumpLevel(Base):
 
     user = relationship('UserInformation', foreign_keys='DailySumpPumpLevel.user_id')
 
+
+class AverageSumpPumpLevel(Base):
+    __tablename__ = 'average_daily_sump_level'
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    user_id = Column(UUID, ForeignKey(UserInformation.id))
+    distance = Column(DECIMAL, nullable=False)
+    create_day = Column(DATE, nullable=False)
+
+    user = relationship('UserInformation', foreign_keys='AverageSumpPumpLevel.user_id')
