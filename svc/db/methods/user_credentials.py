@@ -1,5 +1,5 @@
 from sqlalchemy import orm, create_engine
-from werkzeug.exceptions import BadRequest, Unauthorized
+from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
 
 from svc.db.models.user_information_model import UserPreference, UserCredentials, DailySumpPumpLevel
 
@@ -39,4 +39,6 @@ class UserDatabase:
 
     def get_current_sump_level_by_user(self, user_id):
         sump_level = self.session.query(DailySumpPumpLevel).filter_by(user_id=user_id).order_by(DailySumpPumpLevel.id.desc()).first()
+        if sump_level is None:
+            raise NotFound
         return sump_level
