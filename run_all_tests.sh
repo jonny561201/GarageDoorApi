@@ -9,7 +9,7 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 function runUnitTests {
     echo -e "${YELLOW}---------------Running Unit Tests---------------${WHITE}"
-    pytest -s ${CURRENT_DIR}/test/unit
+    python3 -m pytest -s ${CURRENT_DIR}/test/unit
     UNIT_TEST=$?
     if [[ ${UNIT_TEST} -ne 0 ]]; then
         echo -e "${RED}ERROR: Unit Tests Failed!!!${WHITE}"
@@ -35,7 +35,7 @@ function waitForContainerToBeHealthy {
 
 function runIntegrationTests {
     echo -e "${YELLOW}---------------Running Integration Tests---------------${WHITE}"
-    pytest -s ${CURRENT_DIR}/test/integration
+    python3 -m pytest -s ${CURRENT_DIR}/test/integration
     INTEGRATION_EXIT=$?
     if [[ ${INTEGRATION_EXIT} -ne 0 ]]; then
         echo -e "${RED}ERROR: Integration Tests Failed!!!${WHITE}"
