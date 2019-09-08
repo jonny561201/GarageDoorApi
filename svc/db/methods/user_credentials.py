@@ -58,5 +58,5 @@ class UserDatabase:
             current_depth = DailySumpPumpLevel(distance=depth, create_date=date, user_id=user_id)
 
             self.session.add(current_depth)
-        except TypeError:
+        except (TypeError, KeyError):
             raise BadRequest

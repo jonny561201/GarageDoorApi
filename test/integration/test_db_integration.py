@@ -139,3 +139,10 @@ def test_save_current_sump_level__should_store_new_record():
         assert float(actual.distance) == depth
 
         database.session.query(DailySumpPumpLevel).filter_by(user_id=user_info.id).delete()
+
+
+def test_save_current_sump_level__should_raise_exception_with_bad_data():
+    depth_info = {'badData': None}
+    with pytest.raises(BadRequest):
+        with UserDatabaseManager() as database:
+            database.save_current_sump_level(depth_info)
