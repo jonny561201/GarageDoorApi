@@ -107,6 +107,11 @@ class TestUserDatabase:
 
         self.SESSION.add.assert_called()
 
+    def test_save_current_sump_level__should_raise_bad_request_when_depth_info_none(self):
+        depth_info = None
+        with pytest.raises(BadRequest):
+            self.DATABASE.save_current_sump_level(depth_info)
+
     @staticmethod
     def _create_user_preference(user):
         preference = UserPreference()
