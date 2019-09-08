@@ -49,3 +49,11 @@ class UserDatabase:
         if average is None:
             raise BadRequest
         return {'latestDate': str(average.create_day), 'averageDepth': float(average.distance)}
+
+    def save_current_sump_level(self, depth_info):
+        depth = depth_info['depth']
+        date = depth_info['datetime']
+        user_id = depth_info['userId']
+        current_depth = DailySumpPumpLevel(distance=depth, create_date=date, user_id=user_id)
+
+        self.session.add(current_depth)

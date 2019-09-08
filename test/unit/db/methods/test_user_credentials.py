@@ -99,6 +99,14 @@ class TestUserDatabase:
         with pytest.raises(BadRequest):
             self.DATABASE.get_average_sump_level_by_user('12345')
 
+    def test_save_current_sump_level__should_call_add(self):
+        depth_info = {'userId': 'fake123',
+                      'datetime': None,
+                      'depth': None}
+        self.DATABASE.save_current_sump_level(depth_info)
+
+        self.SESSION.add.assert_called()
+
     @staticmethod
     def _create_user_preference(user):
         preference = UserPreference()

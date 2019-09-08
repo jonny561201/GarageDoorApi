@@ -123,3 +123,19 @@ def test_get_average_sump_level_by_user__should_raise_bad_request_when_user_not_
     with UserDatabaseManager() as database:
         with pytest.raises(BadRequest):
             database.get_average_sump_level_by_user(uuid.uuid4().hex)
+
+
+def test_save_current_sump_level__should_store_new_record():
+    depth = 12.345
+    with UserDatabaseManager() as database:
+        user_info = database.session.query(UserInformation).filter_by(last_name='Tester').first()
+        depth_info = {'userId': user_info.id,
+                      'depth': depth,
+                      'datetime': str(datetime.now())}
+        database.save_current_sump_level(depth_info)
+
+        actual = database.session.query(DailySumpPumpLevel).filter_by(user_id=user_info.id).first()
+
+        assert float(actual.distance) == depth
+
+        database.session.query(DailySumpPumpLevel).filter_by(user_id=user_info.id).delete()
