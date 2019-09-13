@@ -7,6 +7,17 @@ WHITE='\033[0m'
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+function validateDocker {
+    if ! [[ -x "$(command -v docker)" ]]; then
+        echo -e "${RED}ERROR: Docker does not appear to be installed!!!${WHITE}"
+    fi
+    docker_state=$(docker info >/dev/null 2>&1)
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}ERROR: Docker is not running! Please start and retry!${WHITE}"
+        exit 1
+    fi
+}
+
 function runUnitTests {
     echo -e "${YELLOW}---------------Running Unit Tests---------------${WHITE}"
     python3 -m pytest -s ${CURRENT_DIR}/test/unit
@@ -51,6 +62,7 @@ function teardownDocker {
     popd
 }
 
+validateDocker
 runUnitTests
 startPostgresDocker
 waitForContainerToBeHealthy
