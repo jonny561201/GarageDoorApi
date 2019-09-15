@@ -16,3 +16,5 @@ def get_sump_level(user_id, bearer_token):
 
 def save_current_level(bearer_token, depth_info):
     is_jwt_valid(bearer_token)
+    with UserDatabaseManager() as database:
+        database.save_current_sump_level(depth_info)

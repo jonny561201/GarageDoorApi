@@ -60,3 +60,13 @@ def test_save_current_level__should_call_is_jwt_valid(mock_jwt):
 
     mock_jwt.assert_called_with(bearer_token)
 
+
+@patch('svc.controllers.sump_controller.UserDatabaseManager')
+@patch('svc.controllers.sump_controller.is_jwt_valid')
+def test_save_current_level__should_call_save_current_sump_level(mock_jwt, mock_db):
+    bearer_token = 'fake_token'
+    depth_info = {'depth': 'test'}
+
+    save_current_level(bearer_token, depth_info)
+
+    mock_db.return_value.__enter__.return_value.save_current_sump_level.assert_called_with(depth_info)
