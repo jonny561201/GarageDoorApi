@@ -2,7 +2,7 @@ import uuid
 
 from mock import patch
 
-from svc.controllers.sump_controller import get_sump_level
+from svc.controllers.sump_controller import get_sump_level, save_current_level
 
 
 @patch('svc.controllers.sump_controller.is_jwt_valid')
@@ -49,3 +49,14 @@ def test_get_sump_level__should_call_get_average_sump_level_by_user(mock_databas
     get_sump_level(user_id, bearer_token)
 
     mock_database.return_value.__enter__.return_value.get_average_sump_level_by_user.assert_called_with(user_id)
+
+
+@patch('svc.controllers.sump_controller.is_jwt_valid')
+def test_save_current_level__should_call_is_jwt_valid(mock_jwt):
+    bearer_token = 'fake_token'
+    depth_info = {'depth': 'test'}
+
+    save_current_level(bearer_token, depth_info)
+
+    mock_jwt.assert_called_with(bearer_token)
+

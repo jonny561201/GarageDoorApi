@@ -12,3 +12,7 @@ def get_sump_level(user_id, bearer_token):
         response.update(average)
 
         return response
+
+
+def save_current_level(bearer_token, depth_info):
+    is_jwt_valid(bearer_token)
