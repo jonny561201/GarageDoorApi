@@ -2,7 +2,7 @@ import json
 
 from mock import patch
 
-from svc.routes.sump_routes import get_current_sump_level
+from svc.routes.sump_routes import get_current_sump_level, save_current_level_by_user
 
 
 @patch('svc.routes.sump_routes.request')
@@ -41,3 +41,17 @@ def test_get_current_sump_level__should_return_success_status(mock_controller, m
     actual = get_current_sump_level(user_id)
 
     assert actual.status_code == 200
+
+
+@patch('svc.routes.sump_routes.request')
+@patch('svc.routes.sump_routes.save_current_level')
+def test_save_current_level_by_user__should_call_controller(mock_controller, mock_request):
+    user_id = 1234
+    request_body = {}
+    bearer_token = 'fake_token'
+    mock_request.data = request_body
+    mock_request.headers = {'Authorization': bearer_token}
+
+    save_current_level_by_user(user_id)
+
+    mock_controller.assert_called_with(user_id, bearer_token, request_body)
