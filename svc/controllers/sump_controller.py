@@ -1,3 +1,5 @@
+import json
+
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.utilities.jwt_utils import is_jwt_valid
 
@@ -14,7 +16,8 @@ def get_sump_level(user_id, bearer_token):
         return response
 
 
-def save_current_level(user_id, bearer_token, depth_info):
+def save_current_level(user_id, bearer_token, request):
     is_jwt_valid(bearer_token)
+    depth_info = json.loads(request)
     with UserDatabaseManager() as database:
-        database.save_current_sump_level(user_id, depth_info)
+        database.insert_current_sump_level(user_id, depth_info)

@@ -15,6 +15,7 @@ def get_current_sump_level(user_id):
     return Response(json.dumps(depth), status=200, headers=DEFAULT_HEADERS)
 
 
+@SUMP_BLUEPRINT.route('/sumpPump/user/<user_id>/currentDepth', methods=['POST'])
 def save_current_level_by_user(user_id):
     bear_token = request.headers.get('Authorization')
     depth_info = request.data

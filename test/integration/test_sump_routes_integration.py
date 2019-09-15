@@ -68,3 +68,18 @@ class TestSumpRoutes:
         assert actual.status_code == 200
         assert json_actual['currentDepth'] == expected_depth
         assert json_actual['averageDepth'] == average_depth
+
+    def test_save_current_level_by_user__should_store_depth_info(self):
+        depth = 12.31
+        user_id = str(uuid.uuid4())
+        url = 'sumpPump/user/' + user_id + '/currentDepth'
+        post_body = {'depth': depth, 'datetime': str(datetime.now())}
+        user = UserInformation(id=user_id, first_name='Jon', last_name='Test')
+        with UserDatabaseManager() as database:
+            database.session.add(user)
+        self.TEST_CLIENT.post(url, data=json.dumps(post_body), headers=self.HEADER)
+
+        with UserDatabaseManager() as database:
+            sump_level = database.session.query(DailySumpPumpLevel).filter_by(user_id=user_id).first()
+            assert float(sump_level.distance) == depth
+            assert sump_level.user_id == user_id
