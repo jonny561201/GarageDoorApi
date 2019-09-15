@@ -51,7 +51,7 @@ class UserDatabase:
         return {'latestDate': str(average.create_day), 'averageDepth': float(average.distance)}
 
     # TODO: pass in user_id and strip off rest route
-    def save_current_sump_level(self, depth_info):
+    def save_current_sump_level(self, user_id, depth_info):
         try:
             depth = depth_info['depth']
             date = depth_info['datetime']

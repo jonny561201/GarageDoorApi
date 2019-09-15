@@ -51,12 +51,14 @@ def test_get_sump_level__should_call_get_average_sump_level_by_user(mock_databas
     mock_database.return_value.__enter__.return_value.get_average_sump_level_by_user.assert_called_with(user_id)
 
 
+@patch('svc.controllers.sump_controller.UserDatabaseManager')
 @patch('svc.controllers.sump_controller.is_jwt_valid')
-def test_save_current_level__should_call_is_jwt_valid(mock_jwt):
+def test_save_current_level__should_call_is_jwt_valid(mock_jwt, mock_db):
     bearer_token = 'fake_token'
+    user_id = 1234
     depth_info = {'depth': 'test'}
 
-    save_current_level(bearer_token, depth_info)
+    save_current_level(user_id, bearer_token, depth_info)
 
     mock_jwt.assert_called_with(bearer_token)
 
@@ -66,7 +68,8 @@ def test_save_current_level__should_call_is_jwt_valid(mock_jwt):
 def test_save_current_level__should_call_save_current_sump_level(mock_jwt, mock_db):
     bearer_token = 'fake_token'
     depth_info = {'depth': 'test'}
+    user_id = 1234
 
-    save_current_level(bearer_token, depth_info)
+    save_current_level(user_id, bearer_token, depth_info)
 
-    mock_db.return_value.__enter__.return_value.save_current_sump_level.assert_called_with(depth_info)
+    mock_db.return_value.__enter__.return_value.save_current_sump_level.assert_called_with(user_id, depth_info)
