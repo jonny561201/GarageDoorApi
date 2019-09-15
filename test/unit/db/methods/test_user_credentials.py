@@ -99,25 +99,25 @@ class TestUserDatabase:
         with pytest.raises(BadRequest):
             self.DATABASE.get_average_sump_level_by_user('12345')
 
-    def test_save_current_sump_level__should_call_add(self):
+    def test_insert_current_sump_level__should_call_add(self):
         user_id = 1234
         depth_info = {'datetime': None,
                       'depth': None}
-        self.DATABASE.save_current_sump_level(user_id, depth_info)
+        self.DATABASE.insert_current_sump_level(user_id, depth_info)
 
         self.SESSION.add.assert_called()
 
-    def test_save_current_sump_level__should_raise_bad_request_when_depth_info_none(self):
+    def test_insert_current_sump_level__should_raise_bad_request_when_depth_info_none(self):
         depth_info = None
         user_id = 1234
         with pytest.raises(BadRequest):
-            self.DATABASE.save_current_sump_level(user_id, depth_info)
+            self.DATABASE.insert_current_sump_level(user_id, depth_info)
 
-    def test_save_current_sump_level__should_raise_bad_request_when_depth_info_missing_keys(self):
+    def test_insert_current_sump_level__should_raise_bad_request_when_depth_info_missing_keys(self):
         depth_info = {'badKey': 1234}
         user_id = 1234
         with pytest.raises(BadRequest):
-            self.DATABASE.save_current_sump_level(user_id, depth_info)
+            self.DATABASE.insert_current_sump_level(user_id, depth_info)
 
     @staticmethod
     def _create_user_preference(user):

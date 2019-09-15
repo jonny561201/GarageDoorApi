@@ -72,4 +72,4 @@ def test_save_current_level__should_call_save_current_sump_level(mock_jwt, mock_
 
     save_current_level(user_id, bearer_token, depth_info)
 
-    mock_db.return_value.__enter__.return_value.save_current_sump_level.assert_called_with(user_id, depth_info)
+    mock_db.return_value.__enter__.return_value.insert_current_sump_level.assert_called_with(user_id, depth_info)

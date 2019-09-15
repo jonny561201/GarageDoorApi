@@ -50,7 +50,7 @@ class UserDatabase:
             raise BadRequest
         return {'latestDate': str(average.create_day), 'averageDepth': float(average.distance)}
 
-    def save_current_sump_level(self, user_id, depth_info):
+    def insert_current_sump_level(self, user_id, depth_info):
         try:
             depth = depth_info['depth']
             date = depth_info['datetime']
