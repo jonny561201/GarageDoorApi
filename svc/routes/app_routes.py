@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, request, Response
 
 from svc.controllers.app_controller import get_login
@@ -16,4 +18,4 @@ def health_check():
 def app_login():
     bearer_token = request.headers.get('Authorization')
     jwt_token = get_login(bearer_token)
-    return Response(jwt_token, status=200, headers=DEFAULT_HEADERS)
+    return Response(json.dumps({'bearerToken': jwt_token.decode('UTF-8')}), status=200, headers=DEFAULT_HEADERS)
