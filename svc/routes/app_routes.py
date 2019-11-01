@@ -16,6 +16,6 @@ def health_check():
 # TODO: Login should return role
 @APP_BLUEPRINT.route('/login', methods=['GET'])
 def app_login():
-    bearer_token = request.headers.get('Authorization')
-    jwt_token = get_login(bearer_token)
+    basic_token = request.headers.get('Authorization')
+    jwt_token = get_login(basic_token)
     return Response(json.dumps({'bearerToken': jwt_token.decode('UTF-8')}), status=200, headers=DEFAULT_HEADERS)
