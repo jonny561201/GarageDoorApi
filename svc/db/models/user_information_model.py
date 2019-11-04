@@ -15,6 +15,14 @@ class UserInformation(Base):
     email = Column(String, nullable=True)
 
 
+class Roles(Base):
+    __tablename__ = 'user_roles'
+
+    id = Column(UUID, nullable=False, primary_key=True)
+    role_desc = Column(String, nullable=False)
+    role_name = Column(String, nullable=False)
+
+
 class UserPreference(Base):
     __tablename__ = 'user_preferences'
 
@@ -32,8 +40,10 @@ class UserCredentials(Base):
     user_name = Column(String, nullable=False)
     password = Column(String, nullable=False)
     user_id = Column(UUID, ForeignKey(UserInformation.id))
+    role_id = Column(UUID, ForeignKey(Roles.id))
 
     user = relationship('UserInformation', foreign_keys='UserCredentials.user_id')
+    role = relationship('Roles', foreign_keys='UserCredentials.role_id')
 
 
 class DailySumpPumpLevel(Base):
@@ -42,6 +52,7 @@ class DailySumpPumpLevel(Base):
     id = Column(Integer, nullable=False, primary_key=True)
     user_id = Column(UUID, ForeignKey(UserInformation.id))
     distance = Column(DECIMAL, nullable=False)
+    warning_level = Column(Integer, nullable=False)
     create_date = Column(TIMESTAMP, nullable=False)
 
     user = relationship('UserInformation', foreign_keys='DailySumpPumpLevel.user_id')

@@ -50,11 +50,13 @@ class UserDatabase:
             raise BadRequest
         return {'latestDate': str(average.create_day), 'averageDepth': float(average.distance)}
 
+# TODO: add new column alert_level
     def insert_current_sump_level(self, user_id, depth_info):
         try:
             depth = depth_info['depth']
             date = depth_info['datetime']
-            current_depth = DailySumpPumpLevel(distance=depth, create_date=date, user_id=user_id)
+            warning_level = depth_info['warning_level']
+            current_depth = DailySumpPumpLevel(distance=depth, create_date=date, warning_level=warning_level, user_id=user_id)
 
             self.session.add(current_depth)
         except (TypeError, KeyError):
