@@ -22,12 +22,12 @@ def test_get_sump_level__should_return_response_with_distance(mock_database, moc
     distance = 3.14159
     bearer_token = 'asdflkhsad98778236'
     user_id = 'fake12354'
-    mock_database.return_value.__enter__.return_value.get_current_sump_level_by_user.return_value = distance
+    mock_database.return_value.__enter__.return_value.get_current_sump_level_by_user.return_value = {'currentDepth': distance, 'warningLevel': 0}
     mock_database.return_value.__enter__.return_value.get_average_sump_level_by_user.return_value = {'testItem': 123}
 
     actual = get_sump_level(user_id, bearer_token)
 
-    assert actual == {'currentDepth': distance, 'userId': user_id, 'testItem': 123}
+    assert actual == {'currentDepth': distance, 'userId': user_id, 'warningLevel': 0, 'testItem': 123}
 
 
 @patch('svc.controllers.sump_controller.is_jwt_valid')

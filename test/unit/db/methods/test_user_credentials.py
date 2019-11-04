@@ -69,13 +69,15 @@ class TestUserDatabase:
 
     def test_get_current_sump_level_by_user__should_return_sump_levels(self):
         expected_distance = 43.9
+        expected_warning = 1
         user = TestUserDatabase._create_database_user()
-        sump = DailySumpPumpLevel(user=user, distance=expected_distance)
+        sump = DailySumpPumpLevel(user=user, distance=expected_distance, warning_level=expected_warning)
         self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = sump
 
         actual = self.DATABASE.get_current_sump_level_by_user(user.user_id)
 
-        assert actual == expected_distance
+        assert actual['currentDepth'] == expected_distance
+        assert actual['warningLevel'] == expected_warning
 
     def test_get_current_sump_level_by_user__should_raise_bad_request_error_when_missing_record(self):
         self.SESSION.query.return_value.filter_by.return_value.order_by.return_value.first.return_value = None

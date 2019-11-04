@@ -93,12 +93,14 @@ class TestDbIntegration:
     def test_get_current_sump_level_by_user__should_return_valid_sump_level(self):
         with UserDatabaseManager() as database:
             actual = database.get_current_sump_level_by_user(self.first_user_id.hex)
-            assert actual == 11.0
+            assert actual['currentDepth'] == 11.0
+            assert actual['warningLevel'] == 2
 
     def test_get_current_sump_level_by_user__should_return_latest_record_for_single_user(self):
         with UserDatabaseManager() as database:
             actual = database.get_current_sump_level_by_user(self.second_user_id.hex)
-            assert actual == 12.0
+            assert actual['currentDepth'] == 12.0
+            assert actual['warningLevel'] == 2
 
     def test_get_current_sump_level_by_user__should_raise_bad_request_when_user_not_found(self):
         with UserDatabaseManager() as database:

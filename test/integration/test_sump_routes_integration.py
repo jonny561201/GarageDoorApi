@@ -46,8 +46,8 @@ class TestSumpRoutes:
         expected_depth = 12.45
         average_depth = 10.65
         date = datetime.date(datetime.now())
-        sump = DailySumpPumpLevel(user=user, id=5, distance=expected_depth, warning_level=0, create_date=datetime.now())
-        average = AverageSumpPumpLevel(user=user, id=7, distance=average_depth, create_day=date)
+        sump = DailySumpPumpLevel(user=user, distance=expected_depth, warning_level=0, create_date=datetime.now())
+        average = AverageSumpPumpLevel(user=user, distance=average_depth, create_day=date)
 
         with UserDatabaseManager() as database:
             database.session.add(sump)

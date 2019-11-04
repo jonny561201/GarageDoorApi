@@ -7,13 +7,13 @@ from svc.utilities.jwt_utils import is_jwt_valid
 def get_sump_level(user_id, bearer_token):
     is_jwt_valid(bearer_token)
     with UserDatabaseManager() as database:
-        depth = database.get_current_sump_level_by_user(user_id)
-        average = database.get_average_sump_level_by_user(user_id)
+        current_data = database.get_current_sump_level_by_user(user_id)
+        average_data = database.get_average_sump_level_by_user(user_id)
 
-        response = {'currentDepth': depth, 'userId': user_id}
-        response.update(average)
+        current_data.update(average_data)
+        current_data['userId'] = user_id
 
-        return response
+        return current_data
 
 
 def save_current_level(user_id, bearer_token, request):

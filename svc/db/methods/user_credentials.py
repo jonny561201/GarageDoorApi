@@ -42,7 +42,7 @@ class UserDatabase:
         sump_level = self.session.query(DailySumpPumpLevel).filter_by(user_id=user_id).order_by(DailySumpPumpLevel.id.desc()).first()
         if sump_level is None:
             raise BadRequest
-        return float(sump_level.distance)
+        return {'currentDepth': float(sump_level.distance), 'warningLevel': sump_level.warning_level}
 
     def get_average_sump_level_by_user(self, user_id):
         average = self.session.query(AverageSumpPumpLevel).filter_by(user_id=user_id).order_by(AverageSumpPumpLevel.id.desc()).first()
@@ -50,7 +50,6 @@ class UserDatabase:
             raise BadRequest
         return {'latestDate': str(average.create_day), 'averageDepth': float(average.distance)}
 
-# TODO: add new column alert_level
     def insert_current_sump_level(self, user_id, depth_info):
         try:
             depth = depth_info['depth']
