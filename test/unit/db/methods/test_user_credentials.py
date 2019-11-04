@@ -102,6 +102,7 @@ class TestUserDatabase:
     def test_insert_current_sump_level__should_call_add(self):
         user_id = 1234
         depth_info = {'datetime': None,
+                      'warning_level': 1,
                       'depth': None}
         self.DATABASE.insert_current_sump_level(user_id, depth_info)
 
