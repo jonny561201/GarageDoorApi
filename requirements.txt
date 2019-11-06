@@ -4,3 +4,4 @@ SQLAlchemy>=1.2.7
 pytz
 psycopg2
 flask_cors
+requests
