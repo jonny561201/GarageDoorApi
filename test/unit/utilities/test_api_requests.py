@@ -1,3 +1,5 @@
+import json
+
 from flask import Response
 from mock import patch
 
@@ -14,3 +16,12 @@ class TestApiRequests:
         get_weather_by_city(self.city, self.unit_preference)
 
         mock_requests.get.assert_called_with(self.url)
+
+    def test_get_weather_by_city__should_return_temp_data(self, mock_requests):
+        expected_temp = 64.8
+        mock_response = {'main': {'temp': expected_temp}}
+        mock_requests.get.return_value = Response(json.dumps(mock_response), 200)
+
+        actual = get_weather_by_city(self.city, self.unit_preference)
+
+        assert actual['temp'] == expected_temp
