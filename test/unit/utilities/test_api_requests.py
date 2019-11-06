@@ -10,15 +10,29 @@ from svc.utilities.api_requests import get_weather_by_city
 class TestApiRequests:
     city = 'Des Moines'
     unit_preference = 'imperial'
-    url = 'https://api.openweathermap.org/data/2.5/weather?q=Des%20Moines&units=imperial'
+    url = 'https://api.openweathermap.org/data/2.5/weather'
+    params = None
+
+    def setup_method(self):
+        self.params = {'q': self.city, 'units': self.unit_preference}
 
     def test_get_weather_by_city__should_call_requests_get(self, mock_requests):
-        mock_response = {'main': {'temp': 54.9}}
+        mock_response = {'main': {}}
         mock_requests.get.return_value = Response(json.dumps(mock_response), 200)
 
         get_weather_by_city(self.city, self.unit_preference)
 
-        mock_requests.get.assert_called_with(self.url)
+        mock_requests.get.assert_called_with(self.url, params=self.params)
+
+    def test_get_weather_by_city__should_use_provided_city_location_in_url(self, mock_requests):
+        city = 'London'
+        mock_response = {'main': {}}
+        mock_requests.get.return_value = Response(json.dumps(mock_response), 200)
+
+        get_weather_by_city(city, self.unit_preference)
+
+        self.params['q'] = city
+        mock_requests.get.assert_called_with(self.url, params=self.params)
 
     def test_get_weather_by_city__should_return_temp_data(self, mock_requests):
         expected_temp = 64.8
