@@ -13,6 +13,9 @@ class TestApiRequests:
     url = 'https://api.openweathermap.org/data/2.5/weather?q=Des%20Moines&units=imperial'
 
     def test_get_weather_by_city__should_call_requests_get(self, mock_requests):
+        mock_response = {'main': {'temp': 54.9}}
+        mock_requests.get.return_value = Response(json.dumps(mock_response), 200)
+
         get_weather_by_city(self.city, self.unit_preference)
 
         mock_requests.get.assert_called_with(self.url)
@@ -25,3 +28,11 @@ class TestApiRequests:
         actual = get_weather_by_city(self.city, self.unit_preference)
 
         assert actual['temp'] == expected_temp
+
+    def test_get_weather_by_city__should_return_default_temp_value_of_zero(self, mock_requests):
+        mock_response = {'main': {}}
+        mock_requests.get.return_value = Response(json.dumps(mock_response), 200)
+
+        actual = get_weather_by_city(self.city, self.unit_preference)
+
+        assert actual['temp'] == 0.0
