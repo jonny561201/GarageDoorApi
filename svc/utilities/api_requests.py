@@ -1,7 +1,7 @@
 import json
 
 import requests
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, BadRequest
 
 
 def get_weather_by_city(city, unit_preference, app_id):
@@ -12,6 +12,8 @@ def get_weather_by_city(city, unit_preference, app_id):
     response = requests.get(base_url, params=args)
     if response.status_code == 401:
         raise Unauthorized
+    if not response.ok:
+        raise BadRequest
     response_content = json.loads(response.content)
     temp_response = __build_response(response_content)
 

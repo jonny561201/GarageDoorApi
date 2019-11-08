@@ -3,7 +3,7 @@ import json
 import pytest
 from mock import patch
 from requests import Response
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, BadRequest
 
 from svc.utilities.api_requests import get_weather_by_city
 
@@ -20,6 +20,7 @@ class TestApiRequests:
 
     def setup_method(self):
         self.response = Response()
+        self.response.status_code = 200
         self.response_content = {'main': {}, 'weather': [{}]}
         self.params = {'q': self.city, 'units': self.unit_preference, 'APPID': self.app_id}
 
@@ -139,4 +140,12 @@ class TestApiRequests:
         mock_requests.get.return_value = response
 
         with pytest.raises(Unauthorized):
+            get_weather_by_city(self.city, self.unit_preference, self.app_id)
+
+    def test_get_weather_by_city__should_throw_bad_request_when_not_ok_status_returned(self, mock_requests):
+        response = Response()
+        response.status_code = 400
+        mock_requests.get.return_value = response
+
+        with pytest.raises(BadRequest):
             get_weather_by_city(self.city, self.unit_preference, self.app_id)
