@@ -73,3 +73,16 @@ class TestThermostatController:
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
         mock_weather.assert_called_with(None, None, None)
+
+    def test_get_user_temp__should_consolidate_weather_response_with_thermostat_data(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        expected_temp = 56.3
+        mock_weather.return_value = {'temp': expected_temp}
+        preference = UserPreference()
+        preference.is_fahrenheit = True
+        mock_user.return_value = 23.3
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = preference
+
+        actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        assert actual['temp'] == expected_temp
+

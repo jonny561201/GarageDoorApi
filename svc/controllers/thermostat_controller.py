@@ -11,7 +11,9 @@ def get_user_temp(user_id, bearer_token):
         preference = database.get_preferences_by_user(user_id)
         temp_text = read_temperature_file()
         temperature = get_user_temperature(temp_text, preference.is_fahrenheit)
-        get_weather_by_city(None, None, None)
+        weather_data = get_weather_by_city(None, None, None)
 
-        return {'currentTemp': temperature,
-                'isFahrenheit': preference.is_fahrenheit}
+        response = {'currentTemp': temperature, 'isFahrenheit': preference.is_fahrenheit}
+        response.update(weather_data)
+
+        return response

@@ -32,6 +32,7 @@ class UserDatabase:
             raise Unauthorized
         return user.user_id
 
+    #TODO: cut over to dictionary instead of DB object
     def get_preferences_by_user(self, user_id):
         preference = self.session.query(UserPreference).filter_by(user_id=user_id).first()
         if preference is None:
