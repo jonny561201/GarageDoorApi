@@ -1,7 +1,9 @@
 import json
 
+import pytest
 from mock import patch
 from requests import Response
+from werkzeug.exceptions import Unauthorized
 
 from svc.utilities.api_requests import get_weather_by_city
 
@@ -130,3 +132,11 @@ class TestApiRequests:
         get_weather_by_city(self.city, unit, self.app_id)
 
         mock_requests.get.assert_called_with(self.url, params=self.params)
+
+    def test_get_weather_by_city__should_throw_unauthorized_when_401_returned(self, mock_requests):
+        response = Response()
+        response.status_code = 401
+        mock_requests.get.return_value = response
+
+        with pytest.raises(Unauthorized):
+            get_weather_by_city(self.city, self.unit_preference, self.app_id)
