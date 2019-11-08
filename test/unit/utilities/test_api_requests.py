@@ -50,3 +50,13 @@ class TestApiRequests:
         actual = get_weather_by_city(self.city, self.unit_preference)
 
         assert actual['temp'] == 0.0
+
+    def test_get_weather_by_city__should_callapi_using_unit_preference_in_params(self, mock_requests):
+        response = {'main': {}}
+        mock_requests.get.return_value = Response(json.dumps(response), 200)
+        unit = 'metric'
+        self.params['units'] = unit
+
+        get_weather_by_city(self.city, unit)
+
+        mock_requests.get.assert_called_with(self.url, params=self.params)
