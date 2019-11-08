@@ -10,4 +10,8 @@ def get_weather_by_city(city, unit_preference):
     response = requests.get(base_url, params=args)
     response_content = json.loads(response.data)
 
-    return {'temp': response_content['main'].get('temp', 0.0)}
+    current_temp = response_content['main'].get('temp', 0.0)
+    min_temp = response_content['main'].get('temp_min')
+
+    temp_response = {'temp': current_temp, 'min_temp': min_temp}
+    return temp_response

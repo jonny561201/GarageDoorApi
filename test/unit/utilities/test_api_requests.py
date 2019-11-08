@@ -51,7 +51,16 @@ class TestApiRequests:
 
         assert actual['temp'] == 0.0
 
-    def test_get_weather_by_city__should_callapi_using_unit_preference_in_params(self, mock_requests):
+    def test_get_weather_by_city__should_return_min_temp_value(self, mock_requests):
+        min_temp = 12.34
+        response = {'main': {'temp_min': min_temp}}
+        mock_requests.get.return_value = Response(json.dumps(response), 200)
+
+        actual = get_weather_by_city(self.city, self.unit_preference)
+
+        assert actual['min_temp'] == min_temp
+
+    def test_get_weather_by_city__should_call_api_using_unit_preference_in_params(self, mock_requests):
         response = {'main': {}}
         mock_requests.get.return_value = Response(json.dumps(response), 200)
         unit = 'metric'
