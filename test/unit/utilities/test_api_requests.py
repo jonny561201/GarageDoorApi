@@ -91,6 +91,13 @@ class TestApiRequests:
 
         assert actual['description'] == forecast_description
 
+    def test_get_weather_by_city__should_return_default_weather_description(self, mock_requests):
+        mock_requests.get.return_value = Response(json.dumps(self.response), 200)
+
+        actual = get_weather_by_city(self.city, self.unit_preference)
+
+        assert actual['description'] is None
+
     def test_get_weather_by_city__should_call_api_using_unit_preference_in_params(self, mock_requests):
         mock_requests.get.return_value = Response(json.dumps(self.response), 200)
         unit = 'metric'
