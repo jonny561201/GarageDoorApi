@@ -10,14 +10,18 @@ def get_weather_by_city(city, unit_preference, app_id):
             'units': unit_preference,
             'APPID': app_id}
     response = requests.get(base_url, params=args)
-    if response.status_code == 401:
-        raise Unauthorized
-    if not response.ok:
-        raise BadRequest
+    __validate_response(response)
     response_content = json.loads(response.content)
     temp_response = __build_response(response_content)
 
     return temp_response
+
+
+def __validate_response(response):
+    if response.status_code == 401:
+        raise Unauthorized
+    if not response.ok:
+        raise BadRequest
 
 
 def __build_response(response_content):
