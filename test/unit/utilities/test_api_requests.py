@@ -68,6 +68,15 @@ class TestApiRequests:
 
         assert actual['min_temp'] == 0.0
 
+    def test_get_weather_by_city__should_return_max_temp_value(self, mock_requests):
+        max_temp = 12.87
+        response = {'main': {'temp_max': max_temp}}
+        mock_requests.get.return_value = Response(json.dumps(response), 200)
+
+        actual = get_weather_by_city(self.city, self.unit_preference)
+
+        assert actual['max_temp'] == max_temp
+
     def test_get_weather_by_city__should_call_api_using_unit_preference_in_params(self, mock_requests):
         response = {'main': {}}
         mock_requests.get.return_value = Response(json.dumps(response), 200)
