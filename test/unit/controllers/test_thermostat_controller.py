@@ -1,3 +1,4 @@
+import os
 import uuid
 
 import jwt
@@ -15,6 +16,13 @@ from svc.db.models.user_information_model import UserPreference
 class TestThermostatController:
     JWT_TOKEN = jwt.encode({}, 'JWT_SECRET', algorithm='HS256').decode('UTF-8')
     USER_ID = uuid.uuid4().hex
+    APP_ID = 'fake app id'
+
+    def setup_method(self):
+        os.environ.update({'WEATHER_APP_ID': self.APP_ID})
+
+    def teardown_method(self):
+        os.environ.pop('WEATHER_APP_ID')
 
     def test_get_user_temp__should_call_read_temperature_file(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
@@ -72,7 +80,7 @@ class TestThermostatController:
     def test_get_user_temp__should_call_api_requests(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-        mock_weather.assert_called_with(None, None, None)
+        mock_weather.assert_called_with(None, None, self.APP_ID)
 
     def test_get_user_temp__should_consolidate_weather_response_with_thermostat_data(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         expected_temp = 56.3
