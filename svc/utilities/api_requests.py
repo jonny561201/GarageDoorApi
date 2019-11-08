@@ -3,10 +3,11 @@ import json
 import requests
 
 
-def get_weather_by_city(city, unit_preference):
+def get_weather_by_city(city, unit_preference, app_id):
     base_url = 'https://api.openweathermap.org/data/2.5/weather'
     args = {'q': city,
-            'units': unit_preference}
+            'units': unit_preference,
+            'APPID': app_id}
     response = requests.get(base_url, params=args)
     response_content = json.loads(response.content)
 

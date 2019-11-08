@@ -11,6 +11,7 @@ class TestApiRequests:
     city = 'Des Moines'
     unit_preference = 'imperial'
     url = 'https://api.openweathermap.org/data/2.5/weather'
+    app_id = 'ab30xkd0'
     params = None
     response = None
     response_content = None
@@ -18,13 +19,13 @@ class TestApiRequests:
     def setup_method(self):
         self.response = Response()
         self.response_content = {'main': {}, 'weather': [{}]}
-        self.params = {'q': self.city, 'units': self.unit_preference}
+        self.params = {'q': self.city, 'units': self.unit_preference, 'APPID': self.app_id}
 
     def test_get_weather_by_city__should_call_requests_get(self, mock_requests):
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        get_weather_by_city(self.city, self.unit_preference)
+        get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         mock_requests.get.assert_called_with(self.url, params=self.params)
 
@@ -33,9 +34,19 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        get_weather_by_city(city, self.unit_preference)
+        get_weather_by_city(city, self.unit_preference, self.app_id)
 
         self.params['q'] = city
+        mock_requests.get.assert_called_with(self.url, params=self.params)
+
+    def test_get_weather_by_city__should_use_provided_app_id_in_url(self, mock_requests):
+        app_id = 'fake app id'
+        self.response._content = json.dumps(self.response_content)
+        mock_requests.get.return_value = self.response
+
+        get_weather_by_city(self.city, self.unit_preference, app_id)
+
+        self.params['APPID'] = app_id
         mock_requests.get.assert_called_with(self.url, params=self.params)
 
     def test_get_weather_by_city__should_return_temp_data(self, mock_requests):
@@ -44,7 +55,7 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        actual = get_weather_by_city(self.city, self.unit_preference)
+        actual = get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         assert actual['temp'] == expected_temp
 
@@ -52,7 +63,7 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        actual = get_weather_by_city(self.city, self.unit_preference)
+        actual = get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         assert actual['temp'] == 0.0
 
@@ -62,7 +73,7 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        actual = get_weather_by_city(self.city, self.unit_preference)
+        actual = get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         assert actual['min_temp'] == min_temp
 
@@ -70,7 +81,7 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        actual = get_weather_by_city(self.city, self.unit_preference)
+        actual = get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         assert actual['min_temp'] == 0.0
 
@@ -80,7 +91,7 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        actual = get_weather_by_city(self.city, self.unit_preference)
+        actual = get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         assert actual['max_temp'] == max_temp
 
@@ -88,7 +99,7 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        actual = get_weather_by_city(self.city, self.unit_preference)
+        actual = get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         assert actual['max_temp'] == 0.0
 
@@ -98,7 +109,7 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        actual = get_weather_by_city(self.city, self.unit_preference)
+        actual = get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         assert actual['description'] == forecast_description
 
@@ -106,7 +117,7 @@ class TestApiRequests:
         self.response._content = json.dumps(self.response_content)
         mock_requests.get.return_value = self.response
 
-        actual = get_weather_by_city(self.city, self.unit_preference)
+        actual = get_weather_by_city(self.city, self.unit_preference, self.app_id)
 
         assert actual['description'] is None
 
@@ -116,6 +127,6 @@ class TestApiRequests:
         unit = 'metric'
         self.params['units'] = unit
 
-        get_weather_by_city(self.city, unit)
+        get_weather_by_city(self.city, unit, self.app_id)
 
         mock_requests.get.assert_called_with(self.url, params=self.params)
