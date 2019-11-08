@@ -11,7 +11,7 @@ def get_weather_by_city(city, unit_preference):
     response_content = json.loads(response.data)
 
     current_temp = response_content['main'].get('temp', 0.0)
-    min_temp = response_content['main'].get('temp_min')
+    min_temp = response_content['main'].get('temp_min', 0.0)
 
     temp_response = {'temp': current_temp, 'min_temp': min_temp}
     return temp_response
