@@ -17,7 +17,7 @@ class TestApiRequests:
 
     def setup_method(self):
         self.response = Response()
-        self.response_content = {'main': {}, 'weather': {}}
+        self.response_content = {'main': {}, 'weather': [{}]}
         self.params = {'q': self.city, 'units': self.unit_preference}
 
     def test_get_weather_by_city__should_call_requests_get(self, mock_requests):
@@ -94,22 +94,25 @@ class TestApiRequests:
 
     def test_get_weather_by_city__should_return_weather_description(self, mock_requests):
         forecast_description = 'fake forecast'
-        self.response['weather']['description'] = forecast_description
-        mock_requests.get.return_value = Response(json.dumps(self.response), 200)
+        self.response_content['weather'][0]['description'] = forecast_description
+        self.response._content = json.dumps(self.response_content)
+        mock_requests.get.return_value = self.response
 
         actual = get_weather_by_city(self.city, self.unit_preference)
 
         assert actual['description'] == forecast_description
 
     def test_get_weather_by_city__should_return_default_weather_description(self, mock_requests):
-        mock_requests.get.return_value = Response(json.dumps(self.response), 200)
+        self.response._content = json.dumps(self.response_content)
+        mock_requests.get.return_value = self.response
 
         actual = get_weather_by_city(self.city, self.unit_preference)
 
         assert actual['description'] is None
 
     def test_get_weather_by_city__should_call_api_using_unit_preference_in_params(self, mock_requests):
-        mock_requests.get.return_value = Response(json.dumps(self.response), 200)
+        self.response._content = json.dumps(self.response_content)
+        mock_requests.get.return_value = self.response
         unit = 'metric'
         self.params['units'] = unit
 
