@@ -1,2 +1,0 @@
-export JWT_SECRET=fake_secret
-export WEATHER_APP_ID=e1d4e81b7074d58f018fb5ab727935a2
