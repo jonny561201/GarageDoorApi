@@ -80,7 +80,7 @@ class TestThermostatController:
     def test_get_user_temp__should_call_api_requests(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-        mock_weather.assert_called_with(None, None, self.APP_ID)
+        mock_weather.assert_called_with('London', 'imperial', self.APP_ID)
 
     def test_get_user_temp__should_consolidate_weather_response_with_thermostat_data(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         expected_temp = 56.3
