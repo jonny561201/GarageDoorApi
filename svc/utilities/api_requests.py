@@ -4,10 +4,10 @@ import requests
 from werkzeug.exceptions import Unauthorized, BadRequest
 
 
-def get_weather_by_city(city, unit_preference, app_id):
+def get_weather_by_city(city, unit, app_id):
     base_url = 'https://api.openweathermap.org/data/2.5/weather'
     args = {'q': city,
-            'units': unit_preference,
+            'units': unit,
             'APPID': app_id}
     response = requests.get(base_url, params=args)
     __validate_response(response)
