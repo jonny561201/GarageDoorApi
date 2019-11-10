@@ -9,6 +9,7 @@ from svc.db.models.user_information_model import UserInformation, DailySumpPumpL
     UserCredentials, Roles, UserPreference
 
 
+# TODO: break class apart into multiple test classes
 class TestDbIntegration:
 
     first_user_id = uuid.uuid4()
