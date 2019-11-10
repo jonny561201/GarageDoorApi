@@ -61,7 +61,15 @@ class TestUserDatabase:
 
         assert actual['unit'] is 'metric'
 
-    # TODO: add test to map city
+    def test_get_preferences_by_user__should_return_user_city_preferences(self):
+        city = 'London'
+        user = TestUserDatabase._create_database_user()
+        preference = TestUserDatabase._create_user_preference(user, city)
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = preference
+
+        actual = self.DATABASE.get_preferences_by_user(uuid.uuid4())
+
+        assert actual['city'] == city
 
     def test_get_preferences_by_user__should_throw_bad_request_when_no_preferences(self):
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = None
@@ -125,9 +133,10 @@ class TestUserDatabase:
             self.DATABASE.insert_current_sump_level(user_id, depth_info)
 
     @staticmethod
-    def _create_user_preference(user, is_fahrenheit=False):
+    def _create_user_preference(user, city='Moline', is_fahrenheit=False):
         preference = UserPreference()
         preference.user = user
+        preference.city = city
         preference.is_fahrenheit = is_fahrenheit
 
         return preference
