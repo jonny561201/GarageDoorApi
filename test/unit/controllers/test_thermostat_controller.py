@@ -17,8 +17,10 @@ class TestThermostatController:
     JWT_TOKEN = jwt.encode({}, 'JWT_SECRET', algorithm='HS256').decode('UTF-8')
     USER_ID = uuid.uuid4().hex
     APP_ID = 'fake app id'
+    PREFERENCE = None
 
     def setup_method(self):
+        self.PREFERENCE = {'city': 'Des Moines', 'unit': 'metric', 'is_fahrenheit': True}
         os.environ.update({'WEATHER_APP_ID': self.APP_ID})
 
     def teardown_method(self):
@@ -30,9 +32,7 @@ class TestThermostatController:
         mock_file.assert_called()
 
     def test_get_user_temp__should_call_get_user_temperature(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
-        preference = UserPreference()
-        preference.is_fahrenheit = True
-        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = preference
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
         temp_text = 'fake response'
         mock_file.return_value = temp_text
 
@@ -50,9 +50,8 @@ class TestThermostatController:
 
     def test_get_user_temp__should_return_response_from_get_user_temperature(self, mock_user, mock_file, mock_jwt,
                                                                              mock_db, mock_weather):
-        preference = UserPreference()
-        preference.is_fahrenheit = False
-        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = preference
+        self.PREFERENCE['is_fahrenheit'] = False
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
         expected_temp = 23.45
         mock_user.return_value = expected_temp
 
@@ -67,10 +66,8 @@ class TestThermostatController:
 
     def test_get_user_temp__should_call_get_user_temperature_with_user_id(self, mock_user, mock_file, mock_jwt,
                                                                           mock_db, mock_weather):
-        preference = UserPreference()
         expected_text = 'fake text'
-        preference.is_fahrenheit = True
-        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = preference
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
         mock_file.return_value = expected_text
 
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
@@ -85,10 +82,8 @@ class TestThermostatController:
     def test_get_user_temp__should_consolidate_weather_response_with_thermostat_data(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         expected_temp = 56.3
         mock_weather.return_value = {'temp': expected_temp}
-        preference = UserPreference()
-        preference.is_fahrenheit = True
         mock_user.return_value = 23.3
-        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = preference
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
 
         actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 

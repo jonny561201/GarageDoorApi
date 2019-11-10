@@ -84,6 +84,7 @@ class TestDbIntegration:
 
             assert response['unit'] == 'imperial'
             assert response['city'] == self.city
+            assert response['is_fahrenheit'] is True
 
     def test_get_preferences_by_user__should_raise_bad_request_when_no_preferences(self):
         with pytest.raises(BadRequest):

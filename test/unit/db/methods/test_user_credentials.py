@@ -71,6 +71,15 @@ class TestUserDatabase:
 
         assert actual['city'] == city
 
+    def test_get_preferences_by_user__should_return_is_fahrenheit_preferences(self):
+        user = TestUserDatabase._create_database_user()
+        preference = TestUserDatabase._create_user_preference(user, 'Fake City', True)
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = preference
+
+        actual = self.DATABASE.get_preferences_by_user(uuid.uuid4())
+
+        assert actual['is_fahrenheit'] is True
+
     def test_get_preferences_by_user__should_throw_bad_request_when_no_preferences(self):
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = None
 
