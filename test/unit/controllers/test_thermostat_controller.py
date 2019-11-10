@@ -2,7 +2,7 @@ import os
 import uuid
 
 import jwt
-from mock import patch
+from mock import patch, ANY
 
 from svc.controllers.thermostat_controller import get_user_temp
 from svc.db.models.user_information_model import UserPreference
@@ -74,10 +74,22 @@ class TestThermostatController:
 
         mock_user.assert_called_with(expected_text, True)
 
-    def test_get_user_temp__should_call_api_requests(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+    def test_get_user_temp__should_call_api_requests_with_city(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-        mock_weather.assert_called_with('London', 'imperial', self.APP_ID)
+        mock_weather.assert_called_with('Des Moines', ANY, ANY)
+
+    def test_get_user_temp__should_call_api_requests_with_unit(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
+        get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        mock_weather.assert_called_with(ANY, 'metric', ANY)
+
+    def test_get_user_temp__should_call_api_requests_with_app_id(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        mock_weather.assert_called_with(ANY, ANY, self.APP_ID)
 
     def test_get_user_temp__should_consolidate_weather_response_with_thermostat_data(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         expected_temp = 56.3
