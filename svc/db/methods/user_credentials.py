@@ -37,7 +37,7 @@ class UserDatabase:
         preference = self.session.query(UserPreference).filter_by(user_id=user_id).first()
         if preference is None:
             raise BadRequest
-        return preference
+        return {'unit': 'imperial' if preference.is_fahrenheit else 'metric'}
 
     def get_current_sump_level_by_user(self, user_id):
         sump_level = self.session.query(DailySumpPumpLevel).filter_by(user_id=user_id).order_by(DailySumpPumpLevel.id.desc()).first()
