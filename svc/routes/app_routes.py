@@ -19,3 +19,6 @@ def app_login():
     basic_token = request.headers.get('Authorization')
     jwt_token = get_login(basic_token)
     return Response(json.dumps({'bearerToken': jwt_token.decode('UTF-8')}), status=200, headers=DEFAULT_HEADERS)
+
+
+# TODO: create set preferences page

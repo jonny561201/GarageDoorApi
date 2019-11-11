@@ -58,3 +58,9 @@ class TestGarageController:
         toggle_garage_door_state(self.JWT_TOKEN)
 
         mock_jwt.assert_called_with(self.JWT_TOKEN)
+
+    @patch('svc.controllers.garage_door_controller.toggle_garage_door')
+    def test_toggle_garage_door_state__should_call_gpio_pins(self, mock_toggle):
+        toggle_garage_door_state(self.JWT_TOKEN)
+
+        mock_toggle.assert_called()

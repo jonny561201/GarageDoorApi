@@ -20,3 +20,6 @@ def update_garage_door_state():
     bearer_token = request.headers.get('Authorization')
     updated_state = update_state(bearer_token, request.data)
     return Response(json.dumps(updated_state), status=200, headers=DEFAULT_HEADERS)
+
+
+# TODO: add endpoint to toggle state

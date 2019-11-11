@@ -1,6 +1,6 @@
 import json
 
-from svc.utilities.gpio import garage_door_status, update_garage_door
+from svc.utilities.gpio import garage_door_status, update_garage_door, toggle_garage_door
 from svc.utilities.jwt_utils import is_jwt_valid
 
 
@@ -19,3 +19,4 @@ def update_state(bearer_token, request):
 
 def toggle_garage_door_state(bearer_token):
     is_jwt_valid(bearer_token)
+    toggle_garage_door()
