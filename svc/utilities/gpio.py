@@ -28,7 +28,12 @@ def update_garage_door(requested_state):
         raise BadRequest
     return True
     # status = garage_door_status()
-    # if requested_state['garageDoorOpen'] is True and status['isGarageOpen'] is False:
+    # if requested_state['garageDoorOpen'] is True and status is False:
+    #     toggle_garage_door()
+
+
+def toggle_garage_door():
+    pass
     #     GPIO.output(OUTPUT_PIN, GPIO.LOW)
     #     time.sleep(.5)
     #     GPIO.output(OUTPUT_PIN, GPIO.HIGH)
