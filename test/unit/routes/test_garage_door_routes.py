@@ -109,3 +109,9 @@ class TestAppRoutes:
         toggle_garage_door()
 
         mock_controller.assert_called_with(self.JWT_TOKEN)
+
+    def test_toggle_garage_door__should_return_success_status_code(self, mock_request):
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        actual = toggle_garage_door()
+
+        assert actual.status_code == 200
