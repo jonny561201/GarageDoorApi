@@ -115,3 +115,10 @@ class TestAppRoutes:
         actual = toggle_garage_door()
 
         assert actual.status_code == 200
+
+    def test_toggle_garage_door__should_return_success_headers(self, mock_request):
+        expected_headers = 'text/json'
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        actual = toggle_garage_door()
+
+        assert actual.content_type == expected_headers
