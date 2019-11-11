@@ -55,3 +55,11 @@ class TestGarageDoorRoutesIntegration:
         actual = self.TEST_CLIENT.post('garageDoor/state', data=json.dumps(post_body), headers=headers)
 
         assert actual.status_code == 400
+
+    def test_toggle_garage_door__should_return_success(self):
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        headers = {'Authorization': bearer_token}
+
+        actual = self.TEST_CLIENT.get('garageDoor/toggle', headers=headers)
+
+        assert actual.status_code == 200
