@@ -2,7 +2,7 @@ from flask import Response, Blueprint
 from flask import json
 from flask import request
 
-from svc.controllers.garage_door_controller import get_status, update_state
+from svc.controllers.garage_door_controller import get_status, update_state, toggle_garage_door_state
 
 GARAGE_BLUEPRINT = Blueprint('garage_blueprint', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
@@ -23,3 +23,6 @@ def update_garage_door_state():
 
 
 # TODO: add endpoint to toggle state
+def toggle_garage_door():
+    bearer_token = request.headers.get('Authorization')
+    toggle_garage_door_state(bearer_token)

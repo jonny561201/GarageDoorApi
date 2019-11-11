@@ -6,7 +6,7 @@ from flask import json
 from mock import patch
 from werkzeug.exceptions import Unauthorized, BadRequest
 
-from svc.routes.garage_door_routes import get_garage_door_status, update_garage_door_state
+from svc.routes.garage_door_routes import get_garage_door_status, update_garage_door_state, toggle_garage_door
 
 
 @patch('svc.routes.garage_door_routes.request')
@@ -103,3 +103,9 @@ class TestAppRoutes:
         with pytest.raises(Unauthorized):
             update_garage_door_state()
 
+    @patch('svc.routes.garage_door_routes.toggle_garage_door_state')
+    def test_toggle_garage_door__should_call_controller_with_bearer_token(self, mock_controller, mock_request):
+        mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        toggle_garage_door()
+
+        mock_controller.assert_called_with(self.JWT_TOKEN)
