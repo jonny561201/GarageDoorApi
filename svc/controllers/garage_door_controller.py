@@ -15,3 +15,7 @@ def update_state(bearer_token, request):
     request_body = json.loads(request.decode('UTF-8'))
     new_state = update_garage_door(request_body)
     return {'garageDoorOpen': new_state}
+
+
+def toggle_garage_door_state(bearer_token):
+    is_jwt_valid(bearer_token)

@@ -4,7 +4,7 @@ import os
 import jwt
 from mock import patch
 
-from svc.controllers.garage_door_controller import get_status, update_state
+from svc.controllers.garage_door_controller import get_status, update_state, toggle_garage_door_state
 
 
 class TestGarageController:
@@ -52,3 +52,9 @@ class TestGarageController:
         update_state(self.JWT_TOKEN, self.REQUEST)
 
         mock_gpio.assert_called_with(expected_request)
+
+    @patch('svc.controllers.garage_door_controller.is_jwt_valid')
+    def test_toggle_garage_door_state__should_validate_bearer_token(self, mock_jwt):
+        toggle_garage_door_state(self.JWT_TOKEN)
+
+        mock_jwt.assert_called_with(self.JWT_TOKEN)
