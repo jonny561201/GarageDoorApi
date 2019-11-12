@@ -21,7 +21,7 @@ def app_login():
     return Response(json.dumps({'bearerToken': jwt_token.decode('UTF-8')}), status=200, headers=DEFAULT_HEADERS)
 
 
-# TODO: create set preferences page
+@APP_BLUEPRINT.route('/userId/<user_id>/preferences', methods=['GET'])
 def get_user_preferences_by_user_id(user_id):
     bearer_token = request.headers.get('Authorization')
     preferences = get_user_preferences(bearer_token, user_id)

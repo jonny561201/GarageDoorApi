@@ -1,5 +1,8 @@
 import base64
 import os
+import uuid
+
+import jwt
 
 from svc.manager import create_app
 
@@ -7,6 +10,7 @@ from svc.manager import create_app
 class TestAppRoutesIntegration:
     TEST_CLIENT = None
     JWT_SECRET = 'testSecret'
+    USER_ID = str(uuid.uuid4())
 
     def setup_method(self):
         flask_app = create_app('__main__')
@@ -56,3 +60,11 @@ class TestAppRoutesIntegration:
         actual = self.TEST_CLIENT.get('login', headers=headers)
 
         assert actual.status_code == 200
+
+    def test_get_user_preferences_by_user_id__should_return_401_when_unauthorized(self):
+        bearer_token = jwt.encode({}, 'bad secret', algorithm='HS256')
+        headers = {'Authorization': bearer_token}
+
+        actual = self.TEST_CLIENT.get('userId/' + self.USER_ID + '/preferences', headers=headers)
+
+        assert actual.status_code == 401
