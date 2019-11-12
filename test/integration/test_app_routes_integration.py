@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 import uuid
 
@@ -13,14 +14,26 @@ class TestAppRoutesIntegration:
     TEST_CLIENT = None
     JWT_SECRET = 'testSecret'
     USER_ID = str(uuid.uuid4())
+    CITY = 'Prague'
+    USER = None
+    PREFERENCE = None
 
     def setup_method(self):
         flask_app = create_app('__main__')
         self.TEST_CLIENT = flask_app.test_client()
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
+        self.USER = UserInformation(id=self.USER_ID, first_name='Jon', last_name='Test')
+        self.PREFERENCE = UserPreference(user_id=self.USER_ID, city=self.CITY, is_fahrenheit=True)
+
+        with UserDatabaseManager() as database:
+            database.session.add(self.USER)
+            database.session.add(self.PREFERENCE)
 
     def teardown_method(self):
         os.environ.pop('JWT_SECRET')
+        with UserDatabaseManager() as database:
+            database.session.delete(self.PREFERENCE)
+            database.session.delete(self.USER)
 
     def test_health_check__should_return_success(self):
         actual = self.TEST_CLIENT.get('healthCheck')
@@ -72,20 +85,10 @@ class TestAppRoutesIntegration:
         assert actual.status_code == 401
 
     def test_get_user_preferences_by_user_id__should_return_success_when_valid_user(self):
-        city = 'Prague'
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
-        user = UserInformation(id=self.USER_ID, first_name='Jon', last_name='Test')
-        preference = UserPreference(user_id=self.USER_ID, city=city, is_fahrenheit=True)
-
-        with UserDatabaseManager() as database:
-            database.session.add(user)
-            database.session.add(preference)
 
         actual = self.TEST_CLIENT.get('userId/' + self.USER_ID + '/preferences', headers=headers)
 
         assert actual.status_code == 200
-
-        with UserDatabaseManager() as database:
-            database.session.delete(preference)
-            database.session.delete(user)
+        assert json.loads(actual.data).get('city') == self.CITY
