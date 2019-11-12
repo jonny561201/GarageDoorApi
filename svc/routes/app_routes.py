@@ -25,4 +25,4 @@ def app_login():
 def get_user_preferences_by_user_id(user_id):
     bearer_token = request.headers.get('Authorization')
     preferences = get_user_preferences(bearer_token, user_id)
-    return Response(json.dumps(preferences))
+    return Response(json.dumps(preferences), status=200)

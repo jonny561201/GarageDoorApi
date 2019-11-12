@@ -67,3 +67,11 @@ class TestAppRoutes:
         actual = get_user_preferences_by_user_id(self.USER_ID)
 
         assert json.loads(actual.data) == expected_response
+
+    @patch('svc.routes.app_routes.get_user_preferences')
+    def test_get_user_preferences_by_user_id__should_return_success_status_code(self, mock_controller, mock_requests):
+        mock_controller.return_value = {}
+
+        actual = get_user_preferences_by_user_id(self.USER_ID)
+
+        assert actual.status_code == 200
