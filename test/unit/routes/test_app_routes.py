@@ -1,15 +1,15 @@
 import base64
 import json
 
-from mock import patch
+from mock import patch, ANY
 
-from svc.routes.app_routes import app_login
-
+from svc.routes.app_routes import app_login, get_user_preferences_by_user_id
 
 
 @patch('svc.routes.app_routes.request')
 class TestAppRoutes:
     USER = 'user_name'
+    USER_ID = '123bac34'
     PWORD = 'password'
     FAKE_JWT_TOKEN = 'fakeJwtToken'.encode('UTF-8')
     CREDS = ('%s:%s' % (USER, PWORD)).encode()
@@ -43,3 +43,9 @@ class TestAppRoutes:
 
         expected_bearer = "Basic " + self.ENCODED_CREDS
         mock_login.assert_called_with(expected_bearer)
+
+    @patch('svc.routes.app_routes.get_user_preferences')
+    def test_get_user_preferences_by_user_id__should_call_app_controller(self, mock_controller, mock_requests):
+        get_user_preferences_by_user_id(self.USER_ID)
+
+        mock_controller.assert_called_with(ANY, self.USER_ID)

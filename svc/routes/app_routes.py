@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, request, Response
 
-from svc.controllers.app_controller import get_login
+from svc.controllers.app_controller import get_login, get_user_preferences
 
 APP_BLUEPRINT = Blueprint('app_routes', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
@@ -22,3 +22,5 @@ def app_login():
 
 
 # TODO: create set preferences page
+def get_user_preferences_by_user_id(user_id):
+    get_user_preferences(None, user_id)
