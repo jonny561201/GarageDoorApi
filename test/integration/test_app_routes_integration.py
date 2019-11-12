@@ -4,6 +4,8 @@ import uuid
 
 import jwt
 
+from svc.db.methods.user_credentials import UserDatabaseManager
+from svc.db.models.user_information_model import UserInformation, UserPreference
 from svc.manager import create_app
 
 
@@ -51,7 +53,7 @@ class TestAppRoutesIntegration:
 
         assert actual.status_code == 401
 
-    def test_garage_door_login__should_return_200_when_user_valid(self):
+    def test_garage_door_login__should_return_success_when_user_valid(self):
         user_name = 'Jonny561201'
         user_pass = 'password'
         creds = "%s:%s" % (user_name, user_pass)
@@ -68,3 +70,22 @@ class TestAppRoutesIntegration:
         actual = self.TEST_CLIENT.get('userId/' + self.USER_ID + '/preferences', headers=headers)
 
         assert actual.status_code == 401
+
+    def test_get_user_preferences_by_user_id__should_return_success_when_valid_user(self):
+        city = 'Prague'
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        headers = {'Authorization': bearer_token}
+        user = UserInformation(id=self.USER_ID, first_name='Jon', last_name='Test')
+        preference = UserPreference(user_id=self.USER_ID, city=city, is_fahrenheit=True)
+
+        with UserDatabaseManager() as database:
+            database.session.add(user)
+            database.session.add(preference)
+
+        actual = self.TEST_CLIENT.get('userId/' + self.USER_ID + '/preferences', headers=headers)
+
+        assert actual.status_code == 200
+
+        with UserDatabaseManager() as database:
+            database.session.delete(preference)
+            database.session.delete(user)
