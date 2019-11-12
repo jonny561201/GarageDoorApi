@@ -45,15 +45,25 @@ class TestAppRoutes:
         mock_login.assert_called_with(expected_bearer)
 
     @patch('svc.routes.app_routes.get_user_preferences')
-    def test_get_user_preferences_by_user_id__should_call_app_controller(self, mock_controller, mock_requests):
+    def test_get_user_preferences_by_user_id__should_call_app_controller_with_user_id(self, mock_controller, mock_requests):
+        mock_controller.return_value = {}
         get_user_preferences_by_user_id(self.USER_ID)
 
         mock_controller.assert_called_with(ANY, self.USER_ID)
 
     @patch('svc.routes.app_routes.get_user_preferences')
-    def test_get_user_preferences_by_user_id__should_call_app_controller(self, mock_controller, mock_requests):
+    def test_get_user_preferences_by_user_id__should_call_app_controller_with_jwt(self, mock_controller, mock_requests):
         mock_requests.headers = {'Authorization': self.FAKE_JWT_TOKEN}
-
+        mock_controller.return_value = {}
         get_user_preferences_by_user_id(self.USER_ID)
 
         mock_controller.assert_called_with(self.FAKE_JWT_TOKEN, ANY)
+
+    @patch('svc.routes.app_routes.get_user_preferences')
+    def test_get_user_preferences_by_user_id__should_return_preference_response(self, mock_controller, mock_requests):
+        expected_response = {'unit': 'metric', 'city': 'London'}
+        mock_controller.return_value = expected_response
+
+        actual = get_user_preferences_by_user_id(self.USER_ID)
+
+        assert json.loads(actual.data) == expected_response
