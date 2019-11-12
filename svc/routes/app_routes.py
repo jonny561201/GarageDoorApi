@@ -23,4 +23,5 @@ def app_login():
 
 # TODO: create set preferences page
 def get_user_preferences_by_user_id(user_id):
-    get_user_preferences(None, user_id)
+    bearer_token = request.headers.get('Authorization')
+    get_user_preferences(bearer_token, user_id)
