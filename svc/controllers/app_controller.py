@@ -13,4 +13,4 @@ def get_login(basic_token):
 def get_user_preferences(bearer_token, user_id):
     is_jwt_valid(bearer_token)
     with UserDatabaseManager() as database:
-        database.get_preferences_by_user(user_id)
+        return database.get_preferences_by_user(user_id)

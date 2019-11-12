@@ -79,3 +79,12 @@ class TestLoginController:
         get_user_preferences(self.JWT_SECRET, self.USER_ID)
 
         mock_db.return_value.__enter__.return_value.get_preferences_by_user.assert_called_with(self.USER_ID)
+
+    @patch('svc.controllers.app_controller.is_jwt_valid')
+    def test_get_user_preferences__should_return_preferences_response(self, mock_jwt, mock_db, mock_creds):
+        expected_preferences = {'unit': 'imperial', 'city': 'Des Moines'}
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = expected_preferences
+
+        actual = get_user_preferences(self.JWT_SECRET, self.USER_ID)
+
+        assert actual == expected_preferences
