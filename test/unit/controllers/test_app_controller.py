@@ -16,6 +16,7 @@ class TestLoginController:
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')
     USER = 'user_name'
     PWORD = 'password'
+    USER_ID = 'fake_user_id'
 
     def setup_method(self, _):
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
@@ -53,12 +54,12 @@ class TestLoginController:
         assert actual == self.JWT_TOKEN
 
     @patch('svc.utilities.jwt_utils.datetime')
-    def test_get_login__should_respond_with_jwt_token(self, mock_datetime, mock_credentials, mock_extract):
+    def test_get_login__should_respond_with_jwt_token(self, mock_datetime, mock_db, mock_extract):
         mock_extract.return_value = (self.USER, self.PWORD)
         now = datetime.now(tz=pytz.timezone('US/Central'))
         mock_datetime.now.return_value = now
         user_id = uuid.uuid4().hex
-        mock_credentials.return_value.__enter__.return_value.validate_credentials.return_value = user_id
+        mock_db.return_value.__enter__.return_value.validate_credentials.return_value = user_id
         expected_expire = now + timedelta(hours=2)
         truncated_date = (str(expected_expire.timestamp() * 1000))[:10]
         expected_token = {'user_id': user_id, 'exp': int(truncated_date)}
@@ -69,8 +70,12 @@ class TestLoginController:
 
     @patch('svc.controllers.app_controller.is_jwt_valid')
     def test_get_user_preferences__should_validate_bearer_token(self, mock_jwt, mock_db, mock_creds):
-        user_id = 'fakeUserId'
-        bearer_token = 'fake bearer token'
-        get_user_preferences(bearer_token, user_id)
+        get_user_preferences(self.JWT_SECRET, self.USER_ID)
 
-        mock_jwt.assert_called_with(bearer_token)
+        mock_jwt.assert_called_with(self.JWT_SECRET)
+
+    @patch('svc.controllers.app_controller.is_jwt_valid')
+    def test_get_user_preferences__should_call_get_preferences_by_user(self, mock_jwt, mock_db, mock_creds):
+        get_user_preferences(self.JWT_SECRET, self.USER_ID)
+
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.assert_called_with(self.USER_ID)
