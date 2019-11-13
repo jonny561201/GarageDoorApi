@@ -66,7 +66,6 @@ class UserDatabase:
     def insert_preferences_by_user(self, user_id, preference_info):
         is_fahrenheit = preference_info.get('isFahrenheit')
         city = preference_info.get('city')
-        unit = preference_info.get('unit')
         if len(preference_info) == 0:
             raise BadRequest
 

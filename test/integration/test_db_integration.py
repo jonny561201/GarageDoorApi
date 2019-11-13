@@ -83,14 +83,13 @@ class TestDbPreferenceIntegration:
 
     def test_insert_preferences_by_user__should_insert_valid_preferences(self):
         city = 'Vienna'
-        preference_info = {'city': city, 'isFahrenheit': True, 'unit': self.UNIT}
+        preference_info = {'city': city, 'isFahrenheit': True}
         with UserDatabaseManager() as database:
             database.insert_preferences_by_user(self.USER_ID, preference_info)
             actual = database.session.query(UserPreference).filter_by(user_id=self.USER_ID).first()
 
             assert actual.city == city
             assert actual.is_fahrenheit is True
-            # assert actual.unit == self.UNIT
 
 
 class TestDbSumpIntegration:
