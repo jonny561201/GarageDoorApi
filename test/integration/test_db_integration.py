@@ -49,29 +49,30 @@ class TestDbValidateIntegration:
 
 
 class TestDbPreferenceIntegration:
-    user_id = str(uuid.uuid4())
-    city = 'Praha'
-    user = None
-    user_preference = None
+    USER_ID = str(uuid.uuid4())
+    CITY = 'Praha'
+    UNIT = 'metric'
+    USER = None
+    USER_PREFERENCES = None
 
     def setup_method(self):
-        self.user = UserInformation(id=self.user_id, first_name='Jon', last_name='Test')
-        self.user_preference = UserPreference(user_id=self.user_id, is_fahrenheit=True, city=self.city)
+        self.USER = UserInformation(id=self.USER_ID, first_name='Jon', last_name='Test')
+        self.USER_PREFERENCES = UserPreference(user_id=self.USER_ID, is_fahrenheit=True, city=self.CITY)
         with UserDatabaseManager() as database:
-            database.session.add(self.user)
-            database.session.add(self.user_preference)
+            database.session.add(self.USER)
+            database.session.add(self.USER_PREFERENCES)
 
     def teardown_method(self):
         with UserDatabaseManager() as database:
-            database.session.delete(self.user_preference)
-            database.session.delete(self.user)
+            database.session.delete(self.USER_PREFERENCES)
+            database.session.delete(self.USER)
 
     def test_get_preferences_by_user__should_return_preferences_for_valid_user(self):
         with UserDatabaseManager() as database:
-            response = database.get_preferences_by_user(self.user_id)
+            response = database.get_preferences_by_user(self.USER_ID)
 
             assert response['unit'] == 'imperial'
-            assert response['city'] == self.city
+            assert response['city'] == self.CITY
             assert response['is_fahrenheit'] is True
 
     def test_get_preferences_by_user__should_raise_bad_request_when_no_preferences(self):
@@ -79,6 +80,17 @@ class TestDbPreferenceIntegration:
             with UserDatabaseManager() as database:
                 bad_user_id = str(uuid.uuid4())
                 database.get_preferences_by_user(bad_user_id)
+
+    def test_insert_preferences_by_user__should_insert_valid_preferences(self):
+        city = 'Vienna'
+        preference_info = {'city': city, 'isFahrenheit': True, 'unit': self.UNIT}
+        with UserDatabaseManager() as database:
+            database.insert_preferences_by_user(self.USER_ID, preference_info)
+            actual = database.session.query(UserPreference).filter_by(user_id=self.USER_ID).first()
+
+            assert actual.city == city
+            assert actual.is_fahrenheit is True
+            # assert actual.unit == self.UNIT
 
 
 class TestDbSumpIntegration:

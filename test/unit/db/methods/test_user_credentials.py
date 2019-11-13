@@ -86,11 +86,12 @@ class TestUserDatabase:
         with pytest.raises(BadRequest):
             self.DATABASE.get_preferences_by_user(uuid.uuid4().hex)
 
-    def test_insert_preferences_by_user__should_call_add_function(self):
+    def test_insert_preferences_by_user__should_call_query(self):
+        preference_info = {'isFahrenheit': True, 'city': 'London'}
         user_id = str(uuid.uuid4())
-        self.DATABASE.insert_preferences_by_user(user_id)
+        self.DATABASE.insert_preferences_by_user(user_id, preference_info)
 
-        self.SESSION.add.assert_called()
+        self.SESSION.query.return_value.filter_by.assert_called_with(user_id=user_id)
 
     def test_get_current_sump_level_by_user__should_return_sump_levels(self):
         expected_distance = 43.9
