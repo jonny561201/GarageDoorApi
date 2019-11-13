@@ -102,3 +102,9 @@ class TestAppRoutes:
         actual = update_user_preferences_by_user_id(self.USER_ID)
 
         assert actual.status_code == 200
+
+    @patch('svc.routes.app_routes.save_user_preferences')
+    def test_update_user_preferences_by_user_id__should_return_success_status_code(self, mock_controller, mock_requests):
+        actual = update_user_preferences_by_user_id(self.USER_ID)
+
+        assert actual.content_type == 'text/json'

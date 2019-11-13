@@ -32,4 +32,4 @@ def update_user_preferences_by_user_id(user_id):
     bearer_token = request.headers.get('Authorization')
     request_data = request.data
     save_user_preferences(bearer_token, user_id, request_data)
-    return Response(status=200)
+    return Response(status=200, headers=DEFAULT_HEADERS)
