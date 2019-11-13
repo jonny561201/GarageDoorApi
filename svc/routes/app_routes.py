@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint, request, Response
 
-from svc.controllers.app_controller import get_login, get_user_preferences
+from svc.controllers.app_controller import get_login, get_user_preferences, save_user_preferences
 
 APP_BLUEPRINT = Blueprint('app_routes', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
@@ -26,3 +26,7 @@ def get_user_preferences_by_user_id(user_id):
     bearer_token = request.headers.get('Authorization')
     preferences = get_user_preferences(bearer_token, user_id)
     return Response(json.dumps(preferences), status=200)
+
+
+def insert_user_preferences_by_user_id(user_id):
+    save_user_preferences(None, user_id, None)

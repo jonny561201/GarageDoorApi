@@ -3,7 +3,7 @@ import json
 
 from mock import patch, ANY
 
-from svc.routes.app_routes import app_login, get_user_preferences_by_user_id
+from svc.routes.app_routes import app_login, get_user_preferences_by_user_id, insert_user_preferences_by_user_id
 
 
 @patch('svc.routes.app_routes.request')
@@ -52,7 +52,7 @@ class TestAppRoutes:
         mock_controller.assert_called_with(ANY, self.USER_ID)
 
     @patch('svc.routes.app_routes.get_user_preferences')
-    def test_get_user_preferences_by_user_id__should_call_app_controller_with_jwt(self, mock_controller, mock_requests):
+    def test_get_user_preferences_by_user_id__should_call_app_controller_with_bearer_token(self, mock_controller, mock_requests):
         mock_requests.headers = {'Authorization': self.FAKE_JWT_TOKEN}
         mock_controller.return_value = {}
         get_user_preferences_by_user_id(self.USER_ID)
@@ -75,3 +75,9 @@ class TestAppRoutes:
         actual = get_user_preferences_by_user_id(self.USER_ID)
 
         assert actual.status_code == 200
+
+    @patch('svc.routes.app_routes.save_user_preferences')
+    def test_insert_user_preferences_by_user_id__should_call_app_controller_with_user_id(self, mock_controller, mock_requests):
+        insert_user_preferences_by_user_id(self.USER_ID)
+
+        mock_controller.assert_called_with(ANY, self.USER_ID, ANY)
