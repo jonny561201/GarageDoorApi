@@ -1,3 +1,4 @@
+import json
 import os
 import uuid
 from datetime import datetime, timedelta
@@ -89,24 +90,25 @@ class TestLoginController:
 
     def test_save_user_preferences__should_validate_bearer_token(self, mock_jwt, mock_db, mock_creds):
         bearer_token = 'fakeBearerToken'
-        user_preferences = {}
+        request_data = json.dumps({}).encode()
 
-        save_user_preferences(bearer_token, self.USER_ID, user_preferences)
+        save_user_preferences(bearer_token, self.USER_ID, request_data)
 
         mock_jwt.assert_called_with(bearer_token)
 
     def test_save_user_preferences__should_call_insert_preferences_by_user_with_user_id(self, mock_jwt, mock_db, mock_creds):
         bearer_token = 'fakeBearerToken'
-        user_preferences = {}
+        request_data = json.dumps({}).encode()
 
-        save_user_preferences(bearer_token, self.USER_ID, user_preferences)
+        save_user_preferences(bearer_token, self.USER_ID, request_data)
 
         mock_db.return_value.__enter__.return_value.insert_preferences_by_user.assert_called_with(self.USER_ID, ANY)
 
     def test_save_user_preferences__should_call_insert_preferences_by_user_with_user_info(self, mock_jwt, mock_db, mock_creds):
         bearer_token = 'fakeBearerToken'
-        user_preferences = {}
+        user_preferences = {'city': 'Berlin'}
+        request_data = json.dumps(user_preferences).encode('UTF-8')
 
-        save_user_preferences(bearer_token, self.USER_ID, user_preferences)
+        save_user_preferences(bearer_token, self.USER_ID, request_data)
 
         mock_db.return_value.__enter__.return_value.insert_preferences_by_user.assert_called_with(ANY, user_preferences)
