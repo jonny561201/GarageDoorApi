@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 import jwt
 import pytz
-from mock import patch
+from mock import patch, ANY
 
 from svc.controllers.app_controller import get_login, get_user_preferences, save_user_preferences
 
@@ -95,10 +95,18 @@ class TestLoginController:
 
         mock_jwt.assert_called_with(bearer_token)
 
-    def test_save_user_preferences__should_call_insert_preferences_by_user(self, mock_jwt, mock_db, mock_creds):
+    def test_save_user_preferences__should_call_insert_preferences_by_user_with_user_id(self, mock_jwt, mock_db, mock_creds):
         bearer_token = 'fakeBearerToken'
         user_preferences = {}
 
         save_user_preferences(bearer_token, self.USER_ID, user_preferences)
 
-        mock_db.return_value.__enter__.return_value.insert_preferences_by_user.assert_called_with(self.USER_ID, user_preferences)
+        mock_db.return_value.__enter__.return_value.insert_preferences_by_user.assert_called_with(self.USER_ID, ANY)
+
+    def test_save_user_preferences__should_call_insert_preferences_by_user_with_user_info(self, mock_jwt, mock_db, mock_creds):
+        bearer_token = 'fakeBearerToken'
+        user_preferences = {}
+
+        save_user_preferences(bearer_token, self.USER_ID, user_preferences)
+
+        mock_db.return_value.__enter__.return_value.insert_preferences_by_user.assert_called_with(ANY, user_preferences)
