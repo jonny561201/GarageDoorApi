@@ -65,7 +65,8 @@ class UserDatabase:
 
     def insert_preferences_by_user(self, user_id, preference_info):
         is_fahrenheit = preference_info['isFahrenheit']
-        city = preference_info['city']
+        city = preference_info.get('city')
+        unit = preference_info.get('unit')
 
         record = self.session.query(UserPreference).filter_by(user_id=user_id).first()
         record.is_fahrenheit = is_fahrenheit
