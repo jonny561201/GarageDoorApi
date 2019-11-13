@@ -100,3 +100,13 @@ class TestAppRoutesIntegration:
         actual = self.TEST_CLIENT.post('userId/' + self.USER_ID + '/preferences/update', headers=headers)
 
         assert actual.status_code == 401
+
+    def test_update_user_preferences_by_user_id__should_successfully_update_user(self):
+        expected_city = 'Shannon'
+        post_body = json.dumps({'city': expected_city, 'isFahrenheit': False})
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        headers = {'Authorization': bearer_token}
+
+        actual = self.TEST_CLIENT.post('userId/' + self.USER_ID + '/preferences/update', data=post_body, headers=headers)
+
+        assert actual.status_code == 200
