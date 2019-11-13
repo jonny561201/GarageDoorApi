@@ -92,3 +92,11 @@ class TestAppRoutesIntegration:
 
         assert actual.status_code == 200
         assert json.loads(actual.data).get('city') == self.CITY
+
+    def test_update_user_preferences_by_user_id__should_return_401_when_unauthorized(self):
+        bearer_token = jwt.encode({}, 'bad secret', algorithm='HS256')
+        headers = {'Authorization': bearer_token}
+
+        actual = self.TEST_CLIENT.post('userId/' + self.USER_ID + '/preferences/update', headers=headers)
+
+        assert actual.status_code == 401
