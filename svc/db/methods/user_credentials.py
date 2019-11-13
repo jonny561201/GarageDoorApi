@@ -40,6 +40,16 @@ class UserDatabase:
                 'city': preference.city,
                 'is_fahrenheit': preference.is_fahrenheit}
 
+    def insert_preferences_by_user(self, user_id, preference_info):
+        is_fahrenheit = preference_info.get('isFahrenheit')
+        city = preference_info.get('city')
+        if len(preference_info) == 0:
+            raise BadRequest
+
+        record = self.session.query(UserPreference).filter_by(user_id=user_id).first()
+        record.is_fahrenheit = is_fahrenheit
+        record.city = city
+
     def get_current_sump_level_by_user(self, user_id):
         sump_level = self.session.query(DailySumpPumpLevel).filter_by(user_id=user_id).order_by(DailySumpPumpLevel.id.desc()).first()
         if sump_level is None:
@@ -62,13 +72,3 @@ class UserDatabase:
             self.session.add(current_depth)
         except (TypeError, KeyError):
             raise BadRequest
-
-    def insert_preferences_by_user(self, user_id, preference_info):
-        is_fahrenheit = preference_info.get('isFahrenheit')
-        city = preference_info.get('city')
-        if len(preference_info) == 0:
-            raise BadRequest
-
-        record = self.session.query(UserPreference).filter_by(user_id=user_id).first()
-        record.is_fahrenheit = is_fahrenheit
-        record.city = city

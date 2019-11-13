@@ -86,6 +86,7 @@ class TestDbPreferenceIntegration:
         preference_info = {'city': city, 'isFahrenheit': True}
         with UserDatabaseManager() as database:
             database.insert_preferences_by_user(self.USER_ID, preference_info)
+            database.session.commit()
             actual = database.session.query(UserPreference).filter_by(user_id=self.USER_ID).first()
 
             assert actual.city == city
