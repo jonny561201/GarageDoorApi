@@ -3,7 +3,7 @@ import json
 
 from mock import patch, ANY
 
-from svc.routes.app_routes import app_login, get_user_preferences_by_user_id, insert_user_preferences_by_user_id
+from svc.routes.app_routes import app_login, get_user_preferences_by_user_id, update_user_preferences_by_user_id
 
 
 @patch('svc.routes.app_routes.request')
@@ -77,23 +77,28 @@ class TestAppRoutes:
         assert actual.status_code == 200
 
     @patch('svc.routes.app_routes.save_user_preferences')
-    def test_insert_user_preferences_by_user_id__should_call_app_controller_with_user_id(self, mock_controller, mock_requests):
-        insert_user_preferences_by_user_id(self.USER_ID)
+    def test_update_user_preferences_by_user_id__should_call_app_controller_with_user_id(self, mock_controller, mock_requests):
+        update_user_preferences_by_user_id(self.USER_ID)
 
         mock_controller.assert_called_with(ANY, self.USER_ID, ANY)
 
     @patch('svc.routes.app_routes.save_user_preferences')
-    def test_insert_user_preferences_by_user_id__should_call_app_controller_with_bearer_token(self, mock_controller, mock_requests):
+    def test_update_user_preferences_by_user_id__should_call_app_controller_with_bearer_token(self, mock_controller, mock_requests):
         mock_requests.headers = {'Authorization': self.FAKE_JWT_TOKEN}
-        insert_user_preferences_by_user_id(self.USER_ID)
+        update_user_preferences_by_user_id(self.USER_ID)
 
         mock_controller.assert_called_with(self.FAKE_JWT_TOKEN, ANY, ANY)
 
     @patch('svc.routes.app_routes.save_user_preferences')
-    def test_insert_user_preferences_by_user_id__should_call_app_controller_with_request_data(self, mock_controller, mock_requests):
+    def test_update_user_preferences_by_user_id__should_call_app_controller_with_request_data(self, mock_controller, mock_requests):
         expected_data = json.dumps({}).encode()
         mock_requests.data = expected_data
-        mock_requests.headers = {'Authorization': self.FAKE_JWT_TOKEN}
-        insert_user_preferences_by_user_id(self.USER_ID)
+        update_user_preferences_by_user_id(self.USER_ID)
 
         mock_controller.assert_called_with(ANY, ANY, expected_data)
+
+    @patch('svc.routes.app_routes.save_user_preferences')
+    def test_update_user_preferences_by_user_id__should_return_success_status_code(self, mock_controller, mock_requests):
+        actual = update_user_preferences_by_user_id(self.USER_ID)
+
+        assert actual.status_code == 200
