@@ -30,4 +30,5 @@ def get_user_preferences_by_user_id(user_id):
 
 def insert_user_preferences_by_user_id(user_id):
     bearer_token = request.headers.get('Authorization')
-    save_user_preferences(bearer_token, user_id, None)
+    request_data = request.data
+    save_user_preferences(bearer_token, user_id, request_data)

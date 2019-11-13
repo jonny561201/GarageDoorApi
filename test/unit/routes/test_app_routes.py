@@ -88,3 +88,12 @@ class TestAppRoutes:
         insert_user_preferences_by_user_id(self.USER_ID)
 
         mock_controller.assert_called_with(self.FAKE_JWT_TOKEN, ANY, ANY)
+
+    @patch('svc.routes.app_routes.save_user_preferences')
+    def test_insert_user_preferences_by_user_id__should_call_app_controller_with_request_data(self, mock_controller, mock_requests):
+        expected_data = json.dumps({}).encode()
+        mock_requests.data = expected_data
+        mock_requests.headers = {'Authorization': self.FAKE_JWT_TOKEN}
+        insert_user_preferences_by_user_id(self.USER_ID)
+
+        mock_controller.assert_called_with(ANY, ANY, expected_data)
