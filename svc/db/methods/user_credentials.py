@@ -62,3 +62,6 @@ class UserDatabase:
             self.session.add(current_depth)
         except (TypeError, KeyError):
             raise BadRequest
+
+    def insert_preferences_by_user(self, user_id):
+        self.session.add()
