@@ -40,6 +40,7 @@ class UserDatabase:
                 'city': preference.city,
                 'is_fahrenheit': preference.is_fahrenheit}
 
+# TODO: make sure to validate properties have values before updating database
     def insert_preferences_by_user(self, user_id, preference_info):
         is_fahrenheit = preference_info.get('isFahrenheit')
         city = preference_info.get('city')
