@@ -16,5 +16,7 @@ def get_user_preferences(bearer_token, user_id):
         return database.get_preferences_by_user(user_id)
 
 
-def save_user_preferences(bearer_token, user_id):
+def save_user_preferences(bearer_token, user_id, user_preferences):
     is_jwt_valid(bearer_token)
+    with UserDatabaseManager() as database:
+        database.insert_preferences_by_user(user_id, user_preferences)
