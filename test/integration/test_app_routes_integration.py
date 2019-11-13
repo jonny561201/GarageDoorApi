@@ -110,3 +110,6 @@ class TestAppRoutesIntegration:
         actual = self.TEST_CLIENT.post('userId/' + self.USER_ID + '/preferences/update', data=post_body, headers=headers)
 
         assert actual.status_code == 200
+        with UserDatabaseManager() as database:
+            preference = database.session.query(UserPreference).filter_by(user_id=self.USER_ID).first()
+            assert preference.city == expected_city
