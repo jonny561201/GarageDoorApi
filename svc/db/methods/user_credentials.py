@@ -40,7 +40,6 @@ class UserDatabase:
                 'city': preference.city,
                 'is_fahrenheit': preference.is_fahrenheit}
 
-# TODO: make sure to validate properties have values before updating database
     def insert_preferences_by_user(self, user_id, preference_info):
         is_fahrenheit = preference_info.get('isFahrenheit')
         city = preference_info.get('city')
@@ -49,7 +48,7 @@ class UserDatabase:
 
         record = self.session.query(UserPreference).filter_by(user_id=user_id).first()
         record.is_fahrenheit = is_fahrenheit
-        record.city = city
+        record.city = city if city is not None else record.city
 
     def get_current_sump_level_by_user(self, user_id):
         sump_level = self.session.query(DailySumpPumpLevel).filter_by(user_id=user_id).order_by(DailySumpPumpLevel.id.desc()).first()
