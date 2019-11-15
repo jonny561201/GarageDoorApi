@@ -102,6 +102,17 @@ class TestDbPreferenceIntegration:
             assert actual.city == self.CITY
             assert actual.is_fahrenheit is False
 
+    def test_insert_preferences_by_user__should_not_nullify_is_fahrenheit_when_missing(self):
+        city = 'Lisbon'
+        preference_info = {'city': city}
+        with UserDatabaseManager() as database:
+            database.insert_preferences_by_user(self.USER_ID, preference_info)
+
+            actual = database.session.query(UserPreference).filter_by(user_id=self.USER_ID).first()
+
+            assert actual.city == city
+            assert actual.is_fahrenheit is True
+
 
 class TestDbSumpIntegration:
 

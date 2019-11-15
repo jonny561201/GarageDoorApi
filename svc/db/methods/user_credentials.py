@@ -47,7 +47,7 @@ class UserDatabase:
             raise BadRequest
 
         record = self.session.query(UserPreference).filter_by(user_id=user_id).first()
-        record.is_fahrenheit = is_fahrenheit
+        record.is_fahrenheit = is_fahrenheit if is_fahrenheit is not None else record.is_fahrenheit
         record.city = city if city is not None else record.city
 
     def get_current_sump_level_by_user(self, user_id):
