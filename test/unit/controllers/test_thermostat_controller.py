@@ -5,10 +5,9 @@ import jwt
 from mock import patch, ANY
 
 from svc.controllers.thermostat_controller import get_user_temp
-from svc.db.models.user_information_model import UserPreference
 
 
-@patch('svc.controllers.thermostat_controller.get_weather_by_city')
+@patch('svc.controllers.thermostat_controller.get_weather')
 @patch('svc.controllers.thermostat_controller.UserDatabaseManager')
 @patch('svc.controllers.thermostat_controller.is_jwt_valid')
 @patch('svc.controllers.thermostat_controller.read_temperature_file')
