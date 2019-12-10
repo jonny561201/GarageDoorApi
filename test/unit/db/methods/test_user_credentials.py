@@ -59,7 +59,16 @@ class TestUserDatabase:
 
         actual = self.DATABASE.get_preferences_by_user(uuid.uuid4())
 
-        assert actual['unit'] is 'metric'
+        assert actual['unit'] is 'celsius'
+
+    def test_get_preferences_by_user__should_return_user_temp_preferences_with_fahrenheit(self):
+        user = TestUserDatabase._create_database_user()
+        preference = TestUserDatabase._create_user_preference(user, is_fahrenheit=True)
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = preference
+
+        actual = self.DATABASE.get_preferences_by_user(uuid.uuid4())
+
+        assert actual['unit'] is 'fahrenheit'
 
     def test_get_preferences_by_user__should_return_user_city_preferences(self):
         city = 'London'
