@@ -107,6 +107,15 @@ class TestUserDatabase:
 
         assert actual['measure_unit'] == 'imperial'
 
+    def test_get_preferences_by_user__should_return_measure_unit_preferences_for_metric(self):
+        user = TestUserDatabase._create_database_user()
+        preference = TestUserDatabase._create_user_preference(user, 'Fake City', True, False)
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = preference
+
+        actual = self.DATABASE.get_preferences_by_user(uuid.uuid4())
+
+        assert actual['measure_unit'] == 'metric'
+
     def test_get_preferences_by_user__should_throw_bad_request_when_no_preferences(self):
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = None
 
