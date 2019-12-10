@@ -38,7 +38,8 @@ class UserDatabase:
             raise BadRequest
         return {'unit': 'fahrenheit' if preference.is_fahrenheit else 'celsius',
                 'city': preference.city,
-                'is_fahrenheit': preference.is_fahrenheit}
+                'is_fahrenheit': preference.is_fahrenheit,
+                'is_imperial': preference.is_imperial}
 
     def insert_preferences_by_user(self, user_id, preference_info):
         is_fahrenheit = preference_info.get('isFahrenheit')

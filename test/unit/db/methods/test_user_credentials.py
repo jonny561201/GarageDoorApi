@@ -89,6 +89,15 @@ class TestUserDatabase:
 
         assert actual['is_fahrenheit'] is True
 
+    def test_get_preferences_by_user__should_return_is_imperial_preferences(self):
+        user = TestUserDatabase._create_database_user()
+        preference = TestUserDatabase._create_user_preference(user, 'Fake City', True, True)
+        self.SESSION.query.return_value.filter_by.return_value.first.return_value = preference
+
+        actual = self.DATABASE.get_preferences_by_user(uuid.uuid4())
+
+        assert actual['is_imperial'] is True
+
     def test_get_preferences_by_user__should_throw_bad_request_when_no_preferences(self):
         self.SESSION.query.return_value.filter_by.return_value.first.return_value = None
 
@@ -175,11 +184,12 @@ class TestUserDatabase:
             self.DATABASE.insert_current_sump_level(user_id, depth_info)
 
     @staticmethod
-    def _create_user_preference(user, city='Moline', is_fahrenheit=False):
+    def _create_user_preference(user, city='Moline', is_fahrenheit=False, is_imperial=False):
         preference = UserPreference()
         preference.user = user
         preference.city = city
         preference.is_fahrenheit = is_fahrenheit
+        preference.is_imperial = is_imperial
 
         return preference
 
