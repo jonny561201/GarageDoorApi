@@ -19,7 +19,7 @@ class TestThermostatController:
     PREFERENCE = None
 
     def setup_method(self):
-        self.PREFERENCE = {'city': 'Des Moines', 'unit': 'metric', 'is_fahrenheit': True}
+        self.PREFERENCE = {'city': 'Des Moines', 'temp_unit': 'metric', 'is_fahrenheit': True}
         os.environ.update({'WEATHER_APP_ID': self.APP_ID})
 
     def teardown_method(self):

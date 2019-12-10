@@ -23,7 +23,7 @@ class TestAppRoutesIntegration:
         self.TEST_CLIENT = flask_app.test_client()
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
         self.USER = UserInformation(id=self.USER_ID, first_name='Jon', last_name='Test')
-        self.PREFERENCE = UserPreference(user_id=self.USER_ID, city=self.CITY, is_fahrenheit=True)
+        self.PREFERENCE = UserPreference(user_id=self.USER_ID, city=self.CITY, is_fahrenheit=True, is_imperial=True)
 
         with UserDatabaseManager() as database:
             database.session.add(self.USER)
@@ -41,12 +41,12 @@ class TestAppRoutesIntegration:
         assert actual.status_code == 200
         assert actual.data.decode('UTF-8') == 'Success'
 
-    def test_garage_door_login__should_return_400_when_no_header(self):
+    def test_login__should_return_400_when_no_header(self):
         actual = self.TEST_CLIENT.get('login')
 
         assert actual.status_code == 400
 
-    def test_garage_door_login__should_return_401_when_invalid_user(self):
+    def test_login__should_return_401_when_invalid_user(self):
         user_name = 'not_real_user'
         user_pass = 'wrongPass'
         creds = "%s:%s" % (user_name, user_pass)
@@ -56,7 +56,7 @@ class TestAppRoutesIntegration:
 
         assert actual.status_code == 401
 
-    def test_garage_door_login__should_return_401_when_invalid_password(self):
+    def test_login__should_return_401_when_invalid_password(self):
         user_name = 'Jonny561201'
         user_pass = 'wrongPass'
         creds = "%s:%s" % (user_name, user_pass)
@@ -66,7 +66,7 @@ class TestAppRoutesIntegration:
 
         assert actual.status_code == 401
 
-    def test_garage_door_login__should_return_success_when_user_valid(self):
+    def test_login__should_return_success_when_user_valid(self):
         user_name = 'Jonny561201'
         user_pass = 'password'
         creds = "%s:%s" % (user_name, user_pass)

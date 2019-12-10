@@ -36,7 +36,7 @@ class UserDatabase:
         preference = self.session.query(UserPreference).filter_by(user_id=user_id).first()
         if preference is None:
             raise BadRequest
-        return {'unit': 'fahrenheit' if preference.is_fahrenheit else 'celsius',
+        return {'temp_unit': 'fahrenheit' if preference.is_fahrenheit else 'celsius',
                 'measure_unit': 'imperial' if preference.is_imperial else 'metric',
                 'city': preference.city,
                 'is_fahrenheit': preference.is_fahrenheit,

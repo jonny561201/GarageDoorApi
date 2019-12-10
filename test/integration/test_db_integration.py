@@ -57,7 +57,7 @@ class TestDbPreferenceIntegration:
 
     def setup_method(self):
         self.USER = UserInformation(id=self.USER_ID, first_name='Jon', last_name='Test')
-        self.USER_PREFERENCES = UserPreference(user_id=self.USER_ID, is_fahrenheit=True, city=self.CITY)
+        self.USER_PREFERENCES = UserPreference(user_id=self.USER_ID, is_fahrenheit=True, is_imperial=True, city=self.CITY)
         with UserDatabaseManager() as database:
             database.session.add(self.USER)
             database.session.add(self.USER_PREFERENCES)
@@ -71,9 +71,11 @@ class TestDbPreferenceIntegration:
         with UserDatabaseManager() as database:
             response = database.get_preferences_by_user(self.USER_ID)
 
-            assert response['unit'] == 'imperial'
+            assert response['temp_unit'] == 'fahrenheit'
+            assert response['measure_unit'] == 'imperial'
             assert response['city'] == self.CITY
             assert response['is_fahrenheit'] is True
+            assert response['is_imperial'] is True
 
     def test_get_preferences_by_user__should_raise_bad_request_when_no_preferences(self):
         with pytest.raises(BadRequest):
