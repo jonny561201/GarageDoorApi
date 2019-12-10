@@ -37,6 +37,7 @@ class UserDatabase:
         if preference is None:
             raise BadRequest
         return {'unit': 'fahrenheit' if preference.is_fahrenheit else 'celsius',
+                'measure_unit': 'imperial',
                 'city': preference.city,
                 'is_fahrenheit': preference.is_fahrenheit,
                 'is_imperial': preference.is_imperial}
