@@ -22,12 +22,29 @@ def test_get_sump_level__should_return_response_with_distance(mock_database, moc
     distance = 3.14159
     bearer_token = 'asdflkhsad98778236'
     user_id = 'fake12354'
+    mock_database.return_value.__enter__.return_value.get_preferences_by_user.return_value = {'is_imperial': False}
     mock_database.return_value.__enter__.return_value.get_current_sump_level_by_user.return_value = {'currentDepth': distance, 'warningLevel': 0}
-    mock_database.return_value.__enter__.return_value.get_average_sump_level_by_user.return_value = {'testItem': 123}
+    mock_database.return_value.__enter__.return_value.get_average_sump_level_by_user.return_value = {'averageDepth': distance, 'testItem': 123}
 
     actual = get_sump_level(user_id, bearer_token)
 
-    assert actual == {'currentDepth': distance, 'userId': user_id, 'warningLevel': 0, 'testItem': 123}
+    assert actual == {'currentDepth': distance, 'depthUnit': 'cm', 'warningLevel': 0, 'averageDepth': distance, 'testItem': 123}
+
+
+@patch('svc.controllers.sump_controller.is_jwt_valid')
+@patch('svc.controllers.sump_controller.UserDatabaseManager')
+def test_get_sump_level__should_return_response_with_distance_converted_to_imperial(mock_database, mock_jwt):
+    current_distance = 3.14159
+    average_distance = 5.66
+    bearer_token = 'asdflkhsad98778236'
+    user_id = 'fake12354'
+    mock_database.return_value.__enter__.return_value.get_preferences_by_user.return_value = {'is_imperial': True}
+    mock_database.return_value.__enter__.return_value.get_current_sump_level_by_user.return_value = {'currentDepth': current_distance, 'warningLevel': 0}
+    mock_database.return_value.__enter__.return_value.get_average_sump_level_by_user.return_value = {'averageDepth': average_distance, 'testItem': 123}
+
+    actual = get_sump_level(user_id, bearer_token)
+
+    assert actual == {'currentDepth': current_distance * 2.54, 'depthUnit': 'in', 'warningLevel': 0, 'averageDepth': average_distance * 2.54,'testItem': 123}
 
 
 @patch('svc.controllers.sump_controller.is_jwt_valid')
@@ -39,6 +56,17 @@ def test_get_sump_level__should_call_is_jwt_valid(mock_database, mock_jwt):
     get_sump_level(user_id, bearer_token)
 
     mock_jwt.assert_called_with(bearer_token)
+
+
+@patch('svc.controllers.sump_controller.is_jwt_valid')
+@patch('svc.controllers.sump_controller.UserDatabaseManager')
+def test_get_sump_level__should_call_get_preferences_by_user(mock_database, mock_jwt):
+    user_id = 'fake1234'
+    bearer_token = 'lkhasdhlufiou0892390784'
+
+    get_sump_level(user_id, bearer_token)
+
+    mock_database.return_value.__enter__.return_value.get_preferences_by_user.assert_called_with(user_id)
 
 
 @patch('svc.controllers.sump_controller.is_jwt_valid')
