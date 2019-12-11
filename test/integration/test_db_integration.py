@@ -85,7 +85,7 @@ class TestDbPreferenceIntegration:
 
     def test_insert_preferences_by_user__should_insert_valid_preferences(self):
         city = 'Vienna'
-        preference_info = {'city': city, 'isFahrenheit': True}
+        preference_info = {'city': city, 'isFahrenheit': True, 'isImperial': False}
         with UserDatabaseManager() as database:
             database.insert_preferences_by_user(self.USER_ID, preference_info)
             database.session.commit()
@@ -95,7 +95,7 @@ class TestDbPreferenceIntegration:
             assert actual.is_fahrenheit is True
 
     def test_insert_preferences_by_user__should_not_nullify_city_when_missing(self):
-        preference_info = {'isFahrenheit': False}
+        preference_info = {'isFahrenheit': False, 'isImperial': True}
         with UserDatabaseManager() as database:
             database.insert_preferences_by_user(self.USER_ID, preference_info)
 
@@ -103,10 +103,11 @@ class TestDbPreferenceIntegration:
 
             assert actual.city == self.CITY
             assert actual.is_fahrenheit is False
+            assert actual.is_imperial is True
 
     def test_insert_preferences_by_user__should_not_nullify_is_fahrenheit_when_missing(self):
         city = 'Lisbon'
-        preference_info = {'city': city}
+        preference_info = {'city': city, 'isImperial': False}
         with UserDatabaseManager() as database:
             database.insert_preferences_by_user(self.USER_ID, preference_info)
 
@@ -114,6 +115,19 @@ class TestDbPreferenceIntegration:
 
             assert actual.city == city
             assert actual.is_fahrenheit is True
+            assert actual.is_imperial is False
+
+    def test_insert_preferences_by_user__should_not_nullify_is_imperial_when_missing(self):
+        city = 'Lisbon'
+        preference_info = {'city': city, 'isFahrenheit': True}
+        with UserDatabaseManager() as database:
+            database.insert_preferences_by_user(self.USER_ID, preference_info)
+
+            actual = database.session.query(UserPreference).filter_by(user_id=self.USER_ID).first()
+
+            assert actual.city == city
+            assert actual.is_fahrenheit is True
+            assert actual.is_imperial is True
 
 
 class TestDbSumpIntegration:

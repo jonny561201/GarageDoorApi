@@ -45,11 +45,13 @@ class UserDatabase:
     def insert_preferences_by_user(self, user_id, preference_info):
         is_fahrenheit = preference_info.get('isFahrenheit')
         city = preference_info.get('city')
+        is_imperial = preference_info.get('isImperial')
         if len(preference_info) == 0:
             raise BadRequest
 
         record = self.session.query(UserPreference).filter_by(user_id=user_id).first()
         record.is_fahrenheit = is_fahrenheit if is_fahrenheit is not None else record.is_fahrenheit
+        record.is_imperial = is_imperial if is_imperial is not None else record.is_imperial
         record.city = city if city is not None else record.city
 
     def get_current_sump_level_by_user(self, user_id):

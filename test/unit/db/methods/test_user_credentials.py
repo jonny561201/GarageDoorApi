@@ -123,19 +123,24 @@ class TestUserDatabase:
             self.DATABASE.get_preferences_by_user(uuid.uuid4().hex)
 
     def test_insert_preferences_by_user__should_call_query(self):
-        preference_info = {'isFahrenheit': True, 'city': 'London'}
+        preference_info = {'isFahrenheit': True, 'isImperial': True, 'city': 'Des Moines'}
         user_id = str(uuid.uuid4())
         self.DATABASE.insert_preferences_by_user(user_id, preference_info)
 
         self.SESSION.query.return_value.filter_by.assert_called_with(user_id=user_id)
 
     def test_insert_preferences_by_user__should_not_throw_when_city_missing(self):
-        preference_info = {'isFahrenheit': False}
+        preference_info = {'isFahrenheit': False, 'isImperial': True}
         user_id = str(uuid.uuid4())
         self.DATABASE.insert_preferences_by_user(user_id, preference_info)
 
     def test_insert_preferences_by_user__should_not_throw_when_is_fahrenheit_missing(self):
-        preference_info = {'city': 'London'}
+        preference_info = {'city': 'London', 'isImperial': False}
+        user_id = str(uuid.uuid4())
+        self.DATABASE.insert_preferences_by_user(user_id, preference_info)
+
+    def test_insert_preferences_by_user__should_not_throw_when_is_imperial_missing(self):
+        preference_info = {'city': 'London', 'isFahrenheit': True}
         user_id = str(uuid.uuid4())
         self.DATABASE.insert_preferences_by_user(user_id, preference_info)
 
