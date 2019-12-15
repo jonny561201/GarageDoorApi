@@ -13,3 +13,7 @@ def run_temperature_program(desired_temp, mode):
         gpio.turn_on_hvac(HomeAutomation.AC)
     elif mode == HomeAutomation.HEATING_MODE and celsius_temp < desired_temp:
         gpio.turn_on_hvac(HomeAutomation.FURNACE)
+    elif mode == HomeAutomation.HEATING_MODE:
+        gpio.turn_off_hvac(HomeAutomation.FURNACE)
+    elif mode == HomeAutomation.COOLING_MODE:
+        gpio.turn_off_hvac(HomeAutomation.AC)
