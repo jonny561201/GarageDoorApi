@@ -133,3 +133,8 @@ class TestThermostatSetController:
 
         mock_thread.assert_called_with(ANY, mock_controller.return_value.run_temperature_program, ANY)
 
+    def test_set_user_temperature__should_create_thread_with_one_minute_interval(self, mock_jwt, mock_controller, mock_thread):
+        self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
+
+        mock_thread.assert_called_with(ANY, ANY, 60)
+

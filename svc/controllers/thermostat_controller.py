@@ -22,12 +22,13 @@ def get_user_temp(user_id, bearer_token):
 
 
 class SetThermostat:
+    ONE_MINUTE = 60
 
     def set_user_temperature(self, request, bearer_token):
         is_jwt_valid(bearer_token)
         mode = request['mode']
         desired_temp = request['desiredTemp']
         hvac_utility = Hvac(desired_temp, mode)
-        MyThread(None, hvac_utility.run_temperature_program, None)
+        MyThread(None, hvac_utility.run_temperature_program, self.ONE_MINUTE)
         # need controller that stores only one active event
         # controller will always stop event and start new one when api call is made
