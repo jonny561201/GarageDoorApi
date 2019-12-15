@@ -102,6 +102,11 @@ class TestThermostatController:
 
     @patch('svc.controllers.thermostat_controller.turn_on_hvac')
     def test_set_user_temperature__should_call_gpio_to_turn_on(self, mock_on, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
-        set_user_temperature()
+        set_user_temperature(self.JWT_TOKEN)
 
         mock_on.assert_called()
+
+    def test_set_user_temperature__should_call_is_jwt_valid(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        set_user_temperature(self.JWT_TOKEN)
+
+        mock_jwt.assert_called_with(self.JWT_TOKEN)
