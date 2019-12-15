@@ -21,6 +21,7 @@ def get_user_temp(user_id, bearer_token):
         return response
 
 
-def set_user_temperature(bearer_token):
+def set_user_temperature(request, bearer_token):
     is_jwt_valid(bearer_token)
-    turn_on_hvac(None)
+
+    turn_on_hvac(request['device'])

@@ -4,6 +4,7 @@ import uuid
 import jwt
 from mock import patch, ANY
 
+from svc.constants.home_automation import HomeAutomation
 from svc.controllers.thermostat_controller import get_user_temp, set_user_temperature
 
 
@@ -100,13 +101,20 @@ class TestThermostatController:
 
         assert actual['temp'] == expected_temp
 
+    def test_set_user_temperature__should_call_is_jwt_valid(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        set_user_temperature({'device': None}, self.JWT_TOKEN)
+
+        mock_jwt.assert_called_with(self.JWT_TOKEN)
+
     @patch('svc.controllers.thermostat_controller.turn_on_hvac')
     def test_set_user_temperature__should_call_gpio_to_turn_on(self, mock_on, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
-        set_user_temperature(self.JWT_TOKEN)
+        set_user_temperature({'device': None}, self.JWT_TOKEN)
 
         mock_on.assert_called()
 
-    def test_set_user_temperature__should_call_is_jwt_valid(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
-        set_user_temperature(self.JWT_TOKEN)
+    @patch('svc.controllers.thermostat_controller.turn_on_hvac')
+    def test_set_user_temperature__should_call_gpio_to_turn_on_with_device(self, mock_on, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        request = {'device': HomeAutomation.AC}
+        set_user_temperature(request, self.JWT_TOKEN)
 
-        mock_jwt.assert_called_with(self.JWT_TOKEN)
+        mock_on.assert_called_with(HomeAutomation.AC)
