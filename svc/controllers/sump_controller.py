@@ -30,5 +30,5 @@ def save_current_level(user_id, bearer_token, request):
 
 def __convert_to_imperial(distance, is_imperial):
     if is_imperial:
-        return distance * 2.54
+        return distance / 2.54
     return distance

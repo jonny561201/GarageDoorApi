@@ -34,8 +34,8 @@ def test_get_sump_level__should_return_response_with_distance(mock_database, moc
 @patch('svc.controllers.sump_controller.is_jwt_valid')
 @patch('svc.controllers.sump_controller.UserDatabaseManager')
 def test_get_sump_level__should_return_response_with_distance_converted_to_imperial(mock_database, mock_jwt):
-    current_distance = 3.14159
-    average_distance = 5.66
+    current_distance = 2.54
+    average_distance = 5.08
     bearer_token = 'asdflkhsad98778236'
     user_id = 'fake12354'
     mock_database.return_value.__enter__.return_value.get_preferences_by_user.return_value = {'is_imperial': True}
@@ -44,7 +44,7 @@ def test_get_sump_level__should_return_response_with_distance_converted_to_imper
 
     actual = get_sump_level(user_id, bearer_token)
 
-    assert actual == {'currentDepth': current_distance * 2.54, 'depthUnit': 'in', 'warningLevel': 0, 'averageDepth': average_distance * 2.54,'testItem': 123}
+    assert actual == {'currentDepth': 1.0, 'depthUnit': 'in', 'warningLevel': 0, 'averageDepth': 2.0, 'testItem': 123}
 
 
 @patch('svc.controllers.sump_controller.is_jwt_valid')
