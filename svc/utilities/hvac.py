@@ -5,14 +5,19 @@ from svc.utilities.temperature import get_user_temperature
 from svc.utilities import gpio
 
 
-def run_temperature_program(desired_temp, mode):
-    temp_file = read_temperature_file()
-    celsius_temp = get_user_temperature(temp_file, False)
+class Hvac:
+    def __init__(self, desired_temp, mode):
+        self.DESIRED_TEMP = desired_temp
+        self.MODE = mode
 
-    if mode == HomeAutomation.COOLING_MODE and celsius_temp > desired_temp:
-        gpio.turn_on_hvac(HomeAutomation.AC)
-    elif mode == HomeAutomation.HEATING_MODE and celsius_temp < desired_temp:
-        gpio.turn_on_hvac(HomeAutomation.FURNACE)
-    else:
-        device = HomeAutomation.AC if mode == HomeAutomation.COOLING_MODE else HomeAutomation.FURNACE
-        gpio.turn_off_hvac(device)
+    def run_temperature_program(self):
+        temp_file = read_temperature_file()
+        celsius_temp = get_user_temperature(temp_file, False)
+
+        if self.MODE == HomeAutomation.COOLING_MODE and celsius_temp > self.DESIRED_TEMP:
+            gpio.turn_on_hvac(HomeAutomation.AC)
+        elif self.MODE == HomeAutomation.HEATING_MODE and celsius_temp < self.DESIRED_TEMP:
+            gpio.turn_on_hvac(HomeAutomation.FURNACE)
+        else:
+            device = HomeAutomation.AC if self.MODE == HomeAutomation.COOLING_MODE else HomeAutomation.FURNACE
+            gpio.turn_off_hvac(device)
