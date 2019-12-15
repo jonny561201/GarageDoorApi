@@ -25,3 +25,9 @@ class TestHvac:
 
         run_temperature_program(self.DESIRED_TEMP)
         mock_convert.assert_called_with(self.AC_TEMP, ANY)
+
+    def test_run_temperature_program__should_make_call_to_get_user_temperature_with_celsius(self, mock_temp, mock_convert):
+        mock_temp.return_value = self.AC_TEMP
+
+        run_temperature_program(self.DESIRED_TEMP)
+        mock_convert.assert_called_with(ANY, False)
