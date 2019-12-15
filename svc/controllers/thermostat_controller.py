@@ -30,6 +30,7 @@ class SetThermostat:
         mode = request['mode']
         desired_temp = request['desiredTemp']
         hvac_utility = Hvac(desired_temp, mode)
-        MyThread(self.STOP_FLAG, hvac_utility.run_temperature_program, self.ONE_MINUTE)
+        hvac_thread = MyThread(self.STOP_FLAG, hvac_utility.run_temperature_program, self.ONE_MINUTE)
+        hvac_thread.start()
         # need controller that stores only one active event
         # controller will always stop event and start new one when api call is made

@@ -129,20 +129,24 @@ class TestThermostatSetController:
 
         mock_hvac.assert_called_with(self.DESIRED_TEMP, ANY)
 
-    def test_set_user_temperature__should_create_thread_with_controller_function(self, mock_jwt, mock_controller, mock_thread):
+    def test_set_user_temperature__should_create_thread_with_controller_function(self, mock_jwt, mock_hvac, mock_thread):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
-        mock_thread.assert_called_with(ANY, mock_controller.return_value.run_temperature_program, ANY)
+        mock_thread.assert_called_with(ANY, mock_hvac.return_value.run_temperature_program, ANY)
 
-    def test_set_user_temperature__should_create_thread_with_one_minute_interval(self, mock_jwt, mock_controller, mock_thread):
+    def test_set_user_temperature__should_create_thread_with_one_minute_interval(self, mock_jwt, mock_hvac, mock_thread):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_thread.assert_called_with(ANY, ANY, 60)
 
-    def test_set_user_temperature__should_create_thread_with_class_event(self, mock_jwt, mock_controller, mock_thread):
+    def test_set_user_temperature__should_create_thread_with_class_event(self, mock_jwt, mock_hvac, mock_thread):
         stop_event = Event()
         self.THERMOSTAT.STOP_FLAG = stop_event
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_thread.assert_called_with(stop_event, ANY, ANY)
 
+    def test_set_user_temperature__should_start_the_thread(self, mock_jwt, mock_hvac, mock_thread):
+        self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
+
+        assert mock_thread.return_value.start.call_count == 1
