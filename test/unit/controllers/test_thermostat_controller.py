@@ -120,3 +120,8 @@ class TestThermostatSetController:
         set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_hvac.assert_called_with(ANY, HomeAutomation.HEATING_MODE)
+
+    def test_set_user_temperature__should_create_hvac_class_with_desired_temp(self, mock_jwt, mock_hvac):
+        set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
+
+        mock_hvac.assert_called_with(self.DESIRED_TEMP, ANY)
