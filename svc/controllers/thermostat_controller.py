@@ -1,10 +1,9 @@
-import os
-
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.services.weather_request import get_weather
-from svc.utilities.gpio import read_temperature_file, turn_on_hvac
+from svc.utilities.gpio import read_temperature_file
 from svc.utilities.jwt_utils import is_jwt_valid
 from svc.utilities.temperature import get_user_temperature
+from svc.utilities.hvac import Hvac
 
 
 def get_user_temp(user_id, bearer_token):
@@ -23,5 +22,7 @@ def get_user_temp(user_id, bearer_token):
 
 def set_user_temperature(request, bearer_token):
     is_jwt_valid(bearer_token)
-
-    turn_on_hvac(request['device'])
+    mode = request['mode']
+    Hvac(None, mode)
+    # need controller that stores only one active event
+    # controller will always stop event and start new one when api call is made

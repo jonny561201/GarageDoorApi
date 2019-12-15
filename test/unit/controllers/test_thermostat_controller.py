@@ -13,7 +13,7 @@ from svc.controllers.thermostat_controller import get_user_temp, set_user_temper
 @patch('svc.controllers.thermostat_controller.is_jwt_valid')
 @patch('svc.controllers.thermostat_controller.read_temperature_file')
 @patch('svc.controllers.thermostat_controller.get_user_temperature')
-class TestThermostatController:
+class TestThermostatGetController:
     JWT_TOKEN = jwt.encode({}, 'JWT_SECRET', algorithm='HS256').decode('UTF-8')
     USER_ID = uuid.uuid4().hex
     APP_ID = 'fake app id'
@@ -101,20 +101,22 @@ class TestThermostatController:
 
         assert actual['temp'] == expected_temp
 
-    def test_set_user_temperature__should_call_is_jwt_valid(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
-        set_user_temperature({'device': None}, self.JWT_TOKEN)
 
-        mock_jwt.assert_called_with(self.JWT_TOKEN)
+@patch('svc.controllers.thermostat_controller.Hvac')
+@patch('svc.controllers.thermostat_controller.is_jwt_valid')
+class TestThermostatSetController:
+    BEARER_TOKEN = 'fake bearer'
+    DESIRED_TEMP = 32.0
 
-    @patch('svc.controllers.thermostat_controller.turn_on_hvac')
-    def test_set_user_temperature__should_call_gpio_to_turn_on(self, mock_on, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
-        set_user_temperature({'device': None}, self.JWT_TOKEN)
+    def setup_method(self):
+        self.REQUEST = {'mode': HomeAutomation.HEATING_MODE, 'desiredTemp': self.DESIRED_TEMP}
 
-        mock_on.assert_called()
+    def test_set_user_temperature__should_call_is_jwt_valid(self, mock_jwt, mock_hvac):
+        set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
-    @patch('svc.controllers.thermostat_controller.turn_on_hvac')
-    def test_set_user_temperature__should_call_gpio_to_turn_on_with_device(self, mock_on, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
-        request = {'device': HomeAutomation.AC}
-        set_user_temperature(request, self.JWT_TOKEN)
+        mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
-        mock_on.assert_called_with(HomeAutomation.AC)
+    def test_set_user_temperature__should_create_hvac_class_with_mode(self, mock_jwt, mock_hvac):
+        set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
+
+        mock_hvac.assert_called_with(ANY, HomeAutomation.HEATING_MODE)
