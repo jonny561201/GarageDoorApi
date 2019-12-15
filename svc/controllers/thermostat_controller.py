@@ -4,6 +4,7 @@ from svc.utilities.gpio import read_temperature_file
 from svc.utilities.jwt_utils import is_jwt_valid
 from svc.utilities.temperature import get_user_temperature
 from svc.utilities.hvac import Hvac
+from svc.utilities.event import MyThread
 
 
 def get_user_temp(user_id, bearer_token):
@@ -20,10 +21,13 @@ def get_user_temp(user_id, bearer_token):
         return response
 
 
-def set_user_temperature(request, bearer_token):
-    is_jwt_valid(bearer_token)
-    mode = request['mode']
-    desired_temp = request['desiredTemp']
-    Hvac(desired_temp, mode)
-    # need controller that stores only one active event
-    # controller will always stop event and start new one when api call is made
+class SetThermostat:
+
+    def set_user_temperature(self, request, bearer_token):
+        is_jwt_valid(bearer_token)
+        mode = request['mode']
+        desired_temp = request['desiredTemp']
+        hvac_utility = Hvac(desired_temp, mode)
+        MyThread(None, hvac_utility.run_temperature_program, None)
+        # need controller that stores only one active event
+        # controller will always stop event and start new one when api call is made
