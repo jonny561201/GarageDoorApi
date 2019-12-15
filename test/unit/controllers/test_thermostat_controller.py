@@ -1,5 +1,6 @@
 import os
 import uuid
+from threading import Event
 
 import jwt
 from mock import patch, ANY
@@ -137,4 +138,11 @@ class TestThermostatSetController:
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_thread.assert_called_with(ANY, ANY, 60)
+
+    def test_set_user_temperature__should_create_thread_with_class_event(self, mock_jwt, mock_controller, mock_thread):
+        stop_event = Event()
+        self.THERMOSTAT.STOP_FLAG = stop_event
+        self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
+
+        mock_thread.assert_called_with(stop_event, ANY, ANY)
 
