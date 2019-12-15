@@ -2,7 +2,7 @@ import os
 
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.services.weather_request import get_weather
-from svc.utilities.gpio import read_temperature_file
+from svc.utilities.gpio import read_temperature_file, turn_on_hvac
 from svc.utilities.jwt_utils import is_jwt_valid
 from svc.utilities.temperature import get_user_temperature
 
@@ -19,3 +19,7 @@ def get_user_temp(user_id, bearer_token):
         response.update(weather_data)
 
         return response
+
+
+def set_user_temperature():
+    turn_on_hvac(None)

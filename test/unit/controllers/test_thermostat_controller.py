@@ -4,7 +4,7 @@ import uuid
 import jwt
 from mock import patch, ANY
 
-from svc.controllers.thermostat_controller import get_user_temp
+from svc.controllers.thermostat_controller import get_user_temp, set_user_temperature
 
 
 @patch('svc.controllers.thermostat_controller.get_weather')
@@ -100,3 +100,8 @@ class TestThermostatController:
 
         assert actual['temp'] == expected_temp
 
+    @patch('svc.controllers.thermostat_controller.turn_on_hvac')
+    def test_set_user_temperature__should_call_gpio_to_turn_on(self, mock_on, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        set_user_temperature()
+
+        mock_on.assert_called()
