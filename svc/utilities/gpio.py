@@ -7,7 +7,8 @@ GARAGE_STATUS_PIN = 7
 GARAGE_STATE_PIN = 8
 # TODO: find the correct pins to use
 AC_PIN = 23
-HEAT_PIN = 26
+FURNACE_PIN = 26
+BLOWER_PIN = 14
 
 
 # GPIO.cleanup()
@@ -15,7 +16,8 @@ HEAT_PIN = 26
 # GPIO.setup(GARAGE_STATUS_PIN, GPIO.IN, GPIO.PUD_UP)
 # GPIO.setup(GARAGE_STATE_PIN, GPIO.OUT)
 # GPIO.setup(AC_PIN, GPIO.OUT)
-# GPIO.setup(HEAT_PIN, GPIO.OUT)
+# GPIO.setup(FURNACE_PIN, GPIO.OUT)
+# GPIO.setup(BLOWER_PIN, GPIO.OUT)
 
 
 # assumes connection to output pin and ground with GPIO.PUD_UP
@@ -53,7 +55,8 @@ def turn_on_hvac(device):
      # if device == 'ac':
      #     GPIO.output(AC_PIN, GPIO.LOW)
      # else:
-     #     GPIO.output(HEAT_PIN, GPIO.LOW)
+     #     GPIO.output(FURNACE_PIN, GPIO.LOW)
+     # GPIO.output(BLOWER_PIN, GPIO.LOW)
      pass
 
 
@@ -61,5 +64,6 @@ def turn_off_hvac(device):
     # if device == 'ac':
     #     GPIO.output(AC_PIN, GPIO.HIGH)
     # else:
-    #     GPIO.output(HEAT_PIN, GPIO.HIGH)
+    #     GPIO.output(FURNACE_PIN, GPIO.HIGH)
+    # GPIO.output(BLOWER_PIN, GPIO.HIGH)
     pass
