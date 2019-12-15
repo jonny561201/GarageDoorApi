@@ -5,6 +5,7 @@ from svc.utilities.jwt_utils import is_jwt_valid
 from svc.utilities.temperature import get_user_temperature
 from svc.utilities.hvac import Hvac
 from svc.utilities.event import MyThread
+from threading import Event
 
 
 def get_user_temp(user_id, bearer_token):
@@ -31,7 +32,6 @@ class SetThermostat:
         hvac_utility = Hvac(request['desiredTemp'], request['mode'])
         if self.ACTIVE_THREAD is not None:
             self.STOP_FLAG.set()
+        self.STOP_FLAG = Event()
         self.ACTIVE_THREAD = MyThread(self.STOP_FLAG, hvac_utility.run_temperature_program, self.ONE_MINUTE)
         self.ACTIVE_THREAD.start()
-        # need controller that stores only one active event
-        # controller will always stop event and start new one when api call is made

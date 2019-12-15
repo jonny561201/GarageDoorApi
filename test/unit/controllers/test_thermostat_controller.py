@@ -104,6 +104,7 @@ class TestThermostatGetController:
         assert actual['temp'] == expected_temp
 
 
+@patch('svc.controllers.thermostat_controller.Event')
 @patch('svc.controllers.thermostat_controller.MyThread')
 @patch('svc.controllers.thermostat_controller.Hvac')
 @patch('svc.controllers.thermostat_controller.is_jwt_valid')
@@ -115,50 +116,63 @@ class TestThermostatSetController:
         self.REQUEST = {'mode': HomeAutomation.HEATING_MODE, 'desiredTemp': self.DESIRED_TEMP}
         self.THERMOSTAT = SetThermostat()
 
-    def test_set_user_temperature__should_call_is_jwt_valid(self, mock_jwt, mock_hvac, mock_thread):
+    def test_set_user_temperature__should_call_is_jwt_valid(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
-    def test_set_user_temperature__should_create_hvac_class_with_mode(self, mock_jwt, mock_hvac, mock_thread):
+    def test_set_user_temperature__should_create_hvac_class_with_mode(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_hvac.assert_called_with(ANY, HomeAutomation.HEATING_MODE)
 
-    def test_set_user_temperature__should_create_hvac_class_with_desired_temp(self, mock_jwt, mock_hvac, mock_thread):
+    def test_set_user_temperature__should_create_hvac_class_with_desired_temp(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_hvac.assert_called_with(self.DESIRED_TEMP, ANY)
 
-    def test_set_user_temperature__should_create_thread_with_controller_function(self, mock_jwt, mock_hvac, mock_thread):
+    def test_set_user_temperature__should_create_thread_with_controller_function(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_thread.assert_called_with(ANY, mock_hvac.return_value.run_temperature_program, ANY)
 
-    def test_set_user_temperature__should_create_thread_with_one_minute_interval(self, mock_jwt, mock_hvac, mock_thread):
+    def test_set_user_temperature__should_create_thread_with_one_minute_interval(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_thread.assert_called_with(ANY, ANY, 60)
 
-    def test_set_user_temperature__should_create_new_thread_with_class_event(self, mock_jwt, mock_hvac, mock_thread):
+    def test_set_user_temperature__should_create_new_thread_with_class_event(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         stop_event = mock.create_autospec(Event)
-        self.THERMOSTAT.ACTIVE_THREAD = mock.create_autospec(MyThread)
         self.THERMOSTAT.STOP_FLAG = stop_event
+        self.THERMOSTAT.ACTIVE_THREAD = mock.create_autospec(MyThread)
+        mock_event.return_value = stop_event
+
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         mock_thread.assert_called_with(stop_event, ANY, ANY)
         stop_event.set.assert_called()
 
-    def test_set_user_temperature__should_start_the_thread(self, mock_jwt, mock_hvac, mock_thread):
+    def test_set_user_temperature__should_start_the_thread(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         assert mock_thread.return_value.start.call_count == 1
 
-    def test_set_user_temperature__should_not_stop_thread_when_first_pass(self, mock_jwt, mock_hvac, mock_thread):
+    def test_set_user_temperature__should_not_stop_thread_when_first_pass(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         stop_event = mock.create_autospec(Event)
         self.THERMOSTAT.ACTIVE_THREAD = None
         self.THERMOSTAT.STOP_FLAG = stop_event
+
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
         assert mock_thread.return_value.start.call_count == 1
         stop_event.set.assert_not_called()
+
+    def test_set_user_temperature__should_set_a_new_stop_flag_when_first_pass(self, mock_jwt, mock_hvac, mock_thread, mock_event):
+        self.THERMOSTAT.ACTIVE_THREAD = None
+        self.THERMOSTAT.STOP_FLAG = None
+        event = mock.create_autospec(Event)
+        mock_event.return_value = event
+
+        self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
+
+        assert self.THERMOSTAT.STOP_FLAG == event
