@@ -1,5 +1,6 @@
 from mock import patch, ANY
 
+from svc.constants.home_automation import HomeAutomation
 from svc.utilities.hvac import run_temperature_program
 
 
@@ -33,8 +34,14 @@ class TestHvac:
         run_temperature_program(self.DESIRED_TEMP)
         mock_convert.assert_called_with(ANY, False)
 
-    def test_run_temperature_program__should_turn_on_ac_when_temp_above_desired(self, mock_temp, mock_convert, mock_gpio):
+    def test_run_temperature_program__should_call_hvac_on_when_temp_above_desired(self, mock_temp, mock_convert, mock_gpio):
         mock_temp.return_value = self.AC_TEMP
 
         run_temperature_program(self.DESIRED_TEMP)
         mock_gpio.turn_on_hvac.assert_called()
+
+    def test_run_temperature_program__should_turn_on_ac_when_temp_above_desired(self, mock_temp, mock_convert, mock_gpio):
+        mock_temp.return_value = self.AC_TEMP
+
+        run_temperature_program(self.DESIRED_TEMP)
+        mock_gpio.turn_on_hvac.assert_called_with(HomeAutomation.AC)
