@@ -62,8 +62,20 @@ class TestHvac:
         run_temperature_program(self.DESIRED_TEMP, HomeAutomation.HEATING_MODE)
         mock_gpio.turn_off_hvac.assert_called_with(HomeAutomation.FURNACE)
 
+    def test_run_temperature_program__should_turn_off_furnace_when_temp_equal_desired_and_mode_heating(self, mock_temp, mock_convert, mock_gpio):
+        mock_convert.return_value = self.DESIRED_TEMP
+
+        run_temperature_program(self.DESIRED_TEMP, HomeAutomation.HEATING_MODE)
+        mock_gpio.turn_off_hvac.assert_called_with(HomeAutomation.FURNACE)
+
     def test_run_temperature_program__should_turn_off_ac_when_temp_below_desired_and_mode_cooling(self, mock_temp, mock_convert, mock_gpio):
         mock_convert.return_value = self.HEAT_TEMP
+
+        run_temperature_program(self.DESIRED_TEMP, HomeAutomation.COOLING_MODE)
+        mock_gpio.turn_off_hvac.assert_called_with(HomeAutomation.AC)
+
+    def test_run_temperature_program__should_turn_off_ac_when_temp_equal_desired_and_mode_heating(self, mock_temp, mock_convert, mock_gpio):
+        mock_convert.return_value = self.DESIRED_TEMP
 
         run_temperature_program(self.DESIRED_TEMP, HomeAutomation.COOLING_MODE)
         mock_gpio.turn_off_hvac.assert_called_with(HomeAutomation.AC)
