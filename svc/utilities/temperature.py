@@ -15,7 +15,7 @@ def get_user_temperature(temp_text, is_fahrenheit):
 
 
 def convert_to_fahrenheit(celsius_temp):
-    return 32.0
+    return celsius_temp * 1.8 + 32
 
 
 def _get_celsius_value(temp_row):

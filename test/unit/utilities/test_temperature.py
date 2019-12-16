@@ -34,6 +34,18 @@ def test_get_user_temperature__should_throw_conflict_when_no_temp_text_found():
 
 
 def test_convert_to_fahrenheit__should_convert_zero():
-    actual = convert_to_fahrenheit(0)
+    actual = convert_to_fahrenheit(0.0)
 
     assert actual == 32.0
+
+
+def test_convert_to_fahrenheit__should_convert_positive_number():
+    actual = convert_to_fahrenheit(24.0)
+
+    assert actual == 75.2
+
+
+def test_convert_to_fahrenheit__should_convert_negative_number():
+    actual = convert_to_fahrenheit(-20.0)
+
+    assert actual == -4.0
