@@ -111,10 +111,11 @@ class TestThermostatGetController:
 @patch('svc.controllers.thermostat_controller.is_jwt_valid')
 class TestThermostatSetController:
     BEARER_TOKEN = 'fake bearer'
-    DESIRED_TEMP = 32.0
+    DESIRED_CELSIUS_TEMP = 24.0
+    DESIRED_FAHRENHEIT_TEMP = 68.9
 
     def setup_method(self):
-        self.REQUEST = json.dumps({'mode': HomeAutomation.HEATING_MODE, 'desiredTemp': self.DESIRED_TEMP}).encode('UTF-8')
+        self.REQUEST = json.dumps({'mode': HomeAutomation.HEATING_MODE, 'isFahrenheit': False, 'desiredTemp': self.DESIRED_CELSIUS_TEMP}).encode('UTF-8')
         self.THERMOSTAT = SetThermostat()
 
     def test_set_user_temperature__should_call_is_jwt_valid(self, mock_jwt, mock_hvac, mock_thread, mock_event):
@@ -127,10 +128,17 @@ class TestThermostatSetController:
 
         mock_hvac.assert_called_with(ANY, HomeAutomation.HEATING_MODE)
 
-    def test_set_user_temperature__should_create_hvac_class_with_desired_temp(self, mock_jwt, mock_hvac, mock_thread, mock_event):
+    def test_set_user_temperature__should_create_hvac_class_with_desired_temp_celsius(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
-        mock_hvac.assert_called_with(self.DESIRED_TEMP, ANY)
+        mock_hvac.assert_called_with(self.DESIRED_CELSIUS_TEMP, ANY)
+
+    def test_set_user_temperature__should_create_hvac_class_with_desired_temp_fahrenheit(self, mock_jwt, mock_hvac, mock_thread, mock_event):
+        request = json.dumps({'mode': HomeAutomation.HEATING_MODE, 'isFahrenheit': True, 'desiredTemp': self.DESIRED_FAHRENHEIT_TEMP}).encode('UTF-8')
+        celsius_temp = round((self.DESIRED_FAHRENHEIT_TEMP - 32) / 1.8, 2)
+        self.THERMOSTAT.set_user_temperature(request, self.BEARER_TOKEN)
+
+        mock_hvac.assert_called_with(celsius_temp, ANY)
 
     def test_set_user_temperature__should_create_thread_with_controller_function(self, mock_jwt, mock_hvac, mock_thread, mock_event):
         self.THERMOSTAT.set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
