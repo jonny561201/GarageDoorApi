@@ -19,7 +19,7 @@ def convert_to_fahrenheit(celsius_temp):
 
 
 def convert_to_celsius(fahrenheit_temp):
-    return 0.0
+    return round((fahrenheit_temp - 32) / 1.8, 2)
 
 
 def _get_celsius_value(temp_row):

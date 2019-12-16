@@ -55,3 +55,15 @@ def test_convert_to_celsius__should_convert_zero():
     actual = convert_to_celsius(32.0)
 
     assert actual == 0.0
+
+
+def test_convert_to_celsius__should_convert_negative_number():
+    actual = convert_to_celsius(12.0)
+
+    assert actual == -11.11
+
+
+def test_convert_to_celsius__should_convert_positive_number():
+    actual = convert_to_celsius(50.0)
+
+    assert actual == 10.0
