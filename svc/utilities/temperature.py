@@ -18,6 +18,10 @@ def convert_to_fahrenheit(celsius_temp):
     return celsius_temp * 1.8 + 32
 
 
+def convert_to_celsius(fahrenheit_temp):
+    return 0.0
+
+
 def _get_celsius_value(temp_row):
     cleaned_text = temp_row.replace('t=', '')
     temp_celsius = int(cleaned_text)

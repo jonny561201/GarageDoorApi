@@ -1,7 +1,7 @@
 import pytest
 from werkzeug.exceptions import Conflict
 
-from svc.utilities.temperature import get_user_temperature, convert_to_fahrenheit
+from svc.utilities.temperature import get_user_temperature, convert_to_fahrenheit, convert_to_celsius
 
 
 def test_get_user_temperature__should_return_temperature_in_celsius():
@@ -49,3 +49,9 @@ def test_convert_to_fahrenheit__should_convert_negative_number():
     actual = convert_to_fahrenheit(-20.0)
 
     assert actual == -4.0
+
+
+def test_convert_to_celsius__should_convert_zero():
+    actual = convert_to_celsius(32.0)
+
+    assert actual == 0.0
