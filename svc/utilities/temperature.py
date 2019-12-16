@@ -30,5 +30,5 @@ def _get_celsius_value(temp_row):
 
 def _convert_to_correct_unit(celsius, is_fahrenheit):
     if is_fahrenheit:
-        return celsius * 1.8 + 32
+        return convert_to_fahrenheit(celsius)
     return celsius
