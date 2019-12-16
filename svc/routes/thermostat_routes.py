@@ -15,5 +15,5 @@ def get_temperature(user_id):
 def set_temperature(user_id):
     bearer_token = request.headers.get('Authorization')
     # TODO: should start up in app
-    SetThermostat().set_user_temperature(None, bearer_token)
+    SetThermostat().set_user_temperature(request.data, bearer_token)
 
