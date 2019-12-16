@@ -12,6 +12,7 @@ def get_temperature(user_id):
     return get_user_temp(user_id, bearer_token)
 
 
+@THERMOSTAT_BLUEPRINT.route('/thermostat/temperature/<user_id>', methods=['POST'])
 def set_temperature(user_id):
     bearer_token = request.headers.get('Authorization')
     # TODO: should start up in app
