@@ -36,3 +36,10 @@ class TestThermostatRoutes:
         set_temperature(self.USER_ID)
 
         mock_set.assert_called()
+
+    def test_set_temperature__should_call_thermostat_controller_with_bearer_token(self, mock_controller, mock_request, mock_set):
+        mock_request.headers = self.AUTH_HEADER
+        set_temperature(self.USER_ID)
+
+        mock_set.return_value.set_user_temperature.assert_called_with(None, self.BEARER_TOKEN)
+
