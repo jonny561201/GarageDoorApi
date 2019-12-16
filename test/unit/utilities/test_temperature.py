@@ -1,7 +1,7 @@
 import pytest
 from werkzeug.exceptions import Conflict
 
-from svc.utilities.temperature import get_user_temperature
+from svc.utilities.temperature import get_user_temperature, convert_to_fahrenheit
 
 
 def test_get_user_temperature__should_return_temperature_in_celsius():
@@ -31,3 +31,9 @@ def test_get_user_temperature__should_throw_conflict_when_no_temp_text_found():
                  '72 01 4b 46 7f ff 0e 10 57']
     with pytest.raises(Conflict):
         get_user_temperature(temp_text, False)
+
+
+def test_convert_to_fahrenheit__should_convert_zero():
+    actual = convert_to_fahrenheit(0)
+
+    assert actual == 32.0

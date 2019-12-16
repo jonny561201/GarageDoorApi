@@ -1,13 +1,14 @@
 import json
+import os
+from threading import Event
 
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.services.weather_request import get_weather
+from svc.utilities.event import MyThread
 from svc.utilities.gpio import read_temperature_file
+from svc.utilities.hvac import Hvac
 from svc.utilities.jwt_utils import is_jwt_valid
 from svc.utilities.temperature import get_user_temperature
-from svc.utilities.hvac import Hvac
-from svc.utilities.event import MyThread
-from threading import Event
 
 
 def get_user_temp(user_id, bearer_token):

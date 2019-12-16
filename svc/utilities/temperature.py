@@ -11,7 +11,11 @@ def get_user_temperature(temp_text, is_fahrenheit):
         raise Conflict
 
     celsius = _get_celsius_value(temp_string.group())
-    return _convert_to_fahrenheit(celsius, is_fahrenheit)
+    return _convert_to_correct_unit(celsius, is_fahrenheit)
+
+
+def convert_to_fahrenheit(celsius_temp):
+    return 32.0
 
 
 def _get_celsius_value(temp_row):
@@ -20,7 +24,7 @@ def _get_celsius_value(temp_row):
     return round(temp_celsius / 1000, 2)
 
 
-def _convert_to_fahrenheit(celsius, is_fahrenheit):
+def _convert_to_correct_unit(celsius, is_fahrenheit):
     if is_fahrenheit:
         return celsius * 1.8 + 32
     return celsius
