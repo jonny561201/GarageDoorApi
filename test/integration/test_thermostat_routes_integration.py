@@ -4,6 +4,7 @@ import uuid
 import jwt
 from flask import json
 
+from svc.constants.home_automation import HomeAutomation
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.db.models.user_information_model import UserInformation, UserPreference
 from svc.manager import create_app
@@ -56,3 +57,14 @@ class TestThermostatRoutesIntegration:
         actual = self.TEST_CLIENT.post(url)
 
         assert actual.status_code == 401
+
+    # def test_set_temperature__should_return_successfully(self):
+    #     bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+    #     headers = {'Authorization': bearer_token}
+    #     request = {'desiredTemp': 23.7, 'mode': HomeAutomation.HEATING_MODE}
+    #
+    #     url = 'thermostat/temperature/' + str(self.USER_ID)
+    #     actual = self.TEST_CLIENT.post(url, data=json.dumps(request), headers=headers)
+    #
+    #     assert actual.status_code == 200
+

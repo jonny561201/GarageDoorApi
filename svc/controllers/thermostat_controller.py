@@ -1,3 +1,5 @@
+import json
+
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.services.weather_request import get_weather
 from svc.utilities.gpio import read_temperature_file
@@ -29,9 +31,10 @@ class SetThermostat:
 
     def set_user_temperature(self, request, bearer_token):
         is_jwt_valid(bearer_token)
+        json_request = json.loads(request.decode('UTF-8'))
         if self.ACTIVE_THREAD is not None:
             self.STOP_FLAG.set()
-        hvac_utility = Hvac(request['desiredTemp'], request['mode'])
+        hvac_utility = Hvac(json_request['desiredTemp'], json_request['mode'])
         self.STOP_FLAG = Event()
         self.ACTIVE_THREAD = MyThread(self.STOP_FLAG, hvac_utility.run_temperature_program, self.ONE_MINUTE)
         self.ACTIVE_THREAD.start()

@@ -1,3 +1,4 @@
+import json
 import os
 import uuid
 from threading import Event
@@ -113,7 +114,7 @@ class TestThermostatSetController:
     DESIRED_TEMP = 32.0
 
     def setup_method(self):
-        self.REQUEST = {'mode': HomeAutomation.HEATING_MODE, 'desiredTemp': self.DESIRED_TEMP}
+        self.REQUEST = json.dumps({'mode': HomeAutomation.HEATING_MODE, 'desiredTemp': self.DESIRED_TEMP}).encode('UTF-8')
         self.THERMOSTAT = SetThermostat()
 
     def test_set_user_temperature__should_call_is_jwt_valid(self, mock_jwt, mock_hvac, mock_thread, mock_event):
