@@ -29,9 +29,9 @@ class SetThermostat:
 
     def set_user_temperature(self, request, bearer_token):
         is_jwt_valid(bearer_token)
-        hvac_utility = Hvac(request['desiredTemp'], request['mode'])
         if self.ACTIVE_THREAD is not None:
             self.STOP_FLAG.set()
+        hvac_utility = Hvac(request['desiredTemp'], request['mode'])
         self.STOP_FLAG = Event()
         self.ACTIVE_THREAD = MyThread(self.STOP_FLAG, hvac_utility.run_temperature_program, self.ONE_MINUTE)
         self.ACTIVE_THREAD.start()
