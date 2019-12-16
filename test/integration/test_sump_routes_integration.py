@@ -6,7 +6,8 @@ from datetime import datetime
 import jwt
 
 from svc.db.methods.user_credentials import UserDatabaseManager
-from svc.db.models.user_information_model import UserInformation, DailySumpPumpLevel, AverageSumpPumpLevel
+from svc.db.models.user_information_model import UserInformation, DailySumpPumpLevel, AverageSumpPumpLevel, \
+    UserPreference
 from svc.manager import create_app
 
 
@@ -46,11 +47,13 @@ class TestSumpRoutes:
         expected_depth = 12.45
         average_depth = 10.65
         date = datetime.date(datetime.now())
+        preference = UserPreference(user=user, is_imperial=False, is_fahrenheit=True)
         sump = DailySumpPumpLevel(user=user, distance=expected_depth, warning_level=0, create_date=datetime.now())
         average = AverageSumpPumpLevel(user=user, distance=average_depth, create_day=date)
 
         with UserDatabaseManager() as database:
             database.session.add(sump)
+            database.session.add(preference)
             database.session.add(average)
             database.session.flush()
 
@@ -61,6 +64,7 @@ class TestSumpRoutes:
 
         with UserDatabaseManager() as database:
             database.session.delete(sump)
+            database.session.delete(preference)
             database.session.delete(user)
             database.session.delete(average)
             database.session.flush()

@@ -1,8 +1,10 @@
 import os
 import uuid
+from threading import Event
 
 import jwt
 from flask import json
+from mock import patch, mock
 
 from svc.constants.home_automation import HomeAutomation
 from svc.db.methods.user_credentials import UserDatabaseManager
@@ -58,13 +60,14 @@ class TestThermostatRoutesIntegration:
 
         assert actual.status_code == 401
 
-    # def test_set_temperature__should_return_successfully(self):
-    #     bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-    #     headers = {'Authorization': bearer_token}
-    #     request = {'desiredTemp': 23.7, 'mode': HomeAutomation.HEATING_MODE}
-    #
-    #     url = 'thermostat/temperature/' + str(self.USER_ID)
-    #     actual = self.TEST_CLIENT.post(url, data=json.dumps(request), headers=headers)
-    #
-    #     assert actual.status_code == 200
+    @patch('svc.controllers.thermostat_controller.MyThread')
+    def test_set_temperature__should_return_successfully(self, mock_thread):
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        headers = {'Authorization': bearer_token}
+        request = {'desiredTemp': 23.7, 'mode': HomeAutomation.HEATING_MODE}
+
+        url = 'thermostat/temperature/' + str(self.USER_ID)
+        actual = self.TEST_CLIENT.post(url, data=json.dumps(request), headers=headers)
+
+        assert actual.status_code == 200
 
