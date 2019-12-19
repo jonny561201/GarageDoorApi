@@ -1,4 +1,4 @@
-class HomeAutomation:
+class Automation:
     AC = 'ac'
     FURNACE = 'furnace'
     TURN_ON = 'on'

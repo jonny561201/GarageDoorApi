@@ -1,7 +1,6 @@
 from flask import Blueprint, request, Response
 
-from svc.controllers.thermostat_controller import get_user_temp
-from svc.controllers.thermostat_controller import SetThermostat
+from svc.controllers.thermostat_controller import get_user_temp, set_user_temperature
 
 THERMOSTAT_BLUEPRINT = Blueprint('thermostat_blueprint', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
@@ -16,7 +15,6 @@ def get_temperature(user_id):
 @THERMOSTAT_BLUEPRINT.route('/thermostat/temperature/<user_id>', methods=['POST'])
 def set_temperature(user_id):
     bearer_token = request.headers.get('Authorization')
-    # TODO: should start up in app
-    SetThermostat().set_user_temperature(request.data, bearer_token)
+    set_user_temperature(request.data, bearer_token)
     return Response(status=200, headers=DEFAULT_HEADERS)
 

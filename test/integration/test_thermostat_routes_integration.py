@@ -6,7 +6,7 @@ import jwt
 from flask import json
 from mock import patch, mock
 
-from svc.constants.home_automation import HomeAutomation
+from svc.constants.home_automation import Automation
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.db.models.user_information_model import UserInformation, UserPreference
 from svc.manager import create_app
@@ -64,7 +64,7 @@ class TestThermostatRoutesIntegration:
     def test_set_temperature__should_return_successfully(self, mock_thread):
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
-        request = {'desiredTemp': 23.7, 'mode': HomeAutomation.HEATING_MODE}
+        request = {'desiredTemp': 23.7, 'mode': Automation.HEATING_MODE}
 
         url = 'thermostat/temperature/' + str(self.USER_ID)
         actual = self.TEST_CLIENT.post(url, data=json.dumps(request), headers=headers)

@@ -4,7 +4,7 @@ from mock import patch, ANY
 from svc.routes.thermostat_routes import get_temperature, set_temperature
 
 
-@patch('svc.routes.thermostat_routes.SetThermostat')
+@patch('svc.routes.thermostat_routes.set_user_temperature')
 @patch('svc.routes.thermostat_routes.request')
 @patch('svc.routes.thermostat_routes.get_user_temp')
 class TestThermostatRoutes:
@@ -41,7 +41,7 @@ class TestThermostatRoutes:
         mock_request.headers = self.AUTH_HEADER
         set_temperature(self.USER_ID)
 
-        mock_set.return_value.set_user_temperature.assert_called_with(ANY, self.BEARER_TOKEN)
+        mock_set.assert_called_with(ANY, self.BEARER_TOKEN)
 
     def test_set_temperature__should_call_thermostat_controller_with_request_body(self, mock_controller, mock_request, mock_set):
         request = {'desiredTemp': 34.1}
@@ -49,4 +49,4 @@ class TestThermostatRoutes:
 
         set_temperature(self.USER_ID)
 
-        mock_set.return_value.set_user_temperature.assert_called_with(request, ANY)
+        mock_set.assert_called_with(request, ANY)

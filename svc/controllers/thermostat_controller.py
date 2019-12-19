@@ -25,18 +25,19 @@ def get_user_temp(user_id, bearer_token):
         return response
 
 
-class SetThermostat:
-    ONE_MINUTE = 60
-    STOP_FLAG = None
-    ACTIVE_THREAD = None
+def set_user_temperature(request, bearer_token):
+    is_jwt_valid(bearer_token)
+    json_request = json.loads(request.decode('UTF-8'))
+    temp = convert_to_celsius(json_request['desiredTemp']) if json_request['isFahrenheit'] else json_request['desiredTemp']
+    state = HvacState.get_instance()
+    __create_hvac_thread(state)
+    state.MODE = json_request['mode']
+    state.DESIRED_TEMP = temp
 
-    def set_user_temperature(self, request, bearer_token):
-        is_jwt_valid(bearer_token)
-        json_request = json.loads(request.decode('UTF-8'))
-        if self.ACTIVE_THREAD is not None:
-            self.STOP_FLAG.set()
-        temp = convert_to_celsius(json_request['desiredTemp']) if json_request['isFahrenheit'] else json_request['desiredTemp']
-        hvac_utility = Hvac(temp, json_request['mode'])
-        self.STOP_FLAG = Event()
-        self.ACTIVE_THREAD = MyThread(self.STOP_FLAG, hvac_utility.run_temperature_program, self.ONE_MINUTE)
-        self.ACTIVE_THREAD.start()
+
+def __create_hvac_thread(state):
+    if state.ACTIVE_THREAD is None:
+        stop_event = Event()
+        state.STOP_EVENT = stop_event
+        state.ACTIVE_THREAD = MyThread(stop_event, run_temperature_program, ONE_MINUTE)
+        state.ACTIVE_THREAD.start()
