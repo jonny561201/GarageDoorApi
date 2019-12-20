@@ -23,7 +23,7 @@ class TestThermostatGetController:
     PREFERENCE = None
 
     def setup_method(self):
-        self.PREFERENCE = {'city': 'Des Moines', 'temp_unit': 'metric', 'is_fahrenheit': True}
+        self.PREFERENCE = {'city': 'Des Moines', 'temp_unit': 'celsius', 'is_fahrenheit': True}
         os.environ.update({'WEATHER_APP_ID': self.APP_ID})
 
     def teardown_method(self):
@@ -83,11 +83,18 @@ class TestThermostatGetController:
 
         mock_weather.assert_called_with('Des Moines', ANY, ANY)
 
-    def test_get_user_temp__should_call_api_requests_with_unit(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+    def test_get_user_temp__should_call_api_requests_with_unit_metric(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
         mock_weather.assert_called_with(ANY, 'metric', ANY)
+
+    def test_get_user_temp__should_call_api_requests_with_unit_imperial(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        self.PREFERENCE['temp_unit'] = 'fahrenheit'
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
+        get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        mock_weather.assert_called_with(ANY, 'imperial', ANY)
 
     def test_get_user_temp__should_call_api_requests_with_app_id(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
