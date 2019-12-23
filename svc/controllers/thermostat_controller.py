@@ -22,7 +22,8 @@ def get_user_temp(user_id, bearer_token):
         internal_temp = __get_internal_temp(preference)
         weather_data = __get_external_temp(preference)
 
-        response = {'currentTemp': internal_temp, 'isFahrenheit': preference['is_fahrenheit']}
+        response = {'currentTemp': internal_temp, 'isFahrenheit': preference['is_fahrenheit'],
+                    'minThermostatTemp': 10.0}
         response.update(weather_data)
 
         return response

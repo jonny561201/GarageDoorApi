@@ -60,7 +60,8 @@ class TestThermostatGetController:
 
         actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-        assert actual == {'currentTemp': expected_temp, 'isFahrenheit': False}
+        assert actual['currentTemp'] == expected_temp
+        assert actual['isFahrenheit'] is False
 
     def test_get_user_temp__should_call_get_preferences_by_user(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
@@ -110,6 +111,14 @@ class TestThermostatGetController:
         actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
         assert actual['temp'] == expected_temp
+
+    def test_get_user_temp__should_return_thermostat_temps_in_celsius(self, mock_user, mock_file, mock_jwt, mock_db, mock_weather):
+        self.PREFERENCE['is_fahrenheit'] = False
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
+
+        actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        assert actual['minThermostatTemp'] == 10.0
 
 
 @patch('svc.controllers.thermostat_controller.convert_to_celsius')
