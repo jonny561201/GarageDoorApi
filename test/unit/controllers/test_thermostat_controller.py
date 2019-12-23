@@ -100,7 +100,7 @@ class TestThermostatSetController:
     def setup_method(self):
         self.STATE = HvacState.get_instance()
         self.STATE.ACTIVE_THREAD = MyThread(None, None, 0)
-        self.REQUEST = json.dumps({'mode': Automation.HEATING_MODE, 'isFahrenheit': False, 'desiredTemp': self.DESIRED_CELSIUS_TEMP}).encode('UTF-8')
+        self.REQUEST = json.dumps({'mode': Automation.MODE.HEATING, 'isFahrenheit': False, 'desiredTemp': self.DESIRED_CELSIUS_TEMP}).encode('UTF-8')
 
     def test_set_user_temperature__should_call_is_jwt_valid(self, mock_jwt, mock_convert):
         set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
@@ -108,7 +108,7 @@ class TestThermostatSetController:
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
     def test_set_user_temperature__should_convert_fahrenheit_to_celsius(self, mock_jwt, mock_convert):
-        request = json.dumps({'mode': Automation.COOLING_MODE, 'isFahrenheit': True, 'desiredTemp': self.DESIRED_FAHRENHEIT_TEMP}).encode('UTF-8')
+        request = json.dumps({'mode': Automation.MODE.COOLING, 'isFahrenheit': True, 'desiredTemp': self.DESIRED_FAHRENHEIT_TEMP}).encode('UTF-8')
         set_user_temperature(request, self.BEARER_TOKEN)
 
         mock_convert.assert_called_with(self.DESIRED_FAHRENHEIT_TEMP)
@@ -130,4 +130,4 @@ class TestThermostatSetController:
 
     def test_set_user_temperature__should_set_mode(self, mock_jwt, mock_convert):
         set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
-        assert self.STATE.MODE == Automation.HEATING_MODE
+        assert self.STATE.MODE == Automation.MODE.HEATING

@@ -64,7 +64,7 @@ class TestThermostatRoutesIntegration:
     def test_set_temperature__should_return_successfully(self, mock_thread):
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
-        request = {'desiredTemp': 23.7, 'mode': Automation.HEATING_MODE, 'isFahrenheit': True}
+        request = {'desiredTemp': 23.7, 'mode': Automation.HVAC.HEATING_MODE, 'isFahrenheit': True}
 
         url = 'thermostat/temperature/' + str(self.USER_ID)
         actual = self.TEST_CLIENT.post(url, data=json.dumps(request), headers=headers)
