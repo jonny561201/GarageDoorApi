@@ -70,6 +70,15 @@ class TestThermostatGetController:
         assert actual['minThermostatTemp'] == 50.0
         assert actual['maxThermostatTemp'] == 90.0
 
+    def test_get_user_temp__should_return_the_hvac_mode(self, mock_jwt, mock_db, mock_temp):
+        state = HvacState.get_instance()
+        expected_mode = "heating"
+        state.MODE = expected_mode
+
+        actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        assert actual['mode'] == expected_mode
+
 
 @patch('svc.controllers.thermostat_controller.convert_to_celsius')
 @patch('svc.controllers.thermostat_controller.is_jwt_valid')

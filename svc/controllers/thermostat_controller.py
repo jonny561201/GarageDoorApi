@@ -36,9 +36,11 @@ def set_user_temperature(request, bearer_token):
 
 
 def __create_response(internal_temp, is_fahren, weather_data):
+    state = HvacState.get_instance()
     response = {'currentTemp': internal_temp, 'isFahrenheit': is_fahren,
                 'minThermostatTemp': 50.0 if is_fahren else 10.0,
-                'maxThermostatTemp': 90.0 if is_fahren else 32.0}
+                'maxThermostatTemp': 90.0 if is_fahren else 32.0,
+                'mode': state.MODE}
     response.update(weather_data)
     return response
 
