@@ -2,13 +2,12 @@ class Mode:
     BLOWER = 'blower'
     COOLING = 'cooling'
     HEATING = 'heating'
-    OFF = 'off'
+    TURN_OFF = 'off'
 
 
 class Hvac:
     FURNACE = 'furnace'
     AIR_CONDITIONING = 'ac'
-    TURN_OFF = 'off'
 
 
 class Time:
