@@ -119,6 +119,7 @@ class TestThermostatGetController:
         actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
         assert actual['minThermostatTemp'] == 10.0
+        assert actual['maxThermostatTemp'] == 32.0
 
 
 @patch('svc.controllers.thermostat_controller.convert_to_celsius')
