@@ -1,6 +1,7 @@
 import json
 from threading import Event
 
+from svc.constants.home_automation import Automation
 from svc.constants.hvac_state import HvacState
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.utilities.event import MyThread
@@ -8,8 +9,6 @@ from svc.utilities.hvac import run_temperature_program
 from svc.utilities.jwt_utils import is_jwt_valid
 from svc.utilities.temperature import convert_to_celsius
 from svc.services import temperature_service
-
-ONE_MINUTE = 60
 
 
 def get_user_temp(user_id, bearer_token):
@@ -47,5 +46,5 @@ def __create_hvac_thread(state):
     if state.ACTIVE_THREAD is None:
         stop_event = Event()
         state.STOP_EVENT = stop_event
-        state.ACTIVE_THREAD = MyThread(stop_event, run_temperature_program, ONE_MINUTE)
+        state.ACTIVE_THREAD = MyThread(stop_event, run_temperature_program, Automation.TIME.ONE_MINUTE)
         state.ACTIVE_THREAD.start()
