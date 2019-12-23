@@ -44,14 +44,14 @@ class TestWeatherRequest:
 
         actual = get_weather(self.CITY, self.UNIT, self.APP_ID)
 
-        assert actual['min_temp'] == min_temp
+        assert actual['minTemp'] == min_temp
 
     def test_get_weather__should_return_default_min_temp_value(self, mock_request):
         mock_request.return_value = (self.STATUS_OK, json.dumps(self.MOCK_RESPONSE))
 
         actual = get_weather(self.CITY, self.UNIT, self.APP_ID)
 
-        assert actual['min_temp'] == 0.0
+        assert actual['minTemp'] == 0.0
 
     def test_get_weather__should_return_max_temp_value(self, mock_request):
         max_temp = 12.87
@@ -60,14 +60,14 @@ class TestWeatherRequest:
 
         actual = get_weather(self.CITY, self.UNIT, self.APP_ID)
 
-        assert actual['max_temp'] == max_temp
+        assert actual['maxTemp'] == max_temp
 
     def test_get_weather__should_return_default_max_temp_value(self, mock_request):
         mock_request.return_value = (self.STATUS_OK, json.dumps(self.MOCK_RESPONSE))
 
         actual = get_weather(self.CITY, self.UNIT, self.APP_ID)
 
-        assert actual['max_temp'] == 0.0
+        assert actual['maxTemp'] == 0.0
 
     def test_get_weather__should_return_weather_description(self, mock_request):
         forecast_description = 'fake forecast'
@@ -97,8 +97,8 @@ class TestWeatherRequest:
         actual = get_weather(self.CITY, self.UNIT, self.APP_ID)
 
         assert actual['temp'] == 0.0
-        assert actual['min_temp'] == 0.0
-        assert actual['max_temp'] == 0.0
+        assert actual['minTemp'] == 0.0
+        assert actual['maxTemp'] == 0.0
         assert actual['description'] is None
 
     def test_get_weather__should_return_default_values_when_throws_connection_error(self, mock_request):
@@ -107,6 +107,6 @@ class TestWeatherRequest:
         actual = get_weather(self.CITY, self.UNIT, self.APP_ID)
 
         assert actual['temp'] == 0.0
-        assert actual['min_temp'] == 0.0
-        assert actual['max_temp'] == 0.0
+        assert actual['minTemp'] == 0.0
+        assert actual['maxTemp'] == 0.0
         assert actual['description'] is None
