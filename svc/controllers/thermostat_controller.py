@@ -12,8 +12,6 @@ from svc.services import temperature_service
 ONE_MINUTE = 60
 
 
-# TODO: add current furnace mode
-# TODO: get desired temp from global object for hvac
 def get_user_temp(user_id, bearer_token):
     is_jwt_valid(bearer_token)
     with UserDatabaseManager() as database:
@@ -40,7 +38,7 @@ def __create_response(internal_temp, is_fahren, weather_data):
     response = {'currentTemp': internal_temp, 'isFahrenheit': is_fahren,
                 'minThermostatTemp': 50.0 if is_fahren else 10.0,
                 'maxThermostatTemp': 90.0 if is_fahren else 32.0,
-                'mode': state.MODE}
+                'mode': state.MODE, 'desiredTemp': state.DESIRED_TEMP}
     response.update(weather_data)
     return response
 
