@@ -19,17 +19,27 @@ def get_user_temp(user_id, bearer_token):
     is_jwt_valid(bearer_token)
     with UserDatabaseManager() as database:
         preference = database.get_preferences_by_user(user_id)
-        temp_text = read_temperature_file()
-        temperature = get_user_temperature(temp_text, preference['is_fahrenheit'])
-        temp_unit = "metric" if preference['temp_unit'] == "celsius" else "imperial"
-        weather_data = get_weather(preference['city'], temp_unit, os.environ['WEATHER_APP_ID'])
+        internal_temp = __get_internal_temp(preference)
+        weather_data = __get_external_temp(preference)
 
-        response = {'currentTemp': temperature, 'isFahrenheit': preference['is_fahrenheit']}
+        response = {'currentTemp': internal_temp, 'isFahrenheit': preference['is_fahrenheit']}
         response.update(weather_data)
 
         return response
 
 
+def __get_external_temp(preference):
+    temp_unit = "metric" if preference['temp_unit'] == "celsius" else "imperial"
+    weather_data = get_weather(preference['city'], temp_unit, 'bdeb14f537691e6266ed3023605f72a5')
+    return weather_data
+
+
+def __get_internal_temp(preference):
+    temp_text = read_temperature_file()
+    return get_user_temperature(temp_text, preference['is_fahrenheit'])
+
+
+# TODO: mode should also support being off!
 def set_user_temperature(request, bearer_token):
     is_jwt_valid(bearer_token)
     json_request = json.loads(request.decode('UTF-8'))
