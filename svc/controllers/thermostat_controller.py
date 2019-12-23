@@ -1,47 +1,27 @@
 import json
-import os
 from threading import Event
 
 from svc.constants.hvac_state import HvacState
 from svc.db.methods.user_credentials import UserDatabaseManager
-from svc.services.weather_request import get_weather
 from svc.utilities.event import MyThread
-from svc.utilities.gpio import read_temperature_file
 from svc.utilities.hvac import run_temperature_program
 from svc.utilities.jwt_utils import is_jwt_valid
-from svc.utilities.temperature import get_user_temperature, convert_to_celsius
-
+from svc.utilities.temperature import convert_to_celsius
+from svc.services import temperature_service
 
 ONE_MINUTE = 60
 
 
+# TODO: add current furnace mode
+# TODO: get desired temp from global object for hvac
 def get_user_temp(user_id, bearer_token):
     is_jwt_valid(bearer_token)
     with UserDatabaseManager() as database:
         preference = database.get_preferences_by_user(user_id)
-        internal_temp = __get_internal_temp(preference)
-        weather_data = __get_external_temp(preference)
+        internal_temp = temperature_service.get_internal_temp(preference)
+        weather_data = temperature_service.get_external_temp(preference)
 
         return __create_response(internal_temp, preference['is_fahrenheit'], weather_data)
-
-
-def __create_response(internal_temp, is_fahren, weather_data):
-    response = {'currentTemp': internal_temp, 'isFahrenheit': is_fahren,
-                'minThermostatTemp': 50.0 if is_fahren else 10.0,
-                'maxThermostatTemp': 90.0 if is_fahren else 32.0}
-    response.update(weather_data)
-    return response
-
-
-def __get_external_temp(preference):
-    temp_unit = "metric" if preference['temp_unit'] == "celsius" else "imperial"
-    weather_data = get_weather(preference['city'], temp_unit, 'bdeb14f537691e6266ed3023605f72a5')
-    return weather_data
-
-
-def __get_internal_temp(preference):
-    temp_text = read_temperature_file()
-    return get_user_temperature(temp_text, preference['is_fahrenheit'])
 
 
 # TODO: mode should also support being off!
@@ -53,6 +33,14 @@ def set_user_temperature(request, bearer_token):
     __create_hvac_thread(state)
     state.MODE = json_request['mode']
     state.DESIRED_TEMP = temp
+
+
+def __create_response(internal_temp, is_fahren, weather_data):
+    response = {'currentTemp': internal_temp, 'isFahrenheit': is_fahren,
+                'minThermostatTemp': 50.0 if is_fahren else 10.0,
+                'maxThermostatTemp': 90.0 if is_fahren else 32.0}
+    response.update(weather_data)
+    return response
 
 
 def __create_hvac_thread(state):
