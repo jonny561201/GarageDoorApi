@@ -27,9 +27,7 @@ def set_user_temperature(request, bearer_token):
     json_request = json.loads(request.decode('UTF-8'))
     temp = convert_to_celsius(json_request['desiredTemp']) if json_request['isFahrenheit'] else json_request['desiredTemp']
     state = HvacState.get_instance()
-    __create_hvac_thread(state)
-    state.MODE = json_request['mode']
-    state.DESIRED_TEMP = temp
+    __create_hvac_thread(state, temp, json_request)
 
 
 def __create_response(internal_temp, is_fahren, weather_data):
@@ -42,9 +40,11 @@ def __create_response(internal_temp, is_fahren, weather_data):
     return response
 
 
-def __create_hvac_thread(state):
+def __create_hvac_thread(state, temp, json_request):
     if state.ACTIVE_THREAD is None:
         stop_event = Event()
         state.STOP_EVENT = stop_event
         state.ACTIVE_THREAD = MyThread(stop_event, run_temperature_program, Automation.TIME.ONE_MINUTE)
         state.ACTIVE_THREAD.start()
+    state.MODE = json_request['mode']
+    state.DESIRED_TEMP = temp

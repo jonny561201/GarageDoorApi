@@ -1,4 +1,4 @@
-from mock import patch, ANY
+from mock import patch, ANY, call
 
 from svc.constants.home_automation import Automation
 from svc.constants.hvac_state import HvacState
@@ -83,14 +83,18 @@ class TestHvac:
         run_temperature_program()
         mock_gpio.turn_off_hvac.assert_called_with(Automation.HVAC.FURNACE)
 
-    def test_run_temperature_program__should_turn_off_ac_when_temp_below_desired_and_mode_cooling(self, mock_temp, mock_convert, mock_gpio):
+    def test_run_temperature_program__should_turn_off_ac_and_furnace_when_temp_below_desired_and_mode_cooling(self, mock_temp, mock_convert, mock_gpio):
         mock_convert.return_value = self.HEAT_TEMP
+        mock_call_1 = call(Automation.HVAC.AIR_CONDITIONING)
+        mock_call_2 = call(Automation.HVAC.FURNACE)
 
         run_temperature_program()
-        mock_gpio.turn_off_hvac.assert_called_with(Automation.HVAC.AIR_CONDITIONING)
+        mock_gpio.turn_off_hvac.assert_has_calls([mock_call_1, mock_call_2])
 
-    def test_run_temperature_program__should_turn_off_ac_when_temp_equal_desired_and_mode_heating(self, mock_temp, mock_convert, mock_gpio):
+    def test_run_temperature_program__should_turn_off_ac_and_furnace_when_temp_equal_desired_and_mode_heating(self, mock_temp, mock_convert, mock_gpio):
         mock_convert.return_value = self.DESIRED_TEMP
+        mock_call_1 = call(Automation.HVAC.AIR_CONDITIONING)
+        mock_call_2 = call(Automation.HVAC.FURNACE)
 
         run_temperature_program()
-        mock_gpio.turn_off_hvac.assert_called_with(Automation.HVAC.AIR_CONDITIONING)
+        mock_gpio.turn_off_hvac.assert_has_calls([mock_call_1, mock_call_2])
