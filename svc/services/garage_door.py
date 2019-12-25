@@ -1,5 +1,3 @@
-# if garage door status open and open time null set open time and status
-# if garage door status closed and closed time null set closed time and status
 from datetime import datetime
 
 from svc.constants.garage_state import GarageState

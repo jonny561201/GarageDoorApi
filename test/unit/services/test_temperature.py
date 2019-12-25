@@ -5,9 +5,9 @@ from mock import patch, ANY
 from svc.services.temperature import get_external_temp, get_internal_temp
 
 
-@patch('svc.services.temperature_service.get_user_temperature')
-@patch('svc.services.temperature_service.read_temperature_file')
-@patch('svc.services.temperature_service.get_weather')
+@patch('svc.services.temperature.get_user_temperature')
+@patch('svc.services.temperature.read_temperature_file')
+@patch('svc.services.temperature.get_weather')
 class TestTemperatureService:
     PREFERENCES = None
     CITY = 'London'

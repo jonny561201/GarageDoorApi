@@ -11,7 +11,7 @@ from svc.controllers.thermostat_controller import get_user_temp, set_user_temper
 from svc.utilities.event import MyThread
 
 
-@patch('svc.controllers.thermostat_controller.temperature_service')
+@patch('svc.controllers.thermostat_controller.temperature')
 @patch('svc.controllers.thermostat_controller.UserDatabaseManager')
 @patch('svc.controllers.thermostat_controller.is_jwt_valid')
 class TestThermostatGetController:
