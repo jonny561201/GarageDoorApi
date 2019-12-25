@@ -72,3 +72,13 @@ class TestGarageService:
         monitor_status()
 
         assert self.STATE.OPEN_TIME == older_date
+
+    def test_monitor_status__should_not_reset_closed_date_when_already_closed(self, mock_status, mock_date):
+        older_date = datetime.now() - timedelta(days=1)
+        mock_status.return_value = False
+        mock_date.now.return_value = self.DATE
+        self.STATE.CLOSED_TIME = older_date
+
+        monitor_status()
+
+        assert self.STATE.CLOSED_TIME == older_date

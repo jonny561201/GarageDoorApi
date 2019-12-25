@@ -15,7 +15,7 @@ def monitor_status():
         state.STATUS = Automation.GARAGE.OPEN
         state.OPEN_TIME = datetime.now()
         state.CLOSED_TIME = None
-    if not status:
+    if not status and state.CLOSED_TIME is None:
         state.STATUS = Automation.GARAGE.CLOSED
         state.CLOSED_TIME = datetime.now()
         state.OPEN_TIME = None
