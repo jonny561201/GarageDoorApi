@@ -7,7 +7,7 @@ from svc.utilities.temperature_utils import get_user_temperature
 
 def get_external_temp(preference):
     temp_unit = "metric" if preference['temp_unit'] == "celsius" else "imperial"
-    weather_data = get_weather(preference['city'], temp_unit, 'bdeb14f537691e6266ed3023605f72a5')
+    weather_data = get_weather(preference['city'], temp_unit, os.environ['WEATHER_APP_ID'])
     return weather_data
 
 
