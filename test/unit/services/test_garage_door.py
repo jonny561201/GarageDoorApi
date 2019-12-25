@@ -28,3 +28,10 @@ class TestGarageService:
         monitor_status()
 
         assert self.STATE.OPEN_TIME == self.DATE
+
+    def test_monitor_status__should_set_status_to_closed_when_garage_door_closed(self, mock_status, mock_date):
+        mock_status.return_value = False
+
+        monitor_status()
+
+        assert self.STATE.STATUS == Automation.GARAGE.CLOSED
