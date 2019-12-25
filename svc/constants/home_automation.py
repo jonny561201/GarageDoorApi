@@ -10,7 +10,14 @@ class Hvac:
     AIR_CONDITIONING = 'ac'
 
 
+class Garage:
+    OPEN = 'open'
+    PENDING = 'pending'
+    CLOSED = 'closed'
+
+
 class Time:
+    THIRTY_SECONDS = 30
     ONE_MINUTE = 60
     TEN_MINUTE = 600
 
@@ -19,3 +26,4 @@ class Automation:
     MODE = Mode()
     HVAC = Hvac()
     TIME = Time()
+    GARAGE = Garage()
