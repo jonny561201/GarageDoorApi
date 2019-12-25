@@ -11,9 +11,8 @@ class Hvac:
 
 
 class Garage:
-    OPEN = 'open'
-    PENDING = 'pending'
-    CLOSED = 'closed'
+    OPEN = True
+    CLOSED = False
 
 
 class Time:

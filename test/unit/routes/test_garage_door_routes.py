@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import jwt
 import pytest
@@ -29,28 +30,33 @@ class TestAppRoutes:
 
         mock_controller.assert_called_with(self.JWT_TOKEN)
 
-    def test_garage_door_status__should_return_success_status_code(self, mock_request):
+    @patch('svc.routes.garage_door_routes.get_status')
+    def test_garage_door_status__should_return_success_status_code(self, mock_status, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        mock_status.return_value = {}
         actual = get_garage_door_status()
 
         assert actual.status_code == 200
 
-    def test_garage_door_status__should_return_success_header(self, mock_request):
+    @patch('svc.routes.garage_door_routes.get_status')
+    def test_garage_door_status__should_return_success_header(self, mock_status, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
+        mock_status.return_value = {}
         expected_headers = 'text/json'
 
         actual = get_garage_door_status()
 
         assert actual.content_type == expected_headers
 
-    def test_garage_door_status__should_return_response_body(self, mock_request):
+    @patch('svc.routes.garage_door_routes.get_status')
+    def test_garage_door_status__should_return_response_body(self, mock_status, mock_request):
         mock_request.headers = {'Authorization': self.JWT_TOKEN}
-        expected_body = {"isGarageOpen": True}
+        expected_body = {"isGarageOpen": True, "statusDuration": datetime.now()}
+        mock_status.return_value = expected_body
 
         actual = get_garage_door_status()
-        json_actual = json.loads(actual.data)
 
-        assert json_actual == expected_body
+        assert actual.data.decode('UTF-8') == json.dumps(expected_body)
 
     def test_garage_door_status__should_raises_when_unauthorized(self, mock_request):
         mock_request.headers = {}
