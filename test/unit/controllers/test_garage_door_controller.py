@@ -18,7 +18,7 @@ class TestGarageController:
     def teardown_method(self, _):
         os.environ.pop('JWT_SECRET')
 
-    @patch('svc.controllers.garage_door_controller.garage_door_status')
+    @patch('svc.controllers.garage_door_controller.is_garage_open')
     def test_garage_door_status__should_call_get_garage_door_status(self, mock_gpio):
         mock_gpio.return_value = {}
         get_status(self.JWT_TOKEN)

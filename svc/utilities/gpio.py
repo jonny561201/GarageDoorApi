@@ -21,7 +21,7 @@ BLOWER_PIN = 14
 
 
 # assumes connection to output pin and ground with GPIO.PUD_UP
-def garage_door_status():
+def is_garage_open():
     return True
     # status = GPIO.input(GARAGE_STATUS_PIN)
     # return True if status == 1 else False

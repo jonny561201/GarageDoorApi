@@ -2,7 +2,7 @@ import os
 
 from mock import patch, ANY
 
-from svc.services.temperature_service import get_external_temp, get_internal_temp
+from svc.services.temperature import get_external_temp, get_internal_temp
 
 
 @patch('svc.services.temperature_service.get_user_temperature')

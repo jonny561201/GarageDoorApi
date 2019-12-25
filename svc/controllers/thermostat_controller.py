@@ -8,20 +8,19 @@ from svc.utilities.event import MyThread
 from svc.utilities.hvac import run_temperature_program
 from svc.utilities.jwt_utils import is_jwt_valid
 from svc.utilities.temperature import convert_to_celsius
-from svc.services import temperature_service
+from svc.services import temperature
 
 
 def get_user_temp(user_id, bearer_token):
     is_jwt_valid(bearer_token)
     with UserDatabaseManager() as database:
         preference = database.get_preferences_by_user(user_id)
-        internal_temp = temperature_service.get_internal_temp(preference)
-        weather_data = temperature_service.get_external_temp(preference)
+        internal_temp = temperature.get_internal_temp(preference)
+        weather_data = temperature.get_external_temp(preference)
 
         return __create_response(internal_temp, preference['is_fahrenheit'], weather_data)
 
 
-# TODO: mode should also support being off!
 def set_user_temperature(request, bearer_token):
     is_jwt_valid(bearer_token)
     json_request = json.loads(request.decode('UTF-8'))

@@ -1,12 +1,13 @@
 import json
 
-from svc.utilities.gpio import garage_door_status, update_garage_door, toggle_garage_door
+from svc.utilities.gpio import is_garage_open, update_garage_door, toggle_garage_door
 from svc.utilities.jwt_utils import is_jwt_valid
 
 
+# TODO: create thread to store and query status of door
 def get_status(bearer_token):
     is_jwt_valid(bearer_token)
-    status = garage_door_status()
+    status = is_garage_open()
     return {'isGarageOpen': status}
 
 
