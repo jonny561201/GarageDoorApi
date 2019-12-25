@@ -43,3 +43,10 @@ class TestGarageService:
         monitor_status()
 
         assert self.STATE.CLOSED_TIME == self.DATE
+
+    def test_monitor_status__should_nullify_open_date_when_closed(self, mock_status, mock_date):
+        mock_status.return_value = False
+
+        monitor_status()
+
+        assert self.STATE.OPEN_TIME is None
