@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from mock import patch
 
@@ -13,6 +13,11 @@ class TestGarageService:
 
     DATE = datetime.now()
     STATE = GarageState.get_instance()
+
+    def setup_method(self):
+        self.STATE.CLOSED_TIME = None
+        self.STATE.OPEN_TIME = None
+        self.STATE.STATUS = None
 
     def test_monitor_status__should_set_status_to_open_when_garage_open(self, mock_status, mock_date):
         mock_status.return_value = True
@@ -57,3 +62,13 @@ class TestGarageService:
         monitor_status()
 
         assert self.STATE.CLOSED_TIME is None
+
+    def test_monitor_status__should_not_reset_open_date_when_already_open(self, mock_status, mock_date):
+        older_date = datetime.now() - timedelta(days=1)
+        mock_status.return_value = True
+        mock_date.now.return_value = self.DATE
+        self.STATE.OPEN_TIME = older_date
+
+        monitor_status()
+
+        assert self.STATE.OPEN_TIME == older_date
