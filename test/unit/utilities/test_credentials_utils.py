@@ -3,7 +3,7 @@ import base64
 import pytest
 from werkzeug.exceptions import BadRequest
 
-from svc.utilities.credentials import extract_credentials
+from svc.utilities.credentials_utils import extract_credentials
 
 
 def test_extract_credentials__should_return_valid_credentials():

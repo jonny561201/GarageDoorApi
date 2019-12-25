@@ -1,7 +1,7 @@
 import pytest
 from werkzeug.exceptions import Conflict
 
-from svc.utilities.temperature_util import get_user_temperature, convert_to_fahrenheit, convert_to_celsius
+from svc.utilities.temperature_utils import get_user_temperature, convert_to_fahrenheit, convert_to_celsius
 
 
 def test_get_user_temperature__should_return_temperature_in_celsius():

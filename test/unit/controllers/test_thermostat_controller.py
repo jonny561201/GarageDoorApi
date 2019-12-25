@@ -8,7 +8,7 @@ from mock import patch
 from svc.constants.home_automation import Automation
 from svc.constants.hvac_state import HvacState
 from svc.controllers.thermostat_controller import get_user_temp, set_user_temperature
-from svc.utilities.event import MyThread
+from svc.utilities.event_utils import MyThread
 
 
 @patch('svc.controllers.thermostat_controller.temperature')

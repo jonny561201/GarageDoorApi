@@ -2,12 +2,12 @@ from mock import patch, ANY, call
 
 from svc.constants.home_automation import Automation
 from svc.constants.hvac_state import HvacState
-from svc.utilities.hvac import run_temperature_program
+from svc.utilities.hvac_utils import run_temperature_program
 
 
-@patch('svc.utilities.hvac.gpio')
-@patch('svc.utilities.hvac.get_user_temperature')
-@patch('svc.utilities.hvac.read_temperature_file')
+@patch('svc.utilities.hvac_utils.gpio_utils')
+@patch('svc.utilities.hvac_utils.get_user_temperature')
+@patch('svc.utilities.hvac_utils.read_temperature_file')
 class TestHvac:
     DESIRED_TEMP = 33.0
     AC_TEMP = 35.0

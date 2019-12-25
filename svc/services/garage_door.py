@@ -2,7 +2,7 @@ from datetime import datetime
 
 from svc.constants.garage_state import GarageState
 from svc.constants.home_automation import Automation
-from svc.utilities.gpio import is_garage_open
+from svc.utilities.gpio_utils import is_garage_open
 
 
 def monitor_status():

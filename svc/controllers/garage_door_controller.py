@@ -1,6 +1,6 @@
 import json
 
-from svc.utilities.gpio import is_garage_open, update_garage_door, toggle_garage_door
+from svc.utilities.gpio_utils import is_garage_open, update_garage_door, toggle_garage_door
 from svc.utilities.jwt_utils import is_jwt_valid
 
 

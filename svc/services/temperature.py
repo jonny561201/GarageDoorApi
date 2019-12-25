@@ -1,8 +1,8 @@
 import os
 
 from svc.services.weather_request import get_weather
-from svc.utilities.gpio import read_temperature_file
-from svc.utilities.temperature_util import get_user_temperature
+from svc.utilities.gpio_utils import read_temperature_file
+from svc.utilities.temperature_utils import get_user_temperature
 
 
 def get_external_temp(preference):

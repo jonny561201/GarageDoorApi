@@ -4,10 +4,10 @@ from threading import Event
 from svc.constants.home_automation import Automation
 from svc.constants.hvac_state import HvacState
 from svc.db.methods.user_credentials import UserDatabaseManager
-from svc.utilities.event import MyThread
-from svc.utilities.hvac import run_temperature_program
+from svc.utilities.event_utils import MyThread
+from svc.utilities.hvac_utils import run_temperature_program
 from svc.utilities.jwt_utils import is_jwt_valid
-from svc.utilities.temperature_util import convert_to_celsius
+from svc.utilities.temperature_utils import convert_to_celsius
 from svc.services import temperature
 
 

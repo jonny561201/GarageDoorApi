@@ -3,10 +3,10 @@ import json
 from mock import patch
 from requests import Response
 
-from svc.utilities.api_requests import get_weather_by_city
+from svc.utilities.api_requests_utils import get_weather_by_city
 
 
-@patch('svc.utilities.api_requests.requests')
+@patch('svc.utilities.api_requests_utils.requests')
 class TestApiRequests:
     CITY = 'Des Moines'
     UNIT_PREFERENCE = 'imperial'
