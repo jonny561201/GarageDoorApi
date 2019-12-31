@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import pytz
 from mock import patch
 
 from svc.constants.garage_state import GarageState
@@ -11,7 +12,7 @@ from svc.services.garage_door import monitor_status
 @patch('svc.services.garage_door.is_garage_open')
 class TestGarageService:
 
-    DATE = datetime.now()
+    DATE = datetime.now(pytz.utc)
     STATE = GarageState.get_instance()
 
     def setup_method(self):
