@@ -2,6 +2,8 @@ import json
 from datetime import datetime
 from threading import Event
 
+import pytz
+
 from svc.constants.garage_state import GarageState
 from svc.constants.home_automation import Automation
 from svc.services.garage_door import monitor_status
@@ -15,7 +17,7 @@ def get_status(bearer_token):
     state = GarageState.get_instance()
     if state.ACTIVE_THREAD is None:
         __create_thread(state)
-        return {'isGarageOpen': gpio_utils.is_garage_open(), 'statusDuration': datetime.now()}
+        return {'isGarageOpen': gpio_utils.is_garage_open(), 'statusDuration': datetime.now(pytz.utc)}
     else:
         return {'isGarageOpen': state.STATUS, 'statusDuration': state.OPEN_TIME if state.STATUS else state.CLOSED_TIME}
 

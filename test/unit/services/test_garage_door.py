@@ -11,7 +11,7 @@ from svc.services.garage_door import monitor_status
 @patch('svc.services.garage_door.is_garage_open')
 class TestGarageService:
 
-    DATE = datetime.utcnow()
+    DATE = datetime.now()
     STATE = GarageState.get_instance()
 
     def setup_method(self):
@@ -28,7 +28,7 @@ class TestGarageService:
 
     def test_monitor_status__should_set_open_time_when_garage_open(self, mock_status, mock_date):
         mock_status.return_value = True
-        mock_date.utcnow.return_value = self.DATE
+        mock_date.now.return_value = self.DATE
 
         monitor_status()
 
@@ -43,7 +43,7 @@ class TestGarageService:
 
     def test_monitor_status__should_set_closed_time_when_garage_closed(self, mock_status, mock_date):
         mock_status.return_value = False
-        mock_date.utcnow.return_value = self.DATE
+        mock_date.now.return_value = self.DATE
 
         monitor_status()
 
@@ -64,9 +64,9 @@ class TestGarageService:
         assert self.STATE.CLOSED_TIME is None
 
     def test_monitor_status__should_not_reset_open_date_when_already_open(self, mock_status, mock_date):
-        older_date = datetime.utcnow() - timedelta(days=1)
+        older_date = datetime.now() - timedelta(days=1)
         mock_status.return_value = True
-        mock_date.utcnow.return_value = self.DATE
+        mock_date.now.return_value = self.DATE
         self.STATE.OPEN_TIME = older_date
 
         monitor_status()
@@ -74,9 +74,9 @@ class TestGarageService:
         assert self.STATE.OPEN_TIME == older_date
 
     def test_monitor_status__should_not_reset_closed_date_when_already_closed(self, mock_status, mock_date):
-        older_date = datetime.utcnow() - timedelta(days=1)
+        older_date = datetime.now() - timedelta(days=1)
         mock_status.return_value = False
-        mock_date.utcnow.return_value = self.DATE
+        mock_date.now.return_value = self.DATE
         self.STATE.CLOSED_TIME = older_date
 
         monitor_status()
