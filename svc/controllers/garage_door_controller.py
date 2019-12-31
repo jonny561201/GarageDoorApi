@@ -14,10 +14,7 @@ def get_status(bearer_token):
     is_jwt_valid(bearer_token)
     state = GarageState.get_instance()
     if state.ACTIVE_THREAD is None:
-        stop_event = Event()
-        state.STOP_EVENT = stop_event
-        state.ACTIVE_THREAD = MyThread(stop_event, monitor_status, Automation.TIME.THIRTY_SECONDS)
-        state.ACTIVE_THREAD.start()
+        __create_thread(state)
         return {'isGarageOpen': gpio_utils.is_garage_open(), 'statusDuration': datetime.now()}
     else:
         return {'isGarageOpen': state.STATUS, 'statusDuration': state.OPEN_TIME if state.STATUS else state.CLOSED_TIME}
@@ -33,3 +30,10 @@ def update_state(bearer_token, request):
 def toggle_garage_door_state(bearer_token):
     is_jwt_valid(bearer_token)
     gpio_utils.toggle_garage_door()
+
+
+def __create_thread(state):
+    stop_event = Event()
+    state.STOP_EVENT = stop_event
+    state.ACTIVE_THREAD = MyThread(stop_event, monitor_status, Automation.TIME.THIRTY_SECONDS)
+    state.ACTIVE_THREAD.start()
