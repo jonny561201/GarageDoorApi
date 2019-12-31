@@ -14,7 +14,6 @@ from svc.manager import create_app
 class TestThermostatRoutesIntegration:
     TEST_CLIENT = None
     JWT_SECRET = 'fake_secret'
-    APP_ID = 'fake_app_id'
     USER_ID = None
     USER = None
     PREFERENCE = None
@@ -25,14 +24,13 @@ class TestThermostatRoutesIntegration:
         self.PREFERENCE = UserPreference(user_id=self.USER_ID.hex, city='London', is_fahrenheit=False, is_imperial=False)
         flask_app = create_app('__main__')
         self.TEST_CLIENT = flask_app.test_client()
-        os.environ.update({'JWT_SECRET': self.JWT_SECRET, 'WEATHER_APP_ID': self.APP_ID})
+        os.environ.update({'JWT_SECRET': self.JWT_SECRET})
         with UserDatabaseManager() as database:
             database.session.add(self.USER)
             database.session.add(self.PREFERENCE)
 
     def teardown_method(self):
         os.environ.pop('JWT_SECRET')
-        os.environ.pop('WEATHER_APP_ID')
         with UserDatabaseManager() as database:
             database.session.delete(self.PREFERENCE)
             database.session.delete(self.USER)

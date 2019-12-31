@@ -23,7 +23,6 @@ def get_status(bearer_token):
         return {'isGarageOpen': state.STATUS, 'statusDuration': state.OPEN_TIME if state.STATUS else state.CLOSED_TIME}
 
 
-# TODO doesnt appear to be storing the desired Temp
 def update_state(bearer_token, request):
     is_jwt_valid(bearer_token)
     request_body = json.loads(request.decode('UTF-8'))

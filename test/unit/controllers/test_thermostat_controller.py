@@ -18,9 +18,13 @@ class TestThermostatGetController:
     JWT_TOKEN = jwt.encode({}, 'JWT_SECRET', algorithm='HS256').decode('UTF-8')
     USER_ID = uuid.uuid4().hex
     PREFERENCE = None
+    STATE = HvacState.get_instance()
+    TEMP_FAHR = 45.608
+    TEMP_CEL = 7.56
 
     def setup_method(self):
-        self.PREFERENCE = {'city': 'Des Moines', 'temp_unit': 'celsius', 'is_fahrenheit': True}
+        self.STATE.DESIRED_TEMP = self.TEMP_FAHR
+        self.PREFERENCE = {'city': 'Des Moines', 'temp_unit': 'fahrenheit', 'is_fahrenheit': True}
 
     def test_get_user_temp__should_call_is_jwt_valid(self, mock_jwt, mock_db, mock_temp):
         get_user_temp(self.USER_ID, self.JWT_TOKEN)
@@ -34,14 +38,13 @@ class TestThermostatGetController:
 
     def test_get_user_temp__should_return_response_from_get_internal_temp(self, mock_jwt, mock_db, mock_temp):
         expected_temp = 23.45
-        self.PREFERENCE['is_fahrenheit'] = False
         mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
         mock_temp.get_internal_temp.return_value = expected_temp
 
         actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
         assert actual['currentTemp'] == expected_temp
-        assert actual['isFahrenheit'] is False
+        assert actual['isFahrenheit'] is True
 
     def test_get_user_temp__should_consolidate_weather_response_with_get_external_temp(self, mock_jwt, mock_db, mock_temp):
         response = {'temp': 56.3, 'description': 'fake desc'}
@@ -71,22 +74,41 @@ class TestThermostatGetController:
         assert actual['maxThermostatTemp'] == 90.0
 
     def test_get_user_temp__should_return_the_hvac_mode(self, mock_jwt, mock_db, mock_temp):
-        state = HvacState.get_instance()
         expected_mode = "heating"
-        state.MODE = expected_mode
+        self.STATE.MODE = expected_mode
 
         actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
         assert actual['mode'] == expected_mode
 
-    def test_get_user_temp__should_return_the_hvac_desired_temp(self, mock_jwt, mock_db, mock_temp):
-        state = HvacState.get_instance()
-        expected_temp = 34.8
-        state.DESIRED_TEMP = expected_temp
+    def test_get_user_temp__should_return_the_hvac_desired_temp_in_fahrenheit(self, mock_jwt, mock_db, mock_temp):
+        self.STATE.DESIRED_TEMP = self.TEMP_CEL
+        self.STATE.IS_FAHRENHEIT = False
+        self.PREFERENCE['is_fahrenheit'] = True
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
 
         actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
 
-        assert actual['desiredTemp'] == expected_temp
+        assert actual['desiredTemp'] == self.TEMP_FAHR
+
+    def test_get_user_temp__should_return_the_hvac_desired_temp_in_celsius(self, mock_jwt, mock_db, mock_temp):
+        self.STATE.DESIRED_TEMP = self.TEMP_CEL
+        self.PREFERENCE['is_fahrenheit'] = False
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
+
+        actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        assert actual['desiredTemp'] == self.TEMP_CEL
+
+    def test_get_user_temp__should_return_the_hvac_internal_temp_when_desired_temp_not_set(self, mock_jwt, mock_db, mock_temp):
+        self.STATE.DESIRED_TEMP = None
+        self.PREFERENCE['is_fahrenheit'] = False
+        mock_temp.get_internal_temp.return_value = self.TEMP_FAHR
+        mock_db.return_value.__enter__.return_value.get_preferences_by_user.return_value = self.PREFERENCE
+
+        actual = get_user_temp(self.USER_ID, self.JWT_TOKEN)
+
+        assert actual['desiredTemp'] == self.TEMP_FAHR
 
 
 @patch('svc.controllers.thermostat_controller.convert_to_celsius')
