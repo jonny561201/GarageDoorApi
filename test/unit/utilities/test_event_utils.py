@@ -1,6 +1,6 @@
 from threading import Event
 
-from mock import patch, create_autospec
+from mock import patch, create_autospec, Mock
 
 from svc.constants.garage_state import GarageState
 from svc.utilities.event_utils import create_thread, MyThread
@@ -29,4 +29,9 @@ class TestEvent:
 
         assert self.STATE.ACTIVE_THREAD == thread
 
+    def test_create_thread__should_start_the_active_thread(self, mock_event, mock_thread):
+        thread = Mock()
+        mock_thread.return_value = thread
+        create_thread(self.STATE, self.FUNCT)
 
+        thread.start.assert_called()
