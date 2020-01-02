@@ -12,8 +12,7 @@ def get_sump_level(user_id, bearer_token):
         average_data = database.get_average_sump_level_by_user(user_id)
         preferences = database.get_preferences_by_user(user_id)
 
-        is_imperial = preferences['is_imperial']
-        __convert_distance(average_data, current_data, is_imperial)
+        __convert_distance(average_data, current_data, preferences['is_imperial'])
         current_data.update(average_data)
 
         return current_data
