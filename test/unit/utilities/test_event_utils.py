@@ -1,9 +1,10 @@
 from threading import Event
 
-from mock import patch, create_autospec, Mock
+from mock import patch, Mock, ANY
 
 from svc.constants.garage_state import GarageState
-from svc.utilities.event_utils import create_thread, MyThread
+from svc.constants.home_automation import Automation
+from svc.utilities.event_utils import create_thread
 
 
 @patch('svc.utilities.event_utils.MyThread')
@@ -23,7 +24,7 @@ class TestEvent:
         assert self.STATE.STOP_EVENT == event
 
     def test_create_thread__should_set_active_thread(self, mock_event, mock_thread):
-        thread = create_autospec(MyThread)
+        thread = Mock()
         mock_thread.return_value = thread
         create_thread(self.STATE, self.FUNCT)
 
@@ -35,3 +36,20 @@ class TestEvent:
         create_thread(self.STATE, self.FUNCT)
 
         thread.start.assert_called()
+
+    def test_create_thread__should_create_thread_with_stop_event(self, mock_event, mock_thread):
+        event = Mock()
+        mock_event.return_value = event
+        create_thread(self.STATE, self.FUNCT)
+
+        mock_thread.assert_called_with(event, ANY, ANY)
+
+    def test_create_thread__should_create_thread_with_provided_function(self, mock_event, mock_thread):
+        create_thread(self.STATE, self.FUNCT)
+
+        mock_thread.assert_called_with(ANY, self.FUNCT, ANY)
+
+    def test_create_thread__should_create_thread_with_default_delay(self, mock_event, mock_thread):
+        create_thread(self.STATE, self.FUNCT)
+
+        mock_thread.assert_called_with(ANY, ANY, Automation.TIME.THIRTY_SECONDS)
