@@ -9,11 +9,12 @@ from mock import patch
 from svc.constants.garage_state import GarageState
 from svc.constants.home_automation import Automation
 from svc.controllers.garage_door_controller import get_status, update_state, toggle_garage_door_state
+from svc.services.garage_door import monitor_status
 from svc.utilities.event_utils import MyThread
 
 
 @patch('svc.controllers.garage_door_controller.gpio_utils')
-@patch('svc.controllers.garage_door_controller.MyThread')
+@patch('svc.controllers.garage_door_controller.create_thread')
 class TestGarageController:
     STATE = GarageState.get_instance()
     JWT_SECRET = 'fake_jwt_secret'
@@ -49,17 +50,7 @@ class TestGarageController:
     def test_garage_door_status__should_create_thread_when_no_active_thread(self, mock_thread, mock_gpio):
         get_status(self.JWT_TOKEN)
 
-        assert self.STATE.ACTIVE_THREAD is not None
-
-    def test_garage_door_status__should_create_event_when_no_active_thread(self, mock_thread, mock_gpio):
-        get_status(self.JWT_TOKEN)
-
-        assert self.STATE.STOP_EVENT is not None
-
-    def test_garage_door_status__should_start_active_thread(self, mock_thread, mock_gpio):
-        get_status(self.JWT_TOKEN)
-
-        mock_thread.return_value.start.assert_called()
+        mock_thread.assert_called_with(self.STATE, monitor_status)
 
     def test_garage_door_status__should_return_garage_state_status_when_active_thread(self, mock_thread, mock_gpio):
         self.STATE.ACTIVE_THREAD = MyThread(Event(), print, Automation.TIME.THIRTY_SECONDS)

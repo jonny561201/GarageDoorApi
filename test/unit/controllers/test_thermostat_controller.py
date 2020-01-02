@@ -9,6 +9,7 @@ from svc.constants.home_automation import Automation
 from svc.constants.hvac_state import HvacState
 from svc.controllers.thermostat_controller import get_user_temp, set_user_temperature
 from svc.utilities.event_utils import MyThread
+from svc.utilities.hvac_utils import run_temperature_program
 
 
 @patch('svc.controllers.thermostat_controller.temperature')
@@ -141,14 +142,13 @@ class TestThermostatSetController:
         assert self.STATE.DESIRED_TEMP == self.DESIRED_CELSIUS_TEMP
         mock_convert.assert_not_called()
 
-    @patch('svc.controllers.thermostat_controller.MyThread')
+    @patch('svc.controllers.thermostat_controller.create_thread')
     def test_set_user_temperature__should_create_thread_when_none(self, mock_thread, mock_jwt, mock_convert):
         self.STATE.ACTIVE_THREAD = None
         self.STATE.STOP_EVENT = None
         set_user_temperature(self.REQUEST, self.BEARER_TOKEN)
 
-        assert self.STATE.ACTIVE_THREAD is not None
-        assert self.STATE.STOP_EVENT is not None
+        mock_thread.assert_called_with(self.STATE, run_temperature_program)
 
     def test_set_user_temperature__should_set_mode(self, mock_jwt, mock_convert):
         set_user_temperature(self.REQUEST, self.BEARER_TOKEN)

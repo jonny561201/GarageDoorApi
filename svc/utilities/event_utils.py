@@ -1,4 +1,6 @@
-from threading import Thread
+from threading import Thread, Event
+
+from svc.constants.home_automation import Automation
 
 
 class MyThread(Thread):
@@ -11,3 +13,10 @@ class MyThread(Thread):
     def run(self):
         while not self.stopped.wait(self.interval):
             self.function()
+
+
+def create_thread(state, fn, delay=Automation.TIME.THIRTY_SECONDS):
+    stop_event = Event()
+    state.STOP_EVENT = stop_event
+    state.ACTIVE_THREAD = MyThread(stop_event, fn, delay)
+    state.ACTIVE_THREAD.start()
