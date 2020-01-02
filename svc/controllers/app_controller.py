@@ -1,8 +1,7 @@
 import json
 
 from svc.db.methods.user_credentials import UserDatabaseManager
-from svc.utilities.credentials_utils import extract_credentials
-from svc.utilities.jwt_utils import create_jwt_token, is_jwt_valid
+from svc.utilities.jwt_utils import create_jwt_token, is_jwt_valid, extract_credentials
 
 
 def get_login(basic_token):

@@ -1,3 +1,4 @@
+import base64
 import os
 from datetime import datetime, timedelta
 
@@ -5,9 +6,9 @@ import jwt
 import pytest
 import pytz
 from mock import patch
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, BadRequest
 
-from svc.utilities.jwt_utils import is_jwt_valid, create_jwt_token
+from svc.utilities.jwt_utils import is_jwt_valid, create_jwt_token, extract_credentials
 
 
 class TestJwt:
@@ -71,8 +72,40 @@ class TestJwt:
 
         assert jwt.decode(actual, self.JWT_SECRET, algorithms='HS256') == expected_token_body
 
+    def test_extract_credentials__should_return_valid_credentials(self):
+        user = "user"
+        pword = "password"
+        creds = "%s:%s" % (user, pword)
+        encoded_token = base64.b64encode(creds.encode())
+        bearer_token = "Basic %s" % encoded_token.decode('UTF-8')
 
-def test_is_jwt_valid__should_return_false_if_secret_is_not_set():
+        actual_user, actual_pass = extract_credentials(bearer_token)
+
+        assert actual_pass == pword
+        assert actual_user == user
+
+    def test_extract_credentials__should_return_valid_credentials_when_missing_basic(self):
+        user = "user"
+        pword = "password"
+        creds = "%s:%s" % (user, pword)
+        encoded_token = base64.b64encode(creds.encode())
+        bearer_token = encoded_token.decode('UTF-8')
+
+        actual_user, actual_pass = extract_credentials(bearer_token)
+
+        assert actual_pass == pword
+        assert actual_user == user
+
+    def test_extract_credentials__should_throw_bad_request_when_no_token(self):
+        with pytest.raises(BadRequest):
+            extract_credentials(None)
+
+    def test_extract_credentials__should(self):
+        with pytest.raises(BadRequest):
+            extract_credentials("")
+
+
+def test_is_jwt_valid__should_raise_exception_if_secret_is_not_set():
     jwt_body = {'fakeBody': 'valueValue'}
     jwt_secret = 'testSecret'
     jwt_token = jwt.encode(jwt_body, jwt_secret, algorithm='HS256').decode('UTF-8')
