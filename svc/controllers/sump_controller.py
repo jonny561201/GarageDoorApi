@@ -13,11 +13,7 @@ def get_sump_level(user_id, bearer_token):
         preferences = database.get_preferences_by_user(user_id)
 
         is_imperial = preferences['is_imperial']
-        current_distance = convert_to_imperial(current_data['currentDepth'], is_imperial)
-        average_distance = convert_to_imperial(average_data['averageDepth'], is_imperial)
-        current_data['currentDepth'] = current_distance
-        average_data['averageDepth'] = average_distance
-        current_data['depthUnit'] = 'in' if is_imperial else 'cm'
+        __convert_distance(average_data, current_data, is_imperial)
         current_data.update(average_data)
 
         return current_data
@@ -28,3 +24,11 @@ def save_current_level(user_id, bearer_token, request):
     depth_info = json.loads(request)
     with UserDatabaseManager() as database:
         database.insert_current_sump_level(user_id, depth_info)
+
+
+def __convert_distance(average_data, current_data, is_imperial):
+    current_distance = convert_to_imperial(current_data['currentDepth'], is_imperial)
+    average_distance = convert_to_imperial(average_data['averageDepth'], is_imperial)
+    current_data['currentDepth'] = current_distance
+    average_data['averageDepth'] = average_distance
+    current_data['depthUnit'] = 'in' if is_imperial else 'cm'
