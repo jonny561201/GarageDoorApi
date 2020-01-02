@@ -1,7 +1,7 @@
 import pytest
 from werkzeug.exceptions import Conflict
 
-from svc.utilities.temperature_utils import get_user_temperature, convert_to_fahrenheit, convert_to_celsius
+from svc.utilities.user_temp_utils import get_user_temperature
 
 
 def test_get_user_temperature__should_return_temperature_in_celsius():
@@ -32,38 +32,3 @@ def test_get_user_temperature__should_throw_conflict_when_no_temp_text_found():
     with pytest.raises(Conflict):
         get_user_temperature(temp_text, False)
 
-
-def test_convert_to_fahrenheit__should_convert_zero():
-    actual = convert_to_fahrenheit(0.0)
-
-    assert actual == 32.0
-
-
-def test_convert_to_fahrenheit__should_convert_positive_number():
-    actual = convert_to_fahrenheit(24.0)
-
-    assert actual == 75.2
-
-
-def test_convert_to_fahrenheit__should_convert_negative_number():
-    actual = convert_to_fahrenheit(-20.0)
-
-    assert actual == -4.0
-
-
-def test_convert_to_celsius__should_convert_zero():
-    actual = convert_to_celsius(32.0)
-
-    assert actual == 0.0
-
-
-def test_convert_to_celsius__should_convert_negative_number():
-    actual = convert_to_celsius(12.0)
-
-    assert actual == -11.11
-
-
-def test_convert_to_celsius__should_convert_positive_number():
-    actual = convert_to_celsius(50.0)
-
-    assert actual == 10.0

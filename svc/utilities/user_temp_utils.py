@@ -2,6 +2,8 @@ import re
 
 from werkzeug.exceptions import Conflict
 
+from svc.utilities.conversion_utils import convert_to_fahrenheit
+
 
 def get_user_temperature(temp_text, is_fahrenheit):
     if temp_text[0][-3:] != 'YES':
@@ -12,14 +14,6 @@ def get_user_temperature(temp_text, is_fahrenheit):
 
     celsius = _get_celsius_value(temp_string.group())
     return _convert_to_correct_unit(celsius, is_fahrenheit)
-
-
-def convert_to_fahrenheit(celsius_temp):
-    return celsius_temp * 1.8 + 32
-
-
-def convert_to_celsius(fahrenheit_temp):
-    return round((fahrenheit_temp - 32) / 1.8, 2)
 
 
 def _get_celsius_value(temp_row):

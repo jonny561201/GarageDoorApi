@@ -3,10 +3,10 @@ import json
 from svc.constants.hvac_state import HvacState
 from svc.db.methods.user_credentials import UserDatabaseManager
 from svc.services import temperature
+from svc.utilities.conversion_utils import convert_to_celsius, convert_to_fahrenheit
 from svc.utilities.event_utils import create_thread
 from svc.utilities.hvac_utils import run_temperature_program
 from svc.utilities.jwt_utils import is_jwt_valid
-from svc.utilities.temperature_utils import convert_to_celsius, convert_to_fahrenheit
 
 
 def get_user_temp(user_id, bearer_token):
