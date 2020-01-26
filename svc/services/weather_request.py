@@ -30,6 +30,6 @@ def __build_response(response_content):
     current_temp = main.get('temp', 0.0)
     min_temp = main.get('temp_min', 0.0)
     max_temp = main.get('temp_max', 0.0)
-    forecast_desc = next(iter(response_content.get('weather', {})), {}).get('description')
+    forecast_desc = next(iter(response_content.get('weather', {})), {}).get('description', '')
 
     return {'temp': current_temp, 'minTemp': min_temp, 'maxTemp': max_temp, 'description': forecast_desc}

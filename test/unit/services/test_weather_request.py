@@ -83,7 +83,7 @@ class TestWeatherRequest:
 
         actual = get_weather(self.CITY, self.UNIT, self.APP_ID)
 
-        assert actual['description'] is None
+        assert actual['description'] == ""
 
     def test_get_weather__should_throw_unauthorized_when_401_returned(self, mock_request):
         mock_request.return_value = (self.STATUS_UNAUTHORIZED, json.dumps({}))
@@ -99,7 +99,7 @@ class TestWeatherRequest:
         assert actual['temp'] == 0.0
         assert actual['minTemp'] == 0.0
         assert actual['maxTemp'] == 0.0
-        assert actual['description'] is None
+        assert actual['description'] == ""
 
     def test_get_weather__should_return_default_values_when_throws_connection_error(self, mock_request):
         mock_request.side_effect = ConnectionError()
@@ -109,4 +109,4 @@ class TestWeatherRequest:
         assert actual['temp'] == 0.0
         assert actual['minTemp'] == 0.0
         assert actual['maxTemp'] == 0.0
-        assert actual['description'] is None
+        assert actual['description'] == ""
