@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
 
-from svc.routes.sump_routes import SUMP_BLUEPRINT
 from svc.routes.app_routes import APP_BLUEPRINT
 from svc.routes.garage_door_routes import GARAGE_BLUEPRINT
+from svc.routes.sump_routes import SUMP_BLUEPRINT
 from svc.routes.thermostat_routes import THERMOSTAT_BLUEPRINT
 
 
