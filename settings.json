@@ -1,3 +1,5 @@
 {
-  "Development": true
+  "Development": true,
+  "DevWeatherAppId": "",
+  "DevJwtSecret": "FakeSecret"
 }
