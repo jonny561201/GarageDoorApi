@@ -1,5 +1,6 @@
 import os
 
+from svc.constants.settings_state import Settings
 from svc.services.weather_request import get_weather
 from svc.utilities.gpio_utils import read_temperature_file
 from svc.utilities.user_temp_utils import get_user_temperature
@@ -7,7 +8,9 @@ from svc.utilities.user_temp_utils import get_user_temperature
 
 def get_external_temp(preference):
     temp_unit = "metric" if preference['temp_unit'] == "celsius" else "imperial"
-    weather_data = get_weather(preference['city'], temp_unit, os.environ['WEATHER_APP_ID'])
+    app_settings = Settings.get_instance().get_settings()
+    app_id = app_settings.get('DevWeatherAppId') if app_settings.get('Development', False) else os.environ.get('WEATHER_APP_ID')
+    weather_data = get_weather(preference['city'], temp_unit, app_id)
     return weather_data
 
 
