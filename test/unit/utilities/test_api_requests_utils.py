@@ -149,3 +149,9 @@ class TestLightApiRequests:
         expected_request = {'on': state, 'bri': brightness}
         mock_requests.put.assert_called_with(ANY, data=expected_request)
 
+    def test_set_light_groups__should_call_state_with_on_set_true_if_dimmer_value(self, mock_requests):
+        brightness = 155
+        set_light_groups(self.API_KEY, 1, False, brightness)
+
+        expected_request = {'on': True, 'bri': brightness}
+        mock_requests.put.assert_called_with(ANY, data=expected_request)
