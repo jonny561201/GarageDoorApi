@@ -1,9 +1,10 @@
 import json
 
-from mock import patch
+from mock import patch, ANY
 from requests import Response
 
-from svc.utilities.api_requests_utils import get_weather_by_city, get_api_key
+from svc.constants.home_automation import Automation
+from svc.utilities.api_requests_utils import get_weather_by_city, get_light_api_key
 
 
 @patch('svc.utilities.api_requests_utils.requests')
@@ -78,7 +79,13 @@ class TestLightApiRequests:
     PASSWORD = 'fake password'
     URL = 'http://192.168.1.139:8080/api'
 
-    def test_get_api_key__should_call_requests(self, mock_requests):
-        get_api_key(self.USERNAME, self.PASSWORD)
+    def test_get_light_api_key__should_call_requests_with_url(self, mock_requests):
+        get_light_api_key(self.USERNAME, self.PASSWORD)
 
-        mock_requests.post.assert_called_with(self.URL)
+        mock_requests.post.assert_called_with(self.URL, data=ANY)
+
+    def test_get_light_api_key__should_call_requests_with_device_type(self, mock_requests):
+        get_light_api_key(self.USERNAME, self.PASSWORD)
+
+        body = json.dumps({'devicetype': Automation().APP_NAME})
+        mock_requests.post.assert_called_with(ANY, data=body)
