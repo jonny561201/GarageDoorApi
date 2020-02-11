@@ -1,3 +1,4 @@
+import base64
 import json
 
 import requests
@@ -17,4 +18,6 @@ def get_weather_by_city(city, unit, app_id):
 def get_light_api_key(username, password):
     url = 'http://192.168.1.139:8080/api'
     body = {'devicetype': Automation().APP_NAME}
-    requests.post(url, data=json.dumps(body))
+    user_pass = username + ':' + password
+    headers = {'Authorization': 'Basic ' + base64.b64encode(user_pass.encode('UTF-8')).decode('UTF-8')}
+    requests.post(url, data=json.dumps(body), headers=headers)

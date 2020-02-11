@@ -82,10 +82,16 @@ class TestLightApiRequests:
     def test_get_light_api_key__should_call_requests_with_url(self, mock_requests):
         get_light_api_key(self.USERNAME, self.PASSWORD)
 
-        mock_requests.post.assert_called_with(self.URL, data=ANY)
+        mock_requests.post.assert_called_with(self.URL, data=ANY, headers=ANY)
 
     def test_get_light_api_key__should_call_requests_with_device_type(self, mock_requests):
         get_light_api_key(self.USERNAME, self.PASSWORD)
 
         body = json.dumps({'devicetype': Automation().APP_NAME})
-        mock_requests.post.assert_called_with(ANY, data=body)
+        mock_requests.post.assert_called_with(ANY, data=body, headers=ANY)
+
+    def test_get_light_api_key__should_provide_username_and_pass_as_auth_header(self, mock_requests):
+        get_light_api_key(self.USERNAME, self.PASSWORD)
+
+        headers = {'Authorization': 'Basic ' + 'ZmFrZSB1c2VybmFtZTpmYWtlIHBhc3N3b3Jk'}
+        mock_requests.post.assert_called_with(ANY, data=ANY, headers=headers)
