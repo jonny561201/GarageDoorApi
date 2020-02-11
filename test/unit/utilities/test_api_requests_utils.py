@@ -4,7 +4,7 @@ from mock import patch, ANY
 from requests import Response
 
 from svc.constants.home_automation import Automation
-from svc.utilities.api_requests_utils import get_weather_by_city, get_light_api_key, get_light_groups
+from svc.utilities.api_requests_utils import get_weather_by_city, get_light_api_key, get_light_groups, set_light_groups
 
 
 @patch('svc.utilities.api_requests_utils.requests')
@@ -112,7 +112,7 @@ class TestLightApiRequests:
         mock_requests.get.assert_called_with(expected_url)
 
     def test_get_light_groups__should_return_a_list_of_light_groups(self, mock_requests):
-        test = {
+        api_response = {
             "1": {
                 "devicemembership": [],
                 "etag": "ab5272cfe11339202929259af22252ae",
@@ -120,9 +120,17 @@ class TestLightApiRequests:
                 "name": "Living Room"
             }
         }
-        response = Response()
-        response._content = json.dumps(test).encode('UTF-8')
-        mock_requests.get.return_value = response
+        mock_response = Response()
+        mock_response._content = json.dumps(api_response).encode('UTF-8')
+        mock_requests.get.return_value = mock_response
         actual = get_light_groups(self.API_KEY)
 
         assert actual['1']['etag'] == 'ab5272cfe11339202929259af22252ae'
+
+    def test_set_light_groups__should_call_state_url(self, mock_requests):
+        state = True
+        group_id = 1
+        expected_url = self.BASE_URL + '/%s/groups/%s/action' % (self.API_KEY, group_id)
+        set_light_groups(self.API_KEY, state, group_id)
+
+        mock_requests.put.assert_called_with(expected_url)
