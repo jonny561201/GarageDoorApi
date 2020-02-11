@@ -29,4 +29,6 @@ def get_light_api_key(username, password):
 
 def get_light_groups(api_key):
     url = LIGHT_BASE_URL + '/%s/groups' % api_key
-    requests.get(url)
+    response = requests.get(url)
+
+    return response.json()

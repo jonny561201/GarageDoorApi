@@ -74,7 +74,6 @@ class TestWeatherApiRequests:
 
 @patch('svc.utilities.api_requests_utils.requests')
 class TestLightApiRequests:
-
     USERNAME = 'fake username'
     PASSWORD = 'fake password'
     BASE_URL = 'http://192.168.1.139:8080/api'
@@ -111,3 +110,19 @@ class TestLightApiRequests:
         get_light_groups(self.API_KEY)
 
         mock_requests.get.assert_called_with(expected_url)
+
+    def test_get_light_groups__should_return_a_list_of_light_groups(self, mock_requests):
+        test = {
+            "1": {
+                "devicemembership": [],
+                "etag": "ab5272cfe11339202929259af22252ae",
+                "hidden": False,
+                "name": "Living Room"
+            }
+        }
+        response = Response()
+        response._content = json.dumps(test).encode('UTF-8')
+        mock_requests.get.return_value = response
+        actual = get_light_groups(self.API_KEY)
+
+        assert actual['1']['etag'] == 'ab5272cfe11339202929259af22252ae'
