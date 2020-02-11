@@ -4,7 +4,7 @@ from mock import patch, ANY
 from requests import Response
 
 from svc.constants.home_automation import Automation
-from svc.utilities.api_requests_utils import get_weather_by_city, get_light_api_key
+from svc.utilities.api_requests_utils import get_weather_by_city, get_light_api_key, get_light_groups
 
 
 @patch('svc.utilities.api_requests_utils.requests')
@@ -77,13 +77,13 @@ class TestLightApiRequests:
 
     USERNAME = 'fake username'
     PASSWORD = 'fake password'
-    URL = 'http://192.168.1.139:8080/api'
+    BASE_URL = 'http://192.168.1.139:8080/api'
     API_KEY = 'fake api key'
 
     def test_get_light_api_key__should_call_requests_with_url(self, mock_requests):
         get_light_api_key(self.USERNAME, self.PASSWORD)
 
-        mock_requests.post.assert_called_with(self.URL, data=ANY, headers=ANY)
+        mock_requests.post.assert_called_with(self.BASE_URL, data=ANY, headers=ANY)
 
     def test_get_light_api_key__should_call_requests_with_device_type(self, mock_requests):
         get_light_api_key(self.USERNAME, self.PASSWORD)
@@ -105,3 +105,9 @@ class TestLightApiRequests:
         actual = get_light_api_key(self.USERNAME, self.PASSWORD)
 
         assert actual == self.API_KEY
+
+    def test_get_light_groups__should_call_groups_url(self, mock_requests):
+        expected_url = self.BASE_URL + '/%s/groups' % self.API_KEY
+        get_light_groups(self.API_KEY)
+
+        mock_requests.get.assert_called_with(expected_url)
