@@ -78,6 +78,7 @@ class TestLightApiRequests:
     USERNAME = 'fake username'
     PASSWORD = 'fake password'
     URL = 'http://192.168.1.139:8080/api'
+    API_KEY = 'fake api key'
 
     def test_get_light_api_key__should_call_requests_with_url(self, mock_requests):
         get_light_api_key(self.USERNAME, self.PASSWORD)
@@ -95,3 +96,12 @@ class TestLightApiRequests:
 
         headers = {'Authorization': 'Basic ' + 'ZmFrZSB1c2VybmFtZTpmYWtlIHBhc3N3b3Jk'}
         mock_requests.post.assert_called_with(ANY, data=ANY, headers=headers)
+
+    def test_get_light_api_key__should_return_api_key_response(self, mock_requests):
+        response = Response()
+        response._content = json.dumps([{'success': {'username': self.API_KEY}}]).encode('UTF-8')
+        mock_requests.post.return_value = response
+
+        actual = get_light_api_key(self.USERNAME, self.PASSWORD)
+
+        assert actual == self.API_KEY
