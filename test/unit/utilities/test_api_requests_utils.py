@@ -128,17 +128,24 @@ class TestLightApiRequests:
         assert actual['1']['etag'] == 'ab5272cfe11339202929259af22252ae'
 
     def test_set_light_groups__should_call_state_url(self, mock_requests):
-        state = True
         group_id = 1
         expected_url = self.BASE_URL + '/%s/groups/%s/action' % (self.API_KEY, group_id)
-        set_light_groups(self.API_KEY, state, group_id)
+        set_light_groups(self.API_KEY, group_id, True)
 
         mock_requests.put.assert_called_with(expected_url, data=ANY)
 
     def test_set_light_groups__should_call_state_with_on_off_set(self, mock_requests):
         state = False
-        group_id = 2
-        set_light_groups(self.API_KEY, state, group_id)
+        set_light_groups(self.API_KEY, 2, state)
 
         expected_request = {'on': state}
         mock_requests.put.assert_called_with(ANY, data=expected_request)
+
+    def test_set_light_groups__should_call_state_with_dimmer_value(self, mock_requests):
+        state = True
+        brightness = 233
+        set_light_groups(self.API_KEY, 1, state, brightness)
+
+        expected_request = {'on': state, 'bri': brightness}
+        mock_requests.put.assert_called_with(ANY, data=expected_request)
+
