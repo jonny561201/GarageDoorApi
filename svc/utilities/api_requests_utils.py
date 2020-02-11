@@ -8,3 +8,8 @@ def get_weather_by_city(city, unit, app_id):
     response = requests.get(base_url, params=args)
 
     return response.status_code, response.content
+
+
+def get_api_key(username, password):
+    url = 'http://192.168.1.139:8080/api'
+    requests.post(url)

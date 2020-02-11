@@ -3,11 +3,11 @@ import json
 from mock import patch
 from requests import Response
 
-from svc.utilities.api_requests_utils import get_weather_by_city
+from svc.utilities.api_requests_utils import get_weather_by_city, get_api_key
 
 
 @patch('svc.utilities.api_requests_utils.requests')
-class TestApiRequests:
+class TestWeatherApiRequests:
     CITY = 'Des Moines'
     UNIT_PREFERENCE = 'imperial'
     URL = 'https://api.openweathermap.org/data/2.5/weather'
@@ -69,3 +69,16 @@ class TestApiRequests:
 
         assert status == 200
         assert content == expected_content
+
+
+@patch('svc.utilities.api_requests_utils.requests')
+class TestLightApiRequests:
+
+    USERNAME = 'fake username'
+    PASSWORD = 'fake password'
+    URL = 'http://192.168.1.139:8080/api'
+
+    def test_get_api_key__should_call_requests(self, mock_requests):
+        get_api_key(self.USERNAME, self.PASSWORD)
+
+        mock_requests.post.assert_called_with(self.URL)
