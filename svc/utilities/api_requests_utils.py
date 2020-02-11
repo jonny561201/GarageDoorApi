@@ -36,4 +36,5 @@ def get_light_groups(api_key):
 
 def set_light_groups(api_key, state, group_id):
     url = LIGHT_BASE_URL + '/%s/groups/%s/action' % (api_key, group_id)
-    requests.put(url)
+    request = {'on': state}
+    requests.put(url, data=request)

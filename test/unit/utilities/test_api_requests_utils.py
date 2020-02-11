@@ -133,4 +133,12 @@ class TestLightApiRequests:
         expected_url = self.BASE_URL + '/%s/groups/%s/action' % (self.API_KEY, group_id)
         set_light_groups(self.API_KEY, state, group_id)
 
-        mock_requests.put.assert_called_with(expected_url)
+        mock_requests.put.assert_called_with(expected_url, data=ANY)
+
+    def test_set_light_groups__should_call_state_with_on_off_set(self, mock_requests):
+        state = False
+        group_id = 2
+        set_light_groups(self.API_KEY, state, group_id)
+
+        expected_request = {'on': state}
+        mock_requests.put.assert_called_with(ANY, data=expected_request)
