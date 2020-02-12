@@ -3,4 +3,4 @@ def map_light_groups(api_response):
 
 
 def __map_group(group_id, group):
-    return {'groupId': group_id}
+    return {'groupId': group_id, 'groupName': group['name']}
