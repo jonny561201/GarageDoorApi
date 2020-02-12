@@ -1,12 +1,12 @@
 import os
 
-from mock import patch, ANY
+from mock import patch
 
-from svc.services.light_request import get_assigned_lights
+from svc.controllers.light_controller import get_assigned_lights
 
 
-@patch('svc.services.light_request.get_light_groups')
-@patch('svc.services.light_request.get_light_api_key')
+@patch('svc.controllers.light_controller.get_light_groups')
+@patch('svc.controllers.light_controller.get_light_api_key')
 class TestLightRequest:
     LIGHT_USERNAME = "fakeUsername"
     LIGHT_PASSWORD = "fakePassword"
