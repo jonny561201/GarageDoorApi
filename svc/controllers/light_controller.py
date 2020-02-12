@@ -11,4 +11,4 @@ def get_assigned_lights():
 
     response = api_requests_utils.get_light_groups(api_key)
 
-    map_light_groups(response)
+    return map_light_groups(response)

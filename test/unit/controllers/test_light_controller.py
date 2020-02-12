@@ -32,9 +32,17 @@ class TestLightRequest:
         mock_api.get_light_groups.assert_called_with(self.API_KEY)
 
     def test_get_assigned_lights__should_map_response_from_api(self, mock_api, mock_map):
-        response = {'field': 'my value doesnt matter'}
-        mock_api.get_light_groups.return_value = response
+        api_response = {'field': 'my value doesnt matter'}
+        mock_api.get_light_groups.return_value = api_response
 
         get_assigned_lights()
 
-        mock_map.assert_called_with(response)
+        mock_map.assert_called_with(api_response)
+
+    def test_get_assigned_lights__should_return_response_from_mapper(self, mock_api, mock_map):
+        map_response = {'other_field': 'also doesnt matter'}
+        mock_map.return_value = map_response
+
+        actual = get_assigned_lights()
+
+        assert actual == map_response
