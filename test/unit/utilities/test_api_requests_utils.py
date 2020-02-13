@@ -4,7 +4,8 @@ from mock import patch, ANY
 from requests import Response
 
 from svc.constants.home_automation import Automation
-from svc.utilities.api_requests_utils import get_weather_by_city, get_light_api_key, get_light_groups, set_light_groups
+from svc.utilities.api_requests_utils import get_weather_by_city, get_light_api_key, get_light_groups, set_light_groups, \
+    get_light_group_state
 
 
 @patch('svc.utilities.api_requests_utils.requests')
@@ -155,3 +156,11 @@ class TestLightApiRequests:
 
         expected_request = {'on': True, 'bri': brightness}
         mock_requests.put.assert_called_with(ANY, data=expected_request)
+
+    def test_get_light_group_state__should_call_url(self, mock_requests):
+        group_id = '1'
+        url = self.BASE_URL + '/%s/groups/%s' % (self.API_KEY, group_id)
+
+        get_light_group_state(self.API_KEY, group_id)
+
+        mock_requests.get.assert_called_with(url)

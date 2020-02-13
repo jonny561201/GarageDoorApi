@@ -42,3 +42,9 @@ def set_light_groups(api_key, group_id, state, brightness=None):
         request['bri'] = brightness
 
     requests.put(url, data=request)
+
+
+def get_light_group_state(api_key, group_id):
+    url = LIGHT_BASE_URL + '/%s/groups/%s' % (api_key, group_id)
+
+    requests.get(url)
