@@ -164,3 +164,14 @@ class TestLightApiRequests:
         get_light_group_state(self.API_KEY, group_id)
 
         mock_requests.get.assert_called_with(url)
+        
+    def test_get_light_group_state__should_return_group_response(self, mock_requests):
+        group_id = '2'
+        response = Response()
+        response_content = {'field': 'DoesntMatter'}
+        response._content = json.dumps(response_content).encode('UTF-8')
+        mock_requests.get.return_value = response
+        
+        actual = get_light_group_state(self.API_KEY, group_id)
+        
+        assert actual == response_content
