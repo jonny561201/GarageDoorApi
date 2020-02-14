@@ -6,7 +6,7 @@ from svc.controllers.light_controller import get_assigned_lights
 
 
 @patch('svc.controllers.light_controller.map_light_groups')
-@patch('svc.controllers.light_controller.api_requests_utils')
+@patch('svc.controllers.light_controller.api_utils')
 class TestLightRequest:
     LIGHT_USERNAME = "fakeUsername"
     LIGHT_PASSWORD = "fakePassword"

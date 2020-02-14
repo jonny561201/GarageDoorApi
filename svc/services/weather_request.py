@@ -4,7 +4,7 @@ import logging
 from requests.exceptions import ConnectionError
 from werkzeug.exceptions import Unauthorized
 
-from svc.utilities.api_requests_utils import get_weather_by_city
+from svc.utilities.api_utils import get_weather_by_city
 
 
 def get_weather(city, unit, app_id):

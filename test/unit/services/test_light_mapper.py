@@ -3,8 +3,9 @@ from svc.services.light_mapper import map_light_groups
 
 def test_map_light_groups__should_map_group_ids_into_list():
     response = {'1': {'name': 'Test'}, '2': {'name': 'other'}}
+    group = {}
 
-    actual = map_light_groups(response)
+    actual = map_light_groups(response, group)
 
     assert len(actual) == 2
     assert actual[0]['groupId'] == '1'
@@ -12,6 +13,7 @@ def test_map_light_groups__should_map_group_ids_into_list():
 
 
 def test_map_light_groups__should_map_group_name():
+    group = {}
     response = {
         "1": {
             "devicemembership": [],
@@ -21,6 +23,6 @@ def test_map_light_groups__should_map_group_name():
         }
     }
 
-    actual = map_light_groups(response)
+    actual = map_light_groups(response, group)
 
     assert actual[0]['groupName'] == 'Living Room'

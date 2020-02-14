@@ -4,11 +4,11 @@ from mock import patch, ANY
 from requests import Response
 
 from svc.constants.home_automation import Automation
-from svc.utilities.api_requests_utils import get_weather_by_city, get_light_api_key, get_light_groups, set_light_groups, \
+from svc.utilities.api_utils import get_weather_by_city, get_light_api_key, get_light_groups, set_light_groups, \
     get_light_group_state
 
 
-@patch('svc.utilities.api_requests_utils.requests')
+@patch('svc.utilities.api_utils.requests')
 class TestWeatherApiRequests:
     CITY = 'Des Moines'
     UNIT_PREFERENCE = 'imperial'
@@ -73,7 +73,7 @@ class TestWeatherApiRequests:
         assert content == expected_content
 
 
-@patch('svc.utilities.api_requests_utils.requests')
+@patch('svc.utilities.api_utils.requests')
 class TestLightApiRequests:
     USERNAME = 'fake username'
     PASSWORD = 'fake password'
