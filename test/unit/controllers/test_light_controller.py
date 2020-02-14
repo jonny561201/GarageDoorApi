@@ -46,3 +46,11 @@ class TestLightRequest:
         actual = get_assigned_lights()
 
         assert actual == map_response
+
+    def test_get_assigned_lights__should_call_to_get_light_group_state(self, mock_api, mock_map):
+        light_groups = {'1': {}}
+        mock_api.get_light_api_key.return_value = self.API_KEY
+        mock_api.get_light_groups.return_value = light_groups
+        get_assigned_lights()
+
+        mock_api.get_light_group_state.assert_called_with(self.API_KEY, '1')

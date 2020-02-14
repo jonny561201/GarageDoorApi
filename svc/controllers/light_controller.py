@@ -10,6 +10,7 @@ def get_assigned_lights():
     password = os.environ['LIGHT_API_PASSWORD']
     api_key = api_requests_utils.get_light_api_key(username, password)
 
-    response = api_requests_utils.get_light_groups(api_key)
+    light_groups = api_requests_utils.get_light_groups(api_key)
+    api_requests_utils.get_light_group_state(api_key, '1')
 
-    return map_light_groups(response)
+    return map_light_groups(light_groups)
