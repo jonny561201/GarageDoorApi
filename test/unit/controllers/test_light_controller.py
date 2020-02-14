@@ -40,12 +40,16 @@ class TestLightRequest:
         mock_map.assert_called_with(api_response, ANY)
 
     def test_get_assigned_lights__should_map_response_from_group_state_api(self, mock_api, mock_map):
-        group_state = {'action': {'on': False}}
-        mock_api.get_light_group_state.return_value = group_state
+        group_one_state = {'action': {'on': False}}
+        group_two_state = {'action': {'on': True}}
+        mock_api.get_light_groups.return_value = {'1': {}, '3': {}}
+        mock_api.get_light_group_state.side_effect = [group_one_state, group_two_state]
+        expected_groups = {'1': group_one_state, '3': group_two_state}
 
         get_assigned_lights()
 
-        mock_map.assert_called_with(ANY, group_state)
+        assert mock_api.get_light_group_state.call_count == 2
+        mock_map.assert_called_with(ANY, expected_groups)
 
     def test_get_assigned_lights__should_return_response_from_mapper(self, mock_api, mock_map):
         map_response = {'other_field': 'also doesnt matter'}

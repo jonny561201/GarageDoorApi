@@ -1,4 +1,4 @@
-def map_light_groups(api_response):
+def map_light_groups(api_response, group_state):
     return [__map_group(k, v) for k, v in api_response.items()]
 
 
