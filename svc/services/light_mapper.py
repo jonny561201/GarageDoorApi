@@ -4,5 +4,5 @@ def map_light_groups(api_response, group_state):
 
 def __map_group(group_id, group, group_state):
     id_state = group_state[group_id]['action'].get('on', False)
-    brightness = group_state[group_id]['action'].get('bri')
+    brightness = group_state[group_id]['action'].get('bri', 0)
     return {'groupId': group_id, 'groupName': group['name'], 'on': id_state, 'brightness': brightness}

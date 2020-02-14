@@ -67,3 +67,16 @@ def test_map_light_groups__should_map_the_group_brightness():
 
     assert actual[0]['groupName'] == 'Bathroom'
     assert actual[0]['brightness'] == 233
+
+
+def test_map_light_groups__should_default_the_group_brightness():
+    response = {
+        "1": {
+            "name": "Happy Room"
+        }
+    }
+    group_state = {'1': {'action': {}}}
+    actual = map_light_groups(response, group_state)
+
+    assert actual[0]['groupName'] == 'Happy Room'
+    assert actual[0]['brightness'] == 0
