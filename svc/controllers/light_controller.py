@@ -2,9 +2,11 @@ import os
 
 from svc.utilities import api_utils
 from svc.services.light_mapper import map_light_groups
+from svc.utilities.jwt_utils import is_jwt_valid
 
 
 def get_assigned_lights(bearer_token):
+    is_jwt_valid(bearer_token)
     username = os.environ['LIGHT_API_USERNAME']
     password = os.environ['LIGHT_API_PASSWORD']
     api_key = api_utils.get_light_api_key(username, password)
