@@ -4,7 +4,7 @@ from svc.utilities import api_utils
 from svc.services.light_mapper import map_light_groups
 
 
-def get_assigned_lights():
+def get_assigned_lights(bearer_token):
     username = os.environ['LIGHT_API_USERNAME']
     password = os.environ['LIGHT_API_PASSWORD']
     api_key = api_utils.get_light_api_key(username, password)

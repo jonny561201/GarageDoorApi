@@ -11,6 +11,7 @@ class TestLightRequest:
     LIGHT_USERNAME = "fakeUsername"
     LIGHT_PASSWORD = "fakePassword"
     API_KEY = "fakeApiKey"
+    BEARER_TOKEN = "EAK#K$%B$#K#"
 
     def setup_method(self):
         os.environ.update({'LIGHT_API_USERNAME': self.LIGHT_USERNAME})
@@ -21,13 +22,13 @@ class TestLightRequest:
         os.environ.pop('LIGHT_API_PASSWORD')
 
     def test_get_assigned_lights__should_call_to_get_api_key(self, mock_api, mock_map):
-        get_assigned_lights()
+        get_assigned_lights(self.BEARER_TOKEN)
 
         mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)
 
     def test_get_assigned_lights__should_pass_api_key_to_get_light_groups(self, mock_api, mock_map):
         mock_api.get_light_api_key.return_value = self.API_KEY
-        get_assigned_lights()
+        get_assigned_lights(self.BEARER_TOKEN)
 
         mock_api.get_light_groups.assert_called_with(self.API_KEY)
 
@@ -35,7 +36,7 @@ class TestLightRequest:
         api_response = {'field': 'my value doesnt matter'}
         mock_api.get_light_groups.return_value = api_response
 
-        get_assigned_lights()
+        get_assigned_lights(self.BEARER_TOKEN)
 
         mock_map.assert_called_with(api_response, ANY)
 
@@ -46,7 +47,7 @@ class TestLightRequest:
         mock_api.get_light_group_state.side_effect = [group_one_state, group_two_state]
         expected_groups = {'1': group_one_state, '3': group_two_state}
 
-        get_assigned_lights()
+        get_assigned_lights(self.BEARER_TOKEN)
 
         assert mock_api.get_light_group_state.call_count == 2
         mock_map.assert_called_with(ANY, expected_groups)
@@ -55,7 +56,7 @@ class TestLightRequest:
         map_response = {'other_field': 'also doesnt matter'}
         mock_map.return_value = map_response
 
-        actual = get_assigned_lights()
+        actual = get_assigned_lights(self.BEARER_TOKEN)
 
         assert actual == map_response
 
@@ -63,7 +64,7 @@ class TestLightRequest:
         light_groups = {'1': {}}
         mock_api.get_light_api_key.return_value = self.API_KEY
         mock_api.get_light_groups.return_value = light_groups
-        get_assigned_lights()
+        get_assigned_lights(self.BEARER_TOKEN)
 
         mock_api.get_light_group_state.assert_called_with(self.API_KEY, '1')
 
