@@ -11,6 +11,6 @@ def get_assigned_lights():
     api_key = api_requests_utils.get_light_api_key(username, password)
 
     light_groups = api_requests_utils.get_light_groups(api_key)
-    api_requests_utils.get_light_group_state(api_key, '1')
+    group_state = api_requests_utils.get_light_group_state(api_key, '1')
 
-    return map_light_groups(light_groups)
+    return map_light_groups(light_groups, group_state)
