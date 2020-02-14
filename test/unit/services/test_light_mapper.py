@@ -54,3 +54,16 @@ def test_map_light_groups__should_default_the_group_state():
 
     assert actual[0]['groupName'] == 'Bed Room'
     assert actual[0]['on'] is False
+
+
+def test_map_light_groups__should_map_the_group_brightness():
+    response = {
+        "1": {
+            "name": "Bathroom"
+        }
+    }
+    group_state = {'1': {'action': {'bri': 233}}}
+    actual = map_light_groups(response, group_state)
+
+    assert actual[0]['groupName'] == 'Bathroom'
+    assert actual[0]['brightness'] == 233
