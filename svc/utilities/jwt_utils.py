@@ -18,7 +18,7 @@ def is_jwt_valid(jwt_token):
 def create_jwt_token(user_id):
     expire_time = datetime.now(tz=pytz.timezone('US/Central')) + timedelta(hours=2)
     settings = Settings.get_instance().get_settings()
-    jwt_secret = settings.get('DevJwtSecret') if settings.get('Development', False) else os.environ['JWT_SECRET']
+    jwt_secret = settings.get('DevJwtSecret') if settings.get('Development') else os.environ['JWT_SECRET']
     return jwt.encode({'user_id': user_id, 'exp': expire_time}, jwt_secret, algorithm='HS256')
 
 
@@ -36,7 +36,7 @@ def _parse_jwt_token(jwt_token):
     try:
         stripped_token = jwt_token.replace('Bearer ', '')
         settings = Settings.get_instance().get_settings()
-        if settings.get('Development', False):
+        if settings.get('Development'):
             return
         jwt.decode(stripped_token, os.environ['JWT_SECRET'], algorithms=["HS256"])
     except (InvalidSignatureError, ExpiredSignatureError, DecodeError, KeyError) as er:

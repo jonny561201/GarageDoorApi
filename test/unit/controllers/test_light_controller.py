@@ -5,6 +5,7 @@ from mock import patch, ANY
 from svc.controllers.light_controller import get_assigned_lights
 
 
+@patch('svc.controllers.light_controller.Settings')
 @patch('svc.controllers.light_controller.is_jwt_valid')
 @patch('svc.controllers.light_controller.map_light_groups')
 @patch('svc.controllers.light_controller.api_utils')
@@ -22,23 +23,29 @@ class TestLightRequest:
         os.environ.pop('LIGHT_API_USERNAME')
         os.environ.pop('LIGHT_API_PASSWORD')
 
-    def test_get_assigned_lights__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt):
+    def test_get_assigned_lights__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt, mock_setting):
         get_assigned_lights(self.BEARER_TOKEN)
 
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
-    def test_get_assigned_lights__should_call_to_get_api_key(self, mock_api, mock_map, mock_jwt):
+    def test_get_assigned_lights__should_call_to_get_api_key(self, mock_api, mock_map, mock_jwt, mock_setting):
+        new_pass = 'new pass'
+        new_user = 'new user'
+        mock_setting.get_instance.return_value.get_settings.return_value = {'Development': True, 'LightApiUser': new_user, 'LightApiPass': new_pass}
         get_assigned_lights(self.BEARER_TOKEN)
 
-        mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)
+        mock_api.get_light_api_key.assert_called_with(new_user, new_pass)
 
-    def test_get_assigned_lights__should_pass_api_key_to_get_light_groups(self, mock_api, mock_map, mock_jwt):
+    def test_get_assigned_lights__should_call_get_api_key_with_settings(self, mock_api, mock_map, mock_jwt, mock_setting):
+        get_assigned_lights(self.BEARER_TOKEN)
+
+    def test_get_assigned_lights__should_pass_api_key_to_get_light_groups(self, mock_api, mock_map, mock_jwt, mock_setting):
         mock_api.get_light_api_key.return_value = self.API_KEY
         get_assigned_lights(self.BEARER_TOKEN)
 
         mock_api.get_light_groups.assert_called_with(self.API_KEY)
 
-    def test_get_assigned_lights__should_map_response_from_light_group_api(self, mock_api, mock_map, mock_jwt):
+    def test_get_assigned_lights__should_map_response_from_light_group_api(self, mock_api, mock_map, mock_jwt, mock_setting):
         api_response = {'field': 'my value doesnt matter'}
         mock_api.get_light_groups.return_value = api_response
 
@@ -46,7 +53,7 @@ class TestLightRequest:
 
         mock_map.assert_called_with(api_response, ANY)
 
-    def test_get_assigned_lights__should_map_response_from_group_state_api(self, mock_api, mock_map, mock_jwt):
+    def test_get_assigned_lights__should_map_response_from_group_state_api(self, mock_api, mock_map, mock_jwt, mock_setting):
         group_one_state = {'action': {'on': False}}
         group_two_state = {'action': {'on': True}}
         mock_api.get_light_groups.return_value = {'1': {}, '3': {}}
@@ -58,7 +65,7 @@ class TestLightRequest:
         assert mock_api.get_light_group_state.call_count == 2
         mock_map.assert_called_with(ANY, expected_groups)
 
-    def test_get_assigned_lights__should_return_response_from_mapper(self, mock_api, mock_map, mock_jwt):
+    def test_get_assigned_lights__should_return_response_from_mapper(self, mock_api, mock_map, mock_jwt, mock_setting):
         map_response = {'other_field': 'also doesnt matter'}
         mock_map.return_value = map_response
 
@@ -66,7 +73,7 @@ class TestLightRequest:
 
         assert actual == map_response
 
-    def test_get_assigned_lights__should_call_to_get_light_group_state(self, mock_api, mock_map, mock_jwt):
+    def test_get_assigned_lights__should_call_to_get_light_group_state(self, mock_api, mock_map, mock_jwt, mock_setting):
         light_groups = {'1': {}}
         mock_api.get_light_api_key.return_value = self.API_KEY
         mock_api.get_light_groups.return_value = light_groups
