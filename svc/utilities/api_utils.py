@@ -5,8 +5,7 @@ import requests
 
 from svc.constants.home_automation import Automation
 
-LIGHT_BASE_URL = 'http://192.168.1.139:8080/api'
-
+LIGHT_BASE_URL = 'http://192.168.1.142:80/api'
 WEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather'
 
 

@@ -77,7 +77,7 @@ class TestWeatherApiRequests:
 class TestLightApiRequests:
     USERNAME = 'fake username'
     PASSWORD = 'fake password'
-    BASE_URL = 'http://192.168.1.139:8080/api'
+    BASE_URL = 'http://192.168.1.142:80/api'
     API_KEY = 'fake api key'
 
     def test_get_light_api_key__should_call_requests_with_url(self, mock_requests):
