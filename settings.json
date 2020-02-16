@@ -1,5 +1,7 @@
 {
-  "Development": true,
+  "Development": false,
+  "LightApiUser": "",
+  "LightApiPass": "",
   "DevWeatherAppId": "",
   "DevJwtSecret": "FakeSecret"
 }
