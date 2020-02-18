@@ -52,3 +52,9 @@ class TestLightRoutes:
         actual = set_assigned_light_group()
 
         assert actual.status_code == 200
+
+    def test_set_assigned_light_group__should_return_success_headers(self, mock_controller, mock_request):
+        mock_request.data = '{}'
+        actual = set_assigned_light_group()
+
+        assert actual.content_type == 'text/json'

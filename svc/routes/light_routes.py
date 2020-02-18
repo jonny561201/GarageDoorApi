@@ -20,4 +20,4 @@ def set_assigned_light_group():
     bearer_token = request.headers.get('Authorization')
     light_controller.set_assigned_lights(bearer_token, json.loads(request.data))
 
-    return Response(status=200)
+    return Response(status=200, headers=DEFAULT_HEADERS)
