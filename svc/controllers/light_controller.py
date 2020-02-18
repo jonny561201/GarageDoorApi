@@ -5,6 +5,7 @@ from svc.services.light_mapper import map_light_groups
 from svc.utilities.jwt_utils import is_jwt_valid
 
 
+# TODO: should store api key on global state object
 def get_assigned_lights(bearer_token):
     is_jwt_valid(bearer_token)
     username = os.environ['LIGHT_API_USERNAME']
@@ -19,6 +20,9 @@ def get_assigned_lights(bearer_token):
 
 def set_assigned_lights(bearer_token):
     is_jwt_valid(bearer_token)
+    username = os.environ['LIGHT_API_USERNAME']
+    password = os.environ['LIGHT_API_PASSWORD']
+    api_utils.get_light_api_key(username, password)
 
 
 def __get_light_group_states(api_key, light_groups):

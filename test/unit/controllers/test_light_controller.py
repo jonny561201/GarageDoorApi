@@ -79,4 +79,9 @@ class TestLightRequest:
 
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
+    def test_set_assigned_lights__should_get_api_key(self, mock_api, mock_map, mock_jwt):
+        set_assigned_lights(self.BEARER_TOKEN)
+
+        mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)
+
 
