@@ -1,14 +1,36 @@
+import os
+from wsgiref import headers
+
+import jwt
+from mock import patch
+
 from svc.manager import create_app
 
 
 class TestLightRoutesIntegration:
     TEST_CLIENT = None
+    JWT_SECRET = 'fakeSecret'
+    LIGHT_USER = 'fakeLightUser'
+    LIGHT_PASS = 'fakeLightSecret'
 
     def setup_method(self):
+        os.environ.update({'JWT_SECRET': self.JWT_SECRET, 'LIGHT_API_USERNAME': self.LIGHT_USER, 'LIGHT_API_PASSWORD': self.LIGHT_PASS})
         flask_app = create_app('__main__')
         self.TEST_CLIENT = flask_app.test_client()
+
+    def teardown_method(self):
+        os.environ.pop('JWT_SECRET')
 
     def test_get_all_assigned_lights__should_return_unauthorized_without_header(self):
         actual = self.TEST_CLIENT.get('lights/groups')
 
         assert actual.status_code == 401
+
+    @patch('svc.controllers.light_controller.api_utils')
+    def test_get_all_assigned_lights__should_return_success_with_valid_jwt(self, mock_api):
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        header = {'Authorization': bearer_token}
+
+        actual = self.TEST_CLIENT.get('lights/groups', headers=header)
+
+        assert actual.status_code == 200
