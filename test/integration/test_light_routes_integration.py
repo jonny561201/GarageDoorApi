@@ -1,5 +1,4 @@
 import os
-from wsgiref import headers
 
 import jwt
 from mock import patch
