@@ -17,6 +17,10 @@ def get_assigned_lights(bearer_token):
     return map_light_groups(light_groups, groups_state)
 
 
+def set_assigned_lights(bearer_token):
+    is_jwt_valid(bearer_token)
+
+
 def __get_light_group_states(api_key, light_groups):
     groups_state = {k: api_utils.get_light_group_state(api_key, k) for k, v in light_groups.items()}
     return groups_state

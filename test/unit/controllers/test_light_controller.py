@@ -2,7 +2,7 @@ import os
 
 from mock import patch, ANY
 
-from svc.controllers.light_controller import get_assigned_lights
+from svc.controllers.light_controller import get_assigned_lights, set_assigned_lights
 
 
 @patch('svc.controllers.light_controller.is_jwt_valid')
@@ -73,5 +73,10 @@ class TestLightRequest:
         get_assigned_lights(self.BEARER_TOKEN)
 
         mock_api.get_light_group_state.assert_called_with(self.API_KEY, '1')
+
+    def test_set_assigned_lights__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt):
+        set_assigned_lights(self.BEARER_TOKEN)
+
+        mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
 
