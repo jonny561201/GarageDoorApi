@@ -22,8 +22,9 @@ def get_assigned_lights(bearer_token):
 
 def set_assigned_lights(bearer_token, request):
     is_jwt_valid(bearer_token)
-    username = os.environ['LIGHT_API_USERNAME']
-    password = os.environ['LIGHT_API_PASSWORD']
+    settings = Settings.get_instance().get_settings()
+    username = settings['LightApiUser'] if settings['Development'] else os.environ['LIGHT_API_USERNAME']
+    password = settings['LightApiPass'] if settings['Development'] else os.environ['LIGHT_API_PASSWORD']
     api_key = api_utils.get_light_api_key(username, password)
 
     api_utils.set_light_groups(api_key, request.get('groupId'), request.get('on'), request.get('brightness'))
