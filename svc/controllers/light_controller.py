@@ -18,11 +18,13 @@ def get_assigned_lights(bearer_token):
     return map_light_groups(light_groups, groups_state)
 
 
-def set_assigned_lights(bearer_token):
+def set_assigned_lights(bearer_token, request):
     is_jwt_valid(bearer_token)
     username = os.environ['LIGHT_API_USERNAME']
     password = os.environ['LIGHT_API_PASSWORD']
-    api_utils.get_light_api_key(username, password)
+    api_key = api_utils.get_light_api_key(username, password)
+
+    api_utils.set_light_groups(api_key, request.get('groupId'), request.get('on'))
 
 
 def __get_light_group_states(api_key, light_groups):

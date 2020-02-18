@@ -13,8 +13,12 @@ class TestLightRequest:
     LIGHT_PASSWORD = "fakePassword"
     API_KEY = "fakeApiKey"
     BEARER_TOKEN = "EAK#K$%B$#K#"
+    GROUP_ID = '1'
+    STATE = False
+    REQUEST = None
 
     def setup_method(self):
+        self.REQUEST = {'on': self.STATE, 'groupId': self.GROUP_ID}
         os.environ.update({'LIGHT_API_USERNAME': self.LIGHT_USERNAME})
         os.environ.update({'LIGHT_API_PASSWORD': self.LIGHT_PASSWORD})
 
@@ -75,13 +79,20 @@ class TestLightRequest:
         mock_api.get_light_group_state.assert_called_with(self.API_KEY, '1')
 
     def test_set_assigned_lights__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt):
-        set_assigned_lights(self.BEARER_TOKEN)
+        set_assigned_lights(self.BEARER_TOKEN, self.REQUEST)
 
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
     def test_set_assigned_lights__should_get_api_key(self, mock_api, mock_map, mock_jwt):
-        set_assigned_lights(self.BEARER_TOKEN)
+        set_assigned_lights(self.BEARER_TOKEN, self.REQUEST)
 
         mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)
+
+    def test_set_assigned_lights__should_make_api_call_to_set_state(self, mock_api, mock_map, mock_jwt):
+        api_key = 'fakeApiKey'
+        mock_api.get_light_api_key.return_value = api_key
+        set_assigned_lights(self.BEARER_TOKEN, self.REQUEST)
+
+        mock_api.set_light_groups.assert_called_with(api_key, self.GROUP_ID, self.STATE)
 
 
