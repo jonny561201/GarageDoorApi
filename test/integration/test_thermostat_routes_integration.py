@@ -58,7 +58,7 @@ class TestThermostatRoutesIntegration:
 
         assert actual.status_code == 401
 
-    @patch('svc.controllers.thermostat_controller.MyThread')
+    @patch('svc.utilities.event_utils.MyThread')
     def test_set_temperature__should_return_successfully(self, mock_thread):
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
