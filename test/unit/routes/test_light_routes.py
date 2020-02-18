@@ -46,3 +46,9 @@ class TestLightRoutes:
         set_assigned_light_group()
 
         mock_controller.set_assigned_lights.assert_called_with(bearer_token, json.loads(request_data))
+
+    def test_set_assigned_light_group__should_return_success_status_code(self, mock_controller, mock_request):
+        mock_request.data = '{}'
+        actual = set_assigned_light_group()
+
+        assert actual.status_code == 200
