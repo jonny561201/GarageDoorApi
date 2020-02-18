@@ -2,6 +2,7 @@ import os
 
 import jwt
 from flask import json
+from mock import patch
 
 from svc.manager import create_app
 
@@ -23,7 +24,8 @@ class TestGarageDoorRoutesIntegration:
 
         assert actual.status_code == 401
 
-    def test_get_garage_door_status__should_return_success_with_valid_jwt(self):
+    @patch('svc.utilities.event_utils.MyThread')
+    def test_get_garage_door_status__should_return_success_with_valid_jwt(self, mock_thread):
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
         actual = self.TEST_CLIENT.get('garageDoor/status', headers=headers)
