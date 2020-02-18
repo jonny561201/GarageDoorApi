@@ -93,6 +93,13 @@ class TestLightRequest:
         mock_api.get_light_api_key.return_value = api_key
         set_assigned_lights(self.BEARER_TOKEN, self.REQUEST)
 
-        mock_api.set_light_groups.assert_called_with(api_key, self.GROUP_ID, self.STATE)
+        mock_api.set_light_groups.assert_called_with(api_key, self.GROUP_ID, self.STATE, None)
+
+    def test_set_assigned_lights__should_make_api_call_to_set_brightness_optionally(self, mock_api, mock_map, mock_jwt):
+        brightness = 255
+        self.REQUEST['brightness'] = brightness
+        set_assigned_lights(self.BEARER_TOKEN, self.REQUEST)
+
+        mock_api.set_light_groups.assert_called_with(ANY, ANY, ANY, brightness)
 
 

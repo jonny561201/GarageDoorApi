@@ -24,7 +24,7 @@ def set_assigned_lights(bearer_token, request):
     password = os.environ['LIGHT_API_PASSWORD']
     api_key = api_utils.get_light_api_key(username, password)
 
-    api_utils.set_light_groups(api_key, request.get('groupId'), request.get('on'))
+    api_utils.set_light_groups(api_key, request.get('groupId'), request.get('on'), request.get('brightness'))
 
 
 def __get_light_group_states(api_key, light_groups):
