@@ -16,6 +16,7 @@ def get_all_assigned_lights():
     return Response(json.dumps(response), status=200, headers=DEFAULT_HEADERS)
 
 
+@LIGHT_BLUEPRINT.route('/lights/group/state', methods=['POST'])
 def set_assigned_light_group():
     bearer_token = request.headers.get('Authorization')
     light_controller.set_assigned_lights(bearer_token, json.loads(request.data))

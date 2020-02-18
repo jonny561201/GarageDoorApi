@@ -33,3 +33,17 @@ class TestLightRoutesIntegration:
         actual = self.TEST_CLIENT.get('lights/groups', headers=header)
 
         assert actual.status_code == 200
+
+    def test_set_assigned_light_group__should_return_unauthorized_without_header(self):
+        actual = self.TEST_CLIENT.post('lights/group/state', data='{}', headers={})
+
+        assert actual.status_code == 401
+
+    @patch('svc.controllers.light_controller.api_utils')
+    def test_set_assigned_light_group__should_return_success_with_valid_jwt(self, mock_api):
+        post_body = '{"on": "False", "brightness": 144, "groupId": 1}'
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        header = {'Authorization': bearer_token}
+        actual = self.TEST_CLIENT.post('lights/group/state', data=post_body, headers=header)
+
+        assert actual.status_code == 200
