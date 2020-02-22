@@ -17,33 +17,31 @@ def get_weather_by_city(city, unit, app_id):
     return response.status_code, response.content
 
 
-def get_light_api_key(username, password):
-    body = {'devicetype': Automation().APP_NAME}
-    auth = base64.b64encode((username + ':' + password).encode('UTF-8')).decode('UTF-8')
-    headers = {'Authorization': 'Basic ' + auth}
-    response = requests.post(LIGHT_BASE_URL, data=json.dumps(body), headers=headers)
+class LightApi:
+    def get_light_api_key(self, username, password):
+        body = {'devicetype': Automation().APP_NAME}
+        auth = base64.b64encode((username + ':' + password).encode('UTF-8')).decode('UTF-8')
+        headers = {'Authorization': 'Basic ' + auth}
+        response = requests.post(LIGHT_BASE_URL, data=json.dumps(body), headers=headers)
 
-    return response.json()[0]['success']['username']
+        return response.json()[0]['success']['username']
 
+    def get_light_groups(self, api_key):
+        url = LIGHT_BASE_URL + '/%s/groups' % api_key
+        response = requests.get(url)
 
-def get_light_groups(api_key):
-    url = LIGHT_BASE_URL + '/%s/groups' % api_key
-    response = requests.get(url)
+        return response.json()
 
-    return response.json()
+    def set_light_groups(self, api_key, group_id, state, brightness=None):
+        url = LIGHT_BASE_URL + '/%s/groups/%s/action' % (api_key, group_id)
+        request = {'on': state}
+        if brightness is not None:
+            request['on'] = True
+            request['bri'] = brightness
 
+        requests.put(url, data=json.dumps(request))
 
-def set_light_groups(api_key, group_id, state, brightness=None):
-    url = LIGHT_BASE_URL + '/%s/groups/%s/action' % (api_key, group_id)
-    request = {'on': state}
-    if brightness is not None:
-        request['on'] = True
-        request['bri'] = brightness
+    def get_light_group_state(self, api_key, group_id):
+        url = LIGHT_BASE_URL + '/%s/groups/%s' % (api_key, group_id)
 
-    requests.put(url, data=json.dumps(request))
-
-
-def get_light_group_state(api_key, group_id):
-    url = LIGHT_BASE_URL + '/%s/groups/%s' % (api_key, group_id)
-
-    return requests.get(url).json()
+        return requests.get(url).json()
