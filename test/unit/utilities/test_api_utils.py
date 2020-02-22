@@ -189,8 +189,14 @@ class TestLightApiRequests:
         assert actual == response_content
 
     def test_create_light_group__should_make_api_call_to_url(self, mock_requests):
-        group_name = 'Test Group'
         expected_url = self.BASE_URL + '/%s/groups' % self.API_KEY
-        self.LIGHT_API.create_light_group(self.API_KEY, group_name)
+        self.LIGHT_API.create_light_group(self.API_KEY, None)
 
         mock_requests.post.assert_called_with(expected_url, data=ANY)
+
+    def test_create_light_group__should_make_api_with_group_name(self, mock_requests):
+        group_name = 'Test Group'
+        expected_data = json.dumps({'name': group_name})
+        self.LIGHT_API.create_light_group(self.API_KEY, group_name)
+
+        mock_requests.post.assert_called_with(ANY, data=expected_data)

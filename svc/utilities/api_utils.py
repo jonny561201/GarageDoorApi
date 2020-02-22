@@ -58,4 +58,5 @@ class LightApi:
     def create_light_group(api_key, group_name):
         url = LIGHT_BASE_URL + '/%s/groups' % api_key
 
-        requests.post(url, data={})
+        request = {'name': group_name}
+        requests.post(url, data=json.dumps(request))
