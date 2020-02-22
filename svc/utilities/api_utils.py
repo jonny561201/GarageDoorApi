@@ -17,6 +17,7 @@ def get_weather_by_city(city, unit, app_id):
     return response.status_code, response.content
 
 
+# TODO: may need to re-capture api key if call fails
 class LightApi:
     API_KEY = None
 
@@ -52,3 +53,9 @@ class LightApi:
         url = LIGHT_BASE_URL + '/%s/groups/%s' % (api_key, group_id)
 
         return requests.get(url).json()
+
+    @staticmethod
+    def create_light_group(api_key, group_name):
+        url = LIGHT_BASE_URL + '/%s/groups' % api_key
+
+        requests.post(url, data={})
