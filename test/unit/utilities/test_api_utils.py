@@ -110,6 +110,14 @@ class TestLightApiRequests:
 
         assert actual == self.API_KEY
 
+    def test_get_light_api_key__should_return_cached_api_key_when_already_stored(self, mock_requests):
+        api_key = 'New Test Api Key'
+        self.LIGHT_API.API_KEY = api_key
+        actual = self.LIGHT_API.get_light_api_key(self.USERNAME, self.PASSWORD)
+
+        assert actual == api_key
+        mock_requests.post.assert_not_called()
+
     def test_get_light_groups__should_call_groups_url(self, mock_requests):
         expected_url = self.BASE_URL + '/%s/groups' % self.API_KEY
         self.LIGHT_API.get_light_groups(self.API_KEY)
