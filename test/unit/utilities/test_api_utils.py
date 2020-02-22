@@ -200,3 +200,9 @@ class TestLightApiRequests:
         self.LIGHT_API.create_light_group(self.API_KEY, group_name)
 
         mock_requests.post.assert_called_with(ANY, data=expected_data)
+
+    def test_get_all_lights__should_make_api_call_to_url(self, mock_requests):
+        expected_url = self.BASE_URL + '/%s/lights' % self.API_KEY
+        self.LIGHT_API.get_all_lights(self.API_KEY)
+
+        mock_requests.get.assert_called_with(expected_url)

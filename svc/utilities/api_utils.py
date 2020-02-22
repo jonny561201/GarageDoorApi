@@ -60,3 +60,9 @@ class LightApi:
 
         request = {'name': group_name}
         requests.post(url, data=json.dumps(request))
+
+    @staticmethod
+    def get_all_lights(api_key):
+        url = LIGHT_BASE_URL + '/%s/lights' % api_key
+
+        requests.get(url)
