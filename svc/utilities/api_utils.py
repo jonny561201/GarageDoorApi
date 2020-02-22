@@ -65,4 +65,4 @@ class LightApi:
     def get_all_lights(api_key):
         url = LIGHT_BASE_URL + '/%s/lights' % api_key
 
-        requests.get(url)
+        return requests.get(url).json()

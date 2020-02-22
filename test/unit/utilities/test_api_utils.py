@@ -206,3 +206,12 @@ class TestLightApiRequests:
         self.LIGHT_API.get_all_lights(self.API_KEY)
 
         mock_requests.get.assert_called_with(expected_url)
+
+    def test_get_all_lights__should_return_response_from_api(self, mock_requests):
+        response_data = {'light_name': 'DoesntMatter'}
+        response = Response()
+        response._content = json.dumps(response_data).encode('UTF-8')
+        mock_requests.get.return_value = response
+        actual = self.LIGHT_API.get_all_lights(self.API_KEY)
+
+        assert actual == response_data
