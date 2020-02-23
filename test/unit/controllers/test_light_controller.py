@@ -154,6 +154,15 @@ class TestLightRequest:
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
     def test_get_assigned_lights__should_make_call_to_get_api_key(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+        mock_set.get_instance.return_value.get_settings.return_value = {'Development': False}
         get_assigned_lights(self.BEARER_TOKEN, self.GROUP_ID)
 
         mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)
+
+    def test_get_assigned_lights__should_use_settings_user_pass_when_in_dev_mode(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+        light_user = 'LightUser'
+        light_pass = 'LightPass'
+        mock_set.get_instance.return_value.get_settings.return_value = {'Development': True, 'LightApiUser': light_user, 'LightApiPass': light_pass}
+        get_assigned_lights(self.BEARER_TOKEN, self.GROUP_ID)
+
+        mock_api.get_light_api_key.assert_called_with(light_user, light_pass)
