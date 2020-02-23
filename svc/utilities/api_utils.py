@@ -18,9 +18,6 @@ def get_weather_by_city(city, unit, app_id):
 
 # TODO: may need to re-capture api key if call fails
 def get_light_api_key(username, password):
-    light_state = LightState.get_instance()
-    if light_state.API_KEY is not None:
-        return light_state.API_KEY
     body = {'devicetype': Automation().APP_NAME}
     auth = base64.b64encode((username + ':' + password).encode('UTF-8')).decode('UTF-8')
     headers = {'Authorization': 'Basic ' + auth}
