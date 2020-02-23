@@ -4,8 +4,8 @@ from mock import patch, ANY
 from requests import Response
 
 from svc.constants.home_automation import Automation
-from svc.utilities.api_utils import get_weather_by_city
-from svc.utilities.api_utils import LightApi
+from svc.utilities.api_utils import get_weather_by_city, get_light_group_attributes, get_light_state, get_all_lights, \
+    create_light_group, get_light_group_state, set_light_groups, get_light_groups, get_light_api_key
 
 
 @patch('svc.utilities.api_utils.requests')
@@ -81,22 +81,19 @@ class TestLightApiRequests:
     API_KEY = 'fake api key'
     LIGHT_API = None
 
-    def setup_method(self):
-        self.LIGHT_API = LightApi()
-
     def test_get_light_api_key__should_call_requests_with_url(self, mock_requests):
-        self.LIGHT_API.get_light_api_key(self.USERNAME, self.PASSWORD)
+        get_light_api_key(self.USERNAME, self.PASSWORD)
 
         mock_requests.post.assert_called_with(self.BASE_URL, data=ANY, headers=ANY)
 
     def test_get_light_api_key__should_call_requests_with_device_type(self, mock_requests):
-        self.LIGHT_API.get_light_api_key(self.USERNAME, self.PASSWORD)
+        get_light_api_key(self.USERNAME, self.PASSWORD)
 
         body = json.dumps({'devicetype': Automation().APP_NAME})
         mock_requests.post.assert_called_with(ANY, data=body, headers=ANY)
 
     def test_get_light_api_key__should_provide_username_and_pass_as_auth_header(self, mock_requests):
-        self.LIGHT_API.get_light_api_key(self.USERNAME, self.PASSWORD)
+        get_light_api_key(self.USERNAME, self.PASSWORD)
 
         headers = {'Authorization': 'Basic ' + 'ZmFrZSB1c2VybmFtZTpmYWtlIHBhc3N3b3Jk'}
         mock_requests.post.assert_called_with(ANY, data=ANY, headers=headers)
@@ -106,21 +103,22 @@ class TestLightApiRequests:
         response._content = json.dumps([{'success': {'username': self.API_KEY}}]).encode('UTF-8')
         mock_requests.post.return_value = response
 
-        actual = self.LIGHT_API.get_light_api_key(self.USERNAME, self.PASSWORD)
+        actual = get_light_api_key(self.USERNAME, self.PASSWORD)
 
         assert actual == self.API_KEY
 
-    def test_get_light_api_key__should_return_cached_api_key_when_already_stored(self, mock_requests):
+    @patch('svc.utilities.api_utils.LightState')
+    def test_get_light_api_key__should_return_cached_api_key_when_already_stored(self, mock_state, mock_requests):
         api_key = 'New Test Api Key'
-        self.LIGHT_API.API_KEY = api_key
-        actual = self.LIGHT_API.get_light_api_key(self.USERNAME, self.PASSWORD)
+        mock_state.get_instance.return_value.API_KEY = api_key
+        actual = get_light_api_key(self.USERNAME, self.PASSWORD)
 
         assert actual == api_key
         mock_requests.post.assert_not_called()
 
     def test_get_light_groups__should_call_groups_url(self, mock_requests):
         expected_url = self.BASE_URL + '/%s/groups' % self.API_KEY
-        self.LIGHT_API.get_light_groups(self.API_KEY)
+        get_light_groups(self.API_KEY)
 
         mock_requests.get.assert_called_with(expected_url)
 
@@ -136,20 +134,20 @@ class TestLightApiRequests:
         mock_response = Response()
         mock_response._content = json.dumps(api_response).encode('UTF-8')
         mock_requests.get.return_value = mock_response
-        actual = self.LIGHT_API.get_light_groups(self.API_KEY)
+        actual = get_light_groups(self.API_KEY)
 
         assert actual['1']['etag'] == 'ab5272cfe11339202929259af22252ae'
 
     def test_set_light_groups__should_call_state_url(self, mock_requests):
         group_id = 1
         expected_url = self.BASE_URL + '/%s/groups/%s/action' % (self.API_KEY, group_id)
-        self.LIGHT_API.set_light_groups(self.API_KEY, group_id, True)
+        set_light_groups(self.API_KEY, group_id, True)
 
         mock_requests.put.assert_called_with(expected_url, data=ANY)
 
     def test_set_light_groups__should_call_state_with_on_off_set(self, mock_requests):
         state = False
-        self.LIGHT_API.set_light_groups(self.API_KEY, 2, state)
+        set_light_groups(self.API_KEY, 2, state)
 
         expected_request = json.dumps({'on': state})
         mock_requests.put.assert_called_with(ANY, data=expected_request)
@@ -157,14 +155,14 @@ class TestLightApiRequests:
     def test_set_light_groups__should_call_state_with_dimmer_value(self, mock_requests):
         state = True
         brightness = 233
-        self.LIGHT_API.set_light_groups(self.API_KEY, 1, state, brightness)
+        set_light_groups(self.API_KEY, 1, state, brightness)
 
         expected_request = json.dumps({'on': state, 'bri': brightness})
         mock_requests.put.assert_called_with(ANY, data=expected_request)
 
     def test_set_light_groups__should_call_state_with_on_set_true_if_dimmer_value(self, mock_requests):
         brightness = 155
-        self.LIGHT_API.set_light_groups(self.API_KEY, 1, False, brightness)
+        set_light_groups(self.API_KEY, 1, False, brightness)
 
         expected_request = json.dumps({'on': True, 'bri': brightness})
         mock_requests.put.assert_called_with(ANY, data=expected_request)
@@ -173,7 +171,7 @@ class TestLightApiRequests:
         group_id = '1'
         url = self.BASE_URL + '/%s/groups/%s' % (self.API_KEY, group_id)
 
-        self.LIGHT_API.get_light_group_state(self.API_KEY, group_id)
+        get_light_group_state(self.API_KEY, group_id)
 
         mock_requests.get.assert_called_with(url)
         
@@ -184,26 +182,26 @@ class TestLightApiRequests:
         response._content = json.dumps(response_content).encode('UTF-8')
         mock_requests.get.return_value = response
         
-        actual = self.LIGHT_API.get_light_group_state(self.API_KEY, group_id)
+        actual = get_light_group_state(self.API_KEY, group_id)
         
         assert actual == response_content
 
     def test_create_light_group__should_make_api_call_to_url(self, mock_requests):
         expected_url = self.BASE_URL + '/%s/groups' % self.API_KEY
-        self.LIGHT_API.create_light_group(self.API_KEY, None)
+        create_light_group(self.API_KEY, None)
 
         mock_requests.post.assert_called_with(expected_url, data=ANY)
 
     def test_create_light_group__should_make_api_with_group_name(self, mock_requests):
         group_name = 'Test Group'
         expected_data = json.dumps({'name': group_name})
-        self.LIGHT_API.create_light_group(self.API_KEY, group_name)
+        create_light_group(self.API_KEY, group_name)
 
         mock_requests.post.assert_called_with(ANY, data=expected_data)
 
     def test_get_all_lights__should_make_api_call_to_url(self, mock_requests):
         expected_url = self.BASE_URL + '/%s/lights' % self.API_KEY
-        self.LIGHT_API.get_all_lights(self.API_KEY)
+        get_all_lights(self.API_KEY)
 
         mock_requests.get.assert_called_with(expected_url)
 
@@ -212,14 +210,14 @@ class TestLightApiRequests:
         response = Response()
         response._content = json.dumps(response_data).encode('UTF-8')
         mock_requests.get.return_value = response
-        actual = self.LIGHT_API.get_all_lights(self.API_KEY)
+        actual = get_all_lights(self.API_KEY)
 
         assert actual == response_data
 
     def test_get_light_group_attributes__should_make_api_call_to_url(self, mock_requests):
         group_id = "4"
         expected_url = self.BASE_URL + '/%s/groups/%s' % (self.API_KEY, group_id)
-        self.LIGHT_API.get_light_group_attributes(self.API_KEY, group_id)
+        get_light_group_attributes(self.API_KEY, group_id)
 
         mock_requests.get.assert_called_with(expected_url)
 
@@ -229,14 +227,14 @@ class TestLightApiRequests:
         response = Response()
         response._content = json.dumps(response_data).encode('UTF-8')
         mock_requests.get.return_value = response
-        actual = self.LIGHT_API.get_light_group_attributes(self.API_KEY, group_id)
+        actual = get_light_group_attributes(self.API_KEY, group_id)
 
         assert actual == response_data
 
     def test_get_light_state__should_make_api_call_to_url(self, mock_requests):
         light_id = "4"
         expected_url = self.BASE_URL + '/%s/lights/%s' % (self.API_KEY, light_id)
-        self.LIGHT_API.get_light_state(self.API_KEY, light_id)
+        get_light_state(self.API_KEY, light_id)
 
         mock_requests.get.assert_called_with(expected_url)
 
@@ -247,6 +245,6 @@ class TestLightApiRequests:
         response._content = json.dumps(response_date).encode('UTF-8')
         mock_requests.get.return_value = response
 
-        actual = self.LIGHT_API.get_light_state(self.API_KEY, light_id)
+        actual = get_light_state(self.API_KEY, light_id)
 
         assert actual == response_date
