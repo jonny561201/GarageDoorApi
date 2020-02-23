@@ -66,3 +66,9 @@ class LightApi:
         url = LIGHT_BASE_URL + '/%s/lights' % api_key
 
         return requests.get(url).json()
+
+    # get group attributes returns a list of lights in a group based on group id
+    # get light state for each light in that group
+    def get_light_group_attributes(self, api_key, group_id):
+        url = LIGHT_BASE_URL + '/%s/groups/%s' % (api_key, group_id)
+        requests.get(url)

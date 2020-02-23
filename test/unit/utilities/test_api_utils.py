@@ -215,3 +215,10 @@ class TestLightApiRequests:
         actual = self.LIGHT_API.get_all_lights(self.API_KEY)
 
         assert actual == response_data
+
+    def test_get_light_group_attributes__should_make_api_call_to_url(self, mock_requests):
+        group_id = "4"
+        expected_url = self.BASE_URL + '/%s/groups/%s' % (self.API_KEY, group_id)
+        self.LIGHT_API.get_light_group_attributes(self.API_KEY, group_id)
+
+        mock_requests.get.assert_called_with(expected_url)
