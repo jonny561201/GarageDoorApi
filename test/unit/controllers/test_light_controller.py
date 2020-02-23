@@ -149,7 +149,11 @@ class TestLightRequest:
         mock_api.set_light_groups.assert_called_with(new_api_key, ANY, ANY, ANY)
 
     def test_get_assigned_lights__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
-        group_id = '43'
-        get_assigned_lights(self.BEARER_TOKEN, group_id)
+        get_assigned_lights(self.BEARER_TOKEN, self.GROUP_ID)
 
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
+
+    def test_get_assigned_lights__should_make_call_to_get_api_key(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+        get_assigned_lights(self.BEARER_TOKEN, self.GROUP_ID)
+
+        mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)

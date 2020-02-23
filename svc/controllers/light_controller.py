@@ -43,6 +43,9 @@ def set_assigned_light_groups(bearer_token, request):
 # TODO: want to get the name of each light and their current state
 def get_assigned_lights(bearer_token, group_id):
     is_jwt_valid(bearer_token)
+    username = os.environ['LIGHT_API_USERNAME']
+    password = os.environ['LIGHT_API_PASSWORD']
+    api_utils.get_light_api_key(username, password)
 
 
 def __get_light_group_states(api_key, light_groups):
