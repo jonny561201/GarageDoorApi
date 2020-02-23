@@ -239,3 +239,14 @@ class TestLightApiRequests:
         self.LIGHT_API.get_light_state(self.API_KEY, light_id)
 
         mock_requests.get.assert_called_with(expected_url)
+
+    def test_get_light_state__should_return_response_from_api(self, mock_requests):
+        light_id = '5'
+        response = Response()
+        response_date = {'name': 'livingRoomLamp', 'state': {'on': True}}
+        response._content = json.dumps(response_date).encode('UTF-8')
+        mock_requests.get.return_value = response
+
+        actual = self.LIGHT_API.get_light_state(self.API_KEY, light_id)
+
+        assert actual == response_date

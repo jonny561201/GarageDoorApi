@@ -77,4 +77,4 @@ class LightApi:
     # want to get the name of each light and their current state
     def get_light_state(self, api_key, light_id):
         url = LIGHT_BASE_URL + '/%s/lights/%s' % (api_key, light_id)
-        requests.get(url)
+        return requests.get(url).json()
