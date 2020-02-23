@@ -222,3 +222,13 @@ class TestLightApiRequests:
         self.LIGHT_API.get_light_group_attributes(self.API_KEY, group_id)
 
         mock_requests.get.assert_called_with(expected_url)
+
+    def test_group_light_group_attributes__should_return_response_from_api(self, mock_requests):
+        group_id = "12"
+        response_data = {'lights': ['1', '2']}
+        response = Response()
+        response._content = json.dumps(response_data).encode('UTF-8')
+        mock_requests.get.return_value = response
+        actual = self.LIGHT_API.get_light_group_attributes(self.API_KEY, group_id)
+
+        assert actual == response_data

@@ -71,4 +71,4 @@ class LightApi:
     # get light state for each light in that group
     def get_light_group_attributes(self, api_key, group_id):
         url = LIGHT_BASE_URL + '/%s/groups/%s' % (api_key, group_id)
-        requests.get(url)
+        return requests.get(url).json()
