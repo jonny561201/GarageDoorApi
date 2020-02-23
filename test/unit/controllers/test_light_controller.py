@@ -166,3 +166,10 @@ class TestLightRequest:
         get_assigned_lights(self.BEARER_TOKEN, self.GROUP_ID)
 
         mock_api.get_light_api_key.assert_called_with(light_user, light_pass)
+
+    def test_get_assigned_lights__should_call_to_get_group_attributes(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+        mock_api.get_light_api_key.return_value = self.API_KEY
+        get_assigned_lights(self.BEARER_TOKEN, self.GROUP_ID)
+
+        mock_api.get_light_group_attributes.assert_called_with(self.API_KEY, self.GROUP_ID)
+
