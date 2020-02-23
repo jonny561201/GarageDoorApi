@@ -29,6 +29,13 @@ def set_assigned_light_groups(bearer_token, request):
     api_utils.set_light_groups(api_key, request.get('groupId'), request.get('on'), request.get('brightness'))
 
 
+def get_assigned_lights(bearer_token, group_id):
+    is_jwt_valid(bearer_token)
+
+# get group attributes returns a list of lights in a group based on group id
+# get light state for each light in that group
+# want to get the name of each light and their current state
+
 def __get_light_group_states(api_key, light_groups):
     groups_state = {k: api_utils.get_light_group_state(api_key, k) for k, v in light_groups.items()}
     return groups_state
