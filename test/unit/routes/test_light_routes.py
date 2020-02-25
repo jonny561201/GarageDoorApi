@@ -2,7 +2,7 @@ import json
 
 from mock import patch
 
-from svc.routes.light_routes import get_assigned_light_groups, set_assigned_light_group
+from svc.routes.light_routes import get_assigned_light_groups, set_assigned_light_group, get_lights_assigned_to_group
 
 
 @patch('svc.routes.light_routes.request')
@@ -59,3 +59,10 @@ class TestLightRoutes:
 
         assert actual.content_type == 'text/json'
 
+    def test_get_lights_assigned_to_group__should_call_light_controller(self, mock_controller, mock_request):
+        group_id = '5'
+        bearer_token = 'fakeBearerToken'
+        mock_request.headers = {'Authorization': bearer_token}
+        get_lights_assigned_to_group(group_id)
+
+        mock_controller.get_assigned_lights.assert_called_with(bearer_token, group_id)
