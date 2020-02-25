@@ -9,7 +9,7 @@ DEFAULT_HEADERS = {'Content-Type': 'text/json'}
 
 
 @LIGHT_BLUEPRINT.route('/lights/groups', methods=['GET'])
-def get_all_assigned_lights():
+def get_assigned_light_groups():
     bearer_token = request.headers.get('Authorization')
     response = light_controller.get_assigned_light_groups(bearer_token)
 
