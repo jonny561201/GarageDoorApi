@@ -51,7 +51,11 @@ def get_assigned_lights(bearer_token, group_id):
         api_key = api_utils.get_light_api_key(username, password)
     else:
         api_key = light_state.API_KEY
-    api_utils.get_light_group_attributes(api_key, group_id)
+    # TODO: below should return a list of lights
+    # TODO: need to make api call for each light to the light state end point
+    # TODO: want to get the name of each light and their current state
+    light_groups = api_utils.get_light_group_attributes(api_key, group_id).get('lights')
+    test = {light: api_utils.get_light_state(api_key, light) for light in light_groups}
 
 
 def __get_light_group_states(api_key, light_groups):
