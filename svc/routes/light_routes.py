@@ -24,6 +24,7 @@ def set_assigned_light_group():
     return Response(status=200, headers=DEFAULT_HEADERS)
 
 
+@LIGHT_BLUEPRINT.route('/group/<group_id>/lights', methods=['GET'])
 def get_lights_assigned_to_group(group_id):
     bearer_token = request.headers.get('Authorization')
     response = light_controller.get_assigned_lights(bearer_token, group_id)
