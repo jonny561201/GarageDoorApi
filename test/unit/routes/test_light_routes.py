@@ -61,6 +61,7 @@ class TestLightRoutes:
 
     def test_get_lights_assigned_to_group__should_call_light_controller(self, mock_controller, mock_request):
         group_id = '5'
+        mock_controller.get_assigned_lights.return_value = {}
         bearer_token = 'fakeBearerToken'
         mock_request.headers = {'Authorization': bearer_token}
         get_lights_assigned_to_group(group_id)
@@ -69,12 +70,22 @@ class TestLightRoutes:
 
     def test_get_lights_assigned_to_group__should_return_success_status_code(self, mock_controller, mock_request):
         group_id = '3'
+        mock_controller.get_assigned_lights.return_value = {}
         actual = get_lights_assigned_to_group(group_id)
 
         assert actual.status_code == 200
 
     def test_get_lights_assigned_to_group__should_return_success_headers(self, mock_controller, mock_request):
         group_id = '3'
+        mock_controller.get_assigned_lights.return_value = {}
         actual = get_lights_assigned_to_group(group_id)
 
         assert actual.content_type == 'text/json'
+
+    def test_get_lights_assigned_to_group__should_return_response(self, mock_controller, mock_request):
+        group_id = '5'
+        expected_response = {'test': 'fake'}
+        mock_controller.get_assigned_lights.return_value = expected_response
+        actual = get_lights_assigned_to_group(group_id)
+
+        assert json.loads(actual.data) == expected_response
