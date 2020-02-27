@@ -12,8 +12,8 @@ def get_assigned_light_groups(bearer_token):
     light_state = LightState.get_instance()
     if light_state.API_KEY is None:
         settings = Settings.get_instance().get_settings()
-        username = settings['LightApiUser'] if settings['Development'] else os.environ['LIGHT_API_USERNAME']
-        password = settings['LightApiPass'] if settings['Development'] else os.environ['LIGHT_API_PASSWORD']
+        username = settings.get('LightApiUser') if settings.get('Development') else os.environ['LIGHT_API_USERNAME']
+        password = settings.get('LightApiPass') if settings.get('Development') else os.environ['LIGHT_API_PASSWORD']
         api_key = api_utils.get_light_api_key(username, password)
     else:
         api_key = light_state.API_KEY
@@ -29,8 +29,8 @@ def set_assigned_light_groups(bearer_token, request):
     settings = Settings.get_instance().get_settings()
     light_state = LightState.get_instance()
     if light_state.API_KEY is None:
-        username = settings['LightApiUser'] if settings['Development'] else os.environ['LIGHT_API_USERNAME']
-        password = settings['LightApiPass'] if settings['Development'] else os.environ['LIGHT_API_PASSWORD']
+        username = settings.get('LightApiUser') if settings.get('Development') else os.environ['LIGHT_API_USERNAME']
+        password = settings.get('LightApiPass') if settings.get('Development') else os.environ['LIGHT_API_PASSWORD']
         api_key = api_utils.get_light_api_key(username, password)
     else:
         api_key = light_state.API_KEY
@@ -43,8 +43,8 @@ def get_assigned_lights(bearer_token, group_id):
     settings = Settings.get_instance().get_settings()
     light_state = LightState.get_instance()
     if light_state.API_KEY is None:
-        username = settings['LightApiUser'] if settings['Development'] else os.environ['LIGHT_API_USERNAME']
-        password = settings['LightApiPass'] if settings['Development'] else os.environ['LIGHT_API_PASSWORD']
+        username = settings.get('LightApiUser') if settings.get('Development') else os.environ['LIGHT_API_USERNAME']
+        password = settings.get('LightApiPass') if settings.get('Development') else os.environ['LIGHT_API_PASSWORD']
         api_key = api_utils.get_light_api_key(username, password)
     else:
         api_key = light_state.API_KEY
