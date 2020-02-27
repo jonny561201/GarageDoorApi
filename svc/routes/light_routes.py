@@ -35,4 +35,4 @@ def set_light_state():
     bearer_token = request.headers.get('Authorization')
     request_data = json.loads(request.data.decode('UTF-8'))
     light_controller.set_assigned_light(bearer_token, request_data)
-    return Response(status=200)
+    return Response(status=200, headers=DEFAULT_HEADERS)
