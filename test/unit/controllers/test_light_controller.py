@@ -215,6 +215,16 @@ class TestLightRequest:
 
     def test_set_assigned_light__should_make_api_call_to_get_key(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
         light_id = '3'
+        mock_set.get_instance.return_value.get_settings.return_value = {'Development': False}
         set_assigned_light(self.BEARER_TOKEN, light_id)
 
         mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)
+        
+    def test_set_assigned_light__should_use_dev_key_when_in_dev_mode(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+        light_id = '5'
+        light_user = 'newUser'
+        light_pass = 'newPass'
+        mock_set.get_instance.return_value.get_settings.return_value = {'Development': True, 'LightApiUser': light_user, 'LightApiPass': light_pass}
+        set_assigned_light(self.BEARER_TOKEN, light_id)
+
+        mock_api.get_light_api_key.assert_called_with(light_user, light_pass)
