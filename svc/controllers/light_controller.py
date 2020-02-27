@@ -63,6 +63,7 @@ def set_assigned_light(bearer_token, light_id):
     else:
         api_key = light_state.API_KEY
 
+    # TODO: set the light state and/or brightness
     api_utils.set_light_state(api_key, light_id)
 
 

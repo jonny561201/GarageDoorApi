@@ -29,3 +29,9 @@ def get_lights_assigned_to_group(group_id):
     bearer_token = request.headers.get('Authorization')
     response = light_controller.get_assigned_lights(bearer_token, group_id)
     return Response(json.dumps(response), status=200, headers=DEFAULT_HEADERS)
+
+
+def set_light_state():
+    bearer_token = request.headers.get('Authorization')
+    request_data = json.loads(request.data.decode('UTF-8'))
+    light_controller.set_assigned_light(bearer_token, request)
