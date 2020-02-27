@@ -207,8 +207,14 @@ class TestLightRequest:
 
         assert actual == [{'1': {'on': False, 'brightness': 144}}, {'2': {'on': True, 'brightness': 255}}]
 
-    def test_set_assigned_lights__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+    def test_set_assigned_light__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
         light_id = '4'
         set_assigned_light(self.BEARER_TOKEN, light_id)
 
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
+
+    def test_set_assigned_light__should_make_api_call_to_get_key(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+        light_id = '3'
+        set_assigned_light(self.BEARER_TOKEN, light_id)
+
+        mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)
