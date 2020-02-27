@@ -57,7 +57,9 @@ def set_assigned_light(bearer_token, light_id):
     settings = Settings.get_instance().get_settings()
     username = settings.get('LightApiUser') if settings.get('Development') else os.environ['LIGHT_API_USERNAME']
     password = settings.get('LightApiPass') if settings.get('Development') else os.environ['LIGHT_API_PASSWORD']
-    api_utils.get_light_api_key(username, password)
+    api_key = api_utils.get_light_api_key(username, password)
+
+    api_utils.set_light_state(api_key, light_id)
 
 
 def __get_light_state(api_key, light):

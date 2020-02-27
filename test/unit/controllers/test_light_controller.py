@@ -228,3 +228,11 @@ class TestLightRequest:
         set_assigned_light(self.BEARER_TOKEN, light_id)
 
         mock_api.get_light_api_key.assert_called_with(light_user, light_pass)
+
+    def test_set_assigned_light__should_make_call_to_set_light_state(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+        light_id = '2'
+        mock_set.get_instance.return_value.get_settings.return_value = {'Development': False}
+        mock_api.get_light_api_key.return_value = self.API_KEY
+        set_assigned_light(self.BEARER_TOKEN, light_id)
+
+        mock_api.set_light_state.assert_called_with(self.API_KEY, light_id)
