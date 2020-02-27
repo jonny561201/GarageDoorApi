@@ -91,11 +91,17 @@ class TestLightRoutes:
 
         assert json.loads(actual.data) == expected_response
 
-    def test_set_light__should_call_light_controller(self, mock_controller, mock_requests):
+    def test_set_light_state__should_call_light_controller(self, mock_controller, mock_requests):
         bearer_token = 'fakeBearerToken'
         mock_requests.headers = {'Authorization': bearer_token}
         request = '{"on": "False", "brightness": 133, "lightId": "3"}'
         mock_requests.data = request.encode()
         set_light_state()
 
-        mock_controller.set_assigned_light(bearer_token, json.loads(request))
+        mock_controller.set_assigned_light.assert_called_with(bearer_token, json.loads(request))
+
+    def test_set_light_state__should_return_success_status_code(self, mock_controller, mock_request):
+        mock_request.data = '{}'.encode('UTF-8')
+        actual = set_light_state()
+
+        assert actual.status_code == 200
