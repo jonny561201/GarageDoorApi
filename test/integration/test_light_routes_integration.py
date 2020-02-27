@@ -67,3 +67,12 @@ class TestLightRoutesIntegration:
         actual = self.TEST_CLIENT.post('group/light', headers={}, data=post_body)
 
         assert actual.status_code == 401
+
+    @patch('svc.controllers.light_controller.api_utils')
+    def test_set_light_state__should_return_success_with_valid_jwt(self, mock_api):
+        post_body = '{"on": "True", "brightness": 1, "lightId": "3"}'
+        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
+        header = {'Authorization': bearer_token}
+        actual = self.TEST_CLIENT.post('group/light', headers=header, data=post_body)
+
+        assert actual.status_code == 200
