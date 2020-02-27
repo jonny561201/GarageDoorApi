@@ -31,6 +31,7 @@ def get_lights_assigned_to_group(group_id):
     return Response(json.dumps(response), status=200, headers=DEFAULT_HEADERS)
 
 
+@LIGHT_BLUEPRINT.route('/group/light', methods=['POST'])
 def set_light_state():
     bearer_token = request.headers.get('Authorization')
     request_data = json.loads(request.data.decode('UTF-8'))

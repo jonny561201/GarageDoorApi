@@ -61,3 +61,9 @@ class TestLightRoutesIntegration:
         actual = self.TEST_CLIENT.get('group/1/lights', headers=header)
 
         assert actual.status_code == 200
+
+    def test_set_light_state__should_return_unauthorized_without_header(self):
+        post_body = '{}'
+        actual = self.TEST_CLIENT.post('group/light', headers={}, data=post_body)
+
+        assert actual.status_code == 401
