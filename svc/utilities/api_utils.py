@@ -16,14 +16,15 @@ def get_weather_by_city(city, unit, app_id):
     return response.status_code, response.content
 
 
-# TODO: MAKE SURE TO CACHE API KEY ON GLOBAL STATE!!!
 def get_light_api_key(username, password):
     body = {'devicetype': Automation().APP_NAME}
     auth = base64.b64encode((username + ':' + password).encode('UTF-8')).decode('UTF-8')
     headers = {'Authorization': 'Basic ' + auth}
     response = requests.post(LIGHT_BASE_URL, data=json.dumps(body), headers=headers)
 
-    return response.json()[0]['success']['username']
+    api_key = response.json()[0]['success']['username']
+    LightState.get_instance().API_KEY = api_key
+    return api_key
 
 
 def get_light_groups(api_key):

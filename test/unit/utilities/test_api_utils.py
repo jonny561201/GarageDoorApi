@@ -107,6 +107,15 @@ class TestLightApiRequests:
 
         assert actual == self.API_KEY
 
+    @patch('svc.utilities.api_utils.LightState')
+    def test_get_light_api_key__should_cache_key_to_global_state(self, mock_state, mock_requests):
+        response = Response()
+        response._content = json.dumps([{'success': {'username': self.API_KEY}}]).encode('UTF-8')
+        mock_requests.post.return_value = response
+        get_light_api_key(self.USERNAME, self.PASSWORD)
+
+        assert mock_state.get_instance.return_value.API_KEY == self.API_KEY
+
     def test_get_light_groups__should_call_groups_url(self, mock_requests):
         expected_url = self.BASE_URL + '/%s/groups' % self.API_KEY
         get_light_groups(self.API_KEY)
