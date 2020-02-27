@@ -2,7 +2,8 @@ import os
 
 from mock import patch, ANY
 
-from svc.controllers.light_controller import get_assigned_light_groups, set_assigned_light_groups, get_assigned_lights
+from svc.controllers.light_controller import get_assigned_light_groups, set_assigned_light_groups, get_assigned_lights, \
+    set_assigned_light
 
 
 @patch('svc.controllers.light_controller.LightState')
@@ -205,3 +206,9 @@ class TestLightRequest:
         actual = get_assigned_lights(self.BEARER_TOKEN, self.GROUP_ID)
 
         assert actual == [{'1': {'on': False, 'brightness': 144}}, {'2': {'on': True, 'brightness': 255}}]
+
+    def test_set_assigned_lights__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
+        light_id = '4'
+        set_assigned_light(self.BEARER_TOKEN, light_id)
+
+        mock_jwt.assert_called_with(self.BEARER_TOKEN)

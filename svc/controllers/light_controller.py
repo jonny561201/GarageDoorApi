@@ -52,6 +52,9 @@ def get_assigned_lights(bearer_token, group_id):
     return [__get_light_state(api_key, light) for light in light_groups]
 
 
+def set_assigned_light(bearer_token, light_id):
+    is_jwt_valid(bearer_token)
+
 def __get_light_state(api_key, light):
     response = api_utils.get_light_state(api_key, light).get('state')
     return {light: {'on': response.get('on'), 'brightness': response.get('bri')}}
