@@ -5,7 +5,7 @@ from requests import Response
 
 from svc.constants.home_automation import Automation
 from svc.utilities.api_utils import get_weather_by_city, get_light_group_attributes, get_light_state, get_all_lights, \
-    create_light_group, get_light_group_state, set_light_groups, get_light_groups, get_light_api_key
+    create_light_group, get_light_group_state, set_light_groups, get_light_groups, get_light_api_key, set_light_state
 
 
 @patch('svc.utilities.api_utils.requests')
@@ -248,3 +248,10 @@ class TestLightApiRequests:
         actual = get_light_state(self.API_KEY, light_id)
 
         assert actual == response_date
+
+    def test_set_light_state__should_make_call_to_api(self, mock_requests):
+        light_id = '7'
+        expected_url = self.BASE_URL + '/%s/lights/%s/state' % (self.API_KEY, light_id)
+        set_light_state(self.API_KEY, light_id)
+
+        mock_requests.put.assert_called_with(expected_url)

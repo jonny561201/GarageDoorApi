@@ -70,4 +70,5 @@ def get_light_state(api_key, light_id):
 
 
 def set_light_state(api_key, light_id):
-    pass
+    url = LIGHT_BASE_URL + '/%s/lights/%s/state' % (api_key, light_id)
+    requests.put(url)

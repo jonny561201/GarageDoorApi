@@ -52,7 +52,7 @@ def get_assigned_lights(bearer_token, group_id):
     return [__get_light_state(api_key, light) for light in light_groups]
 
 
-def set_assigned_light(bearer_token, light_id):
+def set_assigned_light(bearer_token, request_data):
     is_jwt_valid(bearer_token)
     settings = Settings.get_instance().get_settings()
     light_state = LightState.get_instance()
@@ -64,7 +64,7 @@ def set_assigned_light(bearer_token, light_id):
         api_key = light_state.API_KEY
 
     # TODO: set the light state and/or brightness
-    api_utils.set_light_state(api_key, light_id)
+    api_utils.set_light_state(api_key, request_data)
 
 
 def __get_light_state(api_key, light):
