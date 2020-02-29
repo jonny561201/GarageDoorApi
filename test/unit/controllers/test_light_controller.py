@@ -208,43 +208,47 @@ class TestLightRequest:
         assert actual == [{'1': {'on': False, 'brightness': 144}}, {'2': {'on': True, 'brightness': 255}}]
 
     def test_set_assigned_light__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
-        light_id = '4'
-        set_assigned_light(self.BEARER_TOKEN, light_id)
+        request_data = {'lightId': '4', 'on': True, 'brightness': 179}
+        set_assigned_light(self.BEARER_TOKEN, request_data)
 
         mock_jwt.assert_called_with(self.BEARER_TOKEN)
 
     def test_set_assigned_light__should_make_api_call_to_get_key(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
-        light_id = '3'
+        request_data = {'lightId': '3', 'on': False, 'brightness': 201}
         mock_light.get_instance.return_value.API_KEY = None
         mock_set.get_instance.return_value.get_settings.return_value = {'Development': False}
-        set_assigned_light(self.BEARER_TOKEN, light_id)
+        set_assigned_light(self.BEARER_TOKEN, request_data)
 
         mock_api.get_light_api_key.assert_called_with(self.LIGHT_USERNAME, self.LIGHT_PASSWORD)
         
     def test_set_assigned_light__should_use_dev_key_when_in_dev_mode(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
-        light_id = '5'
+        request_data = {'lightId': '5', 'on': True, 'brightness': 45}
         light_user = 'newUser'
         light_pass = 'newPass'
         mock_light.get_instance.return_value.API_KEY = None
         mock_set.get_instance.return_value.get_settings.return_value = {'Development': True, 'LightApiUser': light_user, 'LightApiPass': light_pass}
-        set_assigned_light(self.BEARER_TOKEN, light_id)
+        set_assigned_light(self.BEARER_TOKEN, request_data)
 
         mock_api.get_light_api_key.assert_called_with(light_user, light_pass)
 
     def test_set_assigned_light__should_make_call_to_set_light_state(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
         light_id = '2'
+        brightness = 65
+        request_data = {'lightId': light_id, 'on': True, 'brightness': brightness}
         mock_light.get_instance.return_value.API_KEY = None
         mock_set.get_instance.return_value.get_settings.return_value = {'Development': False}
         mock_api.get_light_api_key.return_value = self.API_KEY
-        set_assigned_light(self.BEARER_TOKEN, light_id)
+        set_assigned_light(self.BEARER_TOKEN, request_data)
 
-        mock_api.set_light_state.assert_called_with(self.API_KEY, light_id)
+        mock_api.set_light_state.assert_called_with(self.API_KEY, light_id, True, brightness)
 
     def test_set_assigned_light__should_use_cached_api_key_when_on_state(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
         light_id = '1'
+        brightness = 176
+        request_data = {'lightId': light_id, 'on': False, 'brightness': brightness}
         new_key = 'fakeNewApiKey'
         mock_light.get_instance.return_value.API_KEY = new_key
-        set_assigned_light(self.BEARER_TOKEN, light_id)
+        set_assigned_light(self.BEARER_TOKEN, request_data)
 
         mock_api.get_light_api_key.assert_not_called()
-        mock_api.set_light_state.assert_called_with(new_key, light_id)
+        mock_api.set_light_state.assert_called_with(new_key, light_id, False, brightness)
