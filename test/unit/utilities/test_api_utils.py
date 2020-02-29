@@ -252,6 +252,15 @@ class TestLightApiRequests:
     def test_set_light_state__should_make_call_to_api(self, mock_requests):
         light_id = '7'
         expected_url = self.BASE_URL + '/%s/lights/%s/state' % (self.API_KEY, light_id)
-        set_light_state(self.API_KEY, light_id)
+        set_light_state(self.API_KEY, light_id, None, None)
 
-        mock_requests.put.assert_called_with(expected_url)
+        mock_requests.put.assert_called_with(expected_url, data=ANY)
+
+    def test_set_light_state__should_submit_data_to_requested_url(self, mock_requests):
+        light_id = '9'
+        state = False
+        brightness = 188
+        expected_data = json.dumps({'on': state, 'bri': brightness})
+        set_light_state(self.API_KEY, light_id, state, brightness)
+
+        mock_requests.put.assert_called_with(ANY, data=expected_data)
