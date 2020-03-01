@@ -10,8 +10,7 @@ def get_external_temp(preference):
     temp_unit = "metric" if preference['temp_unit'] == "celsius" else "imperial"
     app_settings = Settings.get_instance().get_settings()
     app_id = app_settings.get('DevWeatherAppId') if app_settings.get('Development', False) else os.environ.get('WEATHER_APP_ID')
-    weather_data = get_weather(preference['city'], temp_unit, app_id)
-    return weather_data
+    return get_weather(preference['city'], temp_unit, app_id)
 
 
 def get_internal_temp(preference):
