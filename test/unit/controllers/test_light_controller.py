@@ -147,6 +147,7 @@ class TestLightRequest:
         set_assigned_light_groups(self.BEARER_TOKEN, self.REQUEST)
 
         mock_api.get_light_api_key.assert_not_called()
+        mock_set.get_instance.assert_not_called()
         mock_api.set_light_groups.assert_called_with(new_api_key, ANY, ANY, ANY)
 
     def test_get_assigned_lights__should_call_is_jwt_valid(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
@@ -183,6 +184,7 @@ class TestLightRequest:
         get_assigned_lights(self.BEARER_TOKEN, self.GROUP_ID)
 
         mock_api.get_light_api_key.assert_not_called()
+        mock_set.get_instance.assert_not_called()
         mock_api.get_light_group_attributes.assert_called_with(api_key, self.GROUP_ID)
 
     def test_get_assigned_lights__should_call_get_lights_for_each_light(self, mock_api, mock_map, mock_jwt, mock_set, mock_light):
@@ -251,4 +253,5 @@ class TestLightRequest:
         set_assigned_light(self.BEARER_TOKEN, request_data)
 
         mock_api.get_light_api_key.assert_not_called()
+        mock_set.get_instance.assert_not_called()
         mock_api.set_light_state.assert_called_with(new_key, light_id, False, brightness)

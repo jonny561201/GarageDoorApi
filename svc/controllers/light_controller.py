@@ -26,9 +26,9 @@ def get_assigned_light_groups(bearer_token):
 
 def set_assigned_light_groups(bearer_token, request):
     is_jwt_valid(bearer_token)
-    settings = Settings.get_instance().get_settings()
     light_state = LightState.get_instance()
     if light_state.API_KEY is None:
+        settings = Settings.get_instance().get_settings()
         username = settings.get('LightApiUser') if settings.get('Development') else os.environ['LIGHT_API_USERNAME']
         password = settings.get('LightApiPass') if settings.get('Development') else os.environ['LIGHT_API_PASSWORD']
         api_key = api_utils.get_light_api_key(username, password)
@@ -38,11 +38,12 @@ def set_assigned_light_groups(bearer_token, request):
     api_utils.set_light_groups(api_key, request.get('groupId'), request.get('on'), request.get('brightness'))
 
 
+# TODO: Investigate using GET FULL STATE api
 def get_assigned_lights(bearer_token, group_id):
     is_jwt_valid(bearer_token)
-    settings = Settings.get_instance().get_settings()
     light_state = LightState.get_instance()
     if light_state.API_KEY is None:
+        settings = Settings.get_instance().get_settings()
         username = settings.get('LightApiUser') if settings.get('Development') else os.environ['LIGHT_API_USERNAME']
         password = settings.get('LightApiPass') if settings.get('Development') else os.environ['LIGHT_API_PASSWORD']
         api_key = api_utils.get_light_api_key(username, password)
@@ -54,9 +55,9 @@ def get_assigned_lights(bearer_token, group_id):
 
 def set_assigned_light(bearer_token, request_data):
     is_jwt_valid(bearer_token)
-    settings = Settings.get_instance().get_settings()
     light_state = LightState.get_instance()
     if light_state.API_KEY is None:
+        settings = Settings.get_instance().get_settings()
         username = settings.get('LightApiUser') if settings.get('Development') else os.environ['LIGHT_API_USERNAME']
         password = settings.get('LightApiPass') if settings.get('Development') else os.environ['LIGHT_API_PASSWORD']
         api_key = api_utils.get_light_api_key(username, password)
