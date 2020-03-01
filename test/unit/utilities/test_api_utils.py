@@ -271,3 +271,12 @@ class TestLightApiRequests:
         get_full_state(self.API_KEY)
 
         mock_requests.get.assert_called_with(expected_url)
+
+    def test_get_full_state__should_return_response_from_api(self, mock_requests):
+        response_data = {'fakeResult': 'response'}
+        response = Response()
+        response._content = json.dumps(response_data).encode('UTF-8')
+        mock_requests.get.return_value = response
+        actual = get_full_state(self.API_KEY)
+
+        assert actual == response_data
