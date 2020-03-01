@@ -18,10 +18,12 @@ def get_assigned_light_groups(bearer_token):
     else:
         api_key = light_state.API_KEY
 
-    light_groups = api_utils.get_light_groups(api_key)
-    groups_state = __get_light_group_states(api_key, light_groups)
-
-    return map_light_groups(light_groups, groups_state)
+    full_state = api_utils.get_full_state(api_key)
+    return [__group_mapper(k, v, full_state) for k, v in full_state.get('groups').items()]
+    # light_groups = api_utils.get_light_groups(api_key)
+    # groups_state = __get_light_group_states(api_key, light_groups)
+    #
+    # return map_light_groups(light_groups, groups_state)
 
 
 def set_assigned_light_groups(bearer_token, request):
@@ -38,7 +40,7 @@ def set_assigned_light_groups(bearer_token, request):
     api_utils.set_light_groups(api_key, request.get('groupId'), request.get('on'), request.get('brightness'))
 
 
-# TODO: Investigate using GET FULL STATE api
+# TODO: Can I now use top group call to replace this function???
 def get_assigned_lights(bearer_token, group_id):
     is_jwt_valid(bearer_token)
     light_state = LightState.get_instance()
@@ -65,6 +67,17 @@ def set_assigned_light(bearer_token, request_data):
         api_key = light_state.API_KEY
 
     api_utils.set_light_state(api_key, request_data.get('lightId'), request_data.get('on'), request_data.get('brightness'))
+
+
+def __group_mapper(k, v, full_state):
+    action = v.get('action')
+    return {'groupId': k, 'groupName': v.get('name'), 'on': action.get('on'), 'brightness': action.get('bri'),
+            'lights': __light_mapper(v.get('lights'), full_state.get('lights'))}
+
+
+def __light_mapper(group_lights, lights):
+    return [{'lightId': k, 'lightName': v.get('name'), 'on': v.get('state').get('on'), 'brightness': v.get('state').get('bri')}
+            for k, v in lights.items() if k in group_lights]
 
 
 def __get_light_state(api_key, light):
