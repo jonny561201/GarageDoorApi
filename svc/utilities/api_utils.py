@@ -74,3 +74,8 @@ def set_light_state(api_key, light_id, state, brightness):
     request = {'on': state, 'bri': brightness}
 
     requests.put(url, data=json.dumps(request))
+
+
+def get_full_state(api_key):
+    url = LIGHT_BASE_URL + '/%s' % api_key
+    requests.get(url)
