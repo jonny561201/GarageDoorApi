@@ -2,8 +2,7 @@ import json
 
 from mock import patch
 
-from svc.routes.light_routes import get_assigned_light_groups, set_assigned_light_group, get_lights_assigned_to_group, \
-    set_light_state
+from svc.routes.light_routes import get_assigned_light_groups, set_assigned_light_group, set_light_state
 
 
 @patch('svc.routes.light_routes.request')
@@ -59,37 +58,6 @@ class TestLightRoutes:
         actual = set_assigned_light_group()
 
         assert actual.content_type == 'text/json'
-
-    def test_get_lights_assigned_to_group__should_call_light_controller(self, mock_controller, mock_request):
-        group_id = '5'
-        mock_controller.get_assigned_lights.return_value = {}
-        bearer_token = 'fakeBearerToken'
-        mock_request.headers = {'Authorization': bearer_token}
-        get_lights_assigned_to_group(group_id)
-
-        mock_controller.get_assigned_lights.assert_called_with(bearer_token, group_id)
-
-    def test_get_lights_assigned_to_group__should_return_success_status_code(self, mock_controller, mock_request):
-        group_id = '3'
-        mock_controller.get_assigned_lights.return_value = {}
-        actual = get_lights_assigned_to_group(group_id)
-
-        assert actual.status_code == 200
-
-    def test_get_lights_assigned_to_group__should_return_success_headers(self, mock_controller, mock_request):
-        group_id = '3'
-        mock_controller.get_assigned_lights.return_value = {}
-        actual = get_lights_assigned_to_group(group_id)
-
-        assert actual.content_type == 'text/json'
-
-    def test_get_lights_assigned_to_group__should_return_response(self, mock_controller, mock_request):
-        group_id = '5'
-        expected_response = {'test': 'fake'}
-        mock_controller.get_assigned_lights.return_value = expected_response
-        actual = get_lights_assigned_to_group(group_id)
-
-        assert json.loads(actual.data) == expected_response
 
     def test_set_light_state__should_call_light_controller(self, mock_controller, mock_requests):
         bearer_token = 'fakeBearerToken'
