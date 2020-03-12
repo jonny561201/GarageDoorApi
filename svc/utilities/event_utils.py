@@ -15,7 +15,7 @@ class MyThread(Thread):
             self.function()
 
 
-def create_thread(state, fn, delay=Automation.TIME.THIRTY_SECONDS):
+def create_thread(state, fn, delay=Automation.TIMING.THIRTY_SECONDS):
     stop_event = Event()
     state.STOP_EVENT = stop_event
     state.ACTIVE_THREAD = MyThread(stop_event, fn, delay)

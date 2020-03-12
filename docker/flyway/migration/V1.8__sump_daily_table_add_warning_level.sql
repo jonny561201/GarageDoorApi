@@ -1,1 +1,0 @@
-ALTER TABLE daily_sump_level ADD COLUMN warning_level INT NOT NULL;
