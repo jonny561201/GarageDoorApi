@@ -1,5 +1,4 @@
 flask>0.0.1
 PyJWT>=1.6.1
 pytz
-flask_cors
 requests
