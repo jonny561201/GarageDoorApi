@@ -52,7 +52,7 @@ class TestEvent:
     def test_create_thread__should_create_thread_with_default_delay(self, mock_event, mock_thread):
         create_thread(self.STATE, self.FUNCT)
 
-        mock_thread.assert_called_with(ANY, ANY, Automation.TIMING.THIRTY_SECONDS)
+        mock_thread.assert_called_with(ANY, ANY, Automation.TIMING.FIVE_SECONDS)
 
     def test_create_thread__should_create_thread_with_overridden_delay_value(self, mock_event, mock_thread):
         create_thread(self.STATE, self.FUNCT, Automation.TIMING.TEN_MINUTE)
