@@ -35,6 +35,6 @@ def update_garage_door(requested_state):
 def toggle_garage_door():
     pass
     # GPIO.output(GARAGE_STATE_PIN, GPIO.LOW)
-    # time.sleep(.5)
+    # time.sleep(.2)
     # GPIO.output(GARAGE_STATE_PIN, GPIO.HIGH)
 
