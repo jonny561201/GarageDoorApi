@@ -24,12 +24,12 @@ def is_garage_open():
 def update_garage_door(requested_state):
     try:
         requested_state['garageDoorOpen']
+        # status = is_garage_open()
+        # if requested_state['garageDoorOpen'] != status:
+        #     toggle_garage_door()
     except KeyError:
         raise BadRequest
     return True
-    # status = garage_door_status()
-    # if requested_state['garageDoorOpen'] is True and status is False:
-    #     toggle_garage_door()
 
 
 def toggle_garage_door():
