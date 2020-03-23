@@ -1,10 +1,10 @@
 # import RPi.GPIO as GPIO
+import time
 
 from werkzeug.exceptions import BadRequest
 
-GARAGE_STATUS_PIN = 7
-GARAGE_STATE_PIN = 8
-# TODO: find the correct pins to use
+GARAGE_STATUS_PIN = 11
+GARAGE_STATE_PIN = 7
 
 
 # GPIO.cleanup()
@@ -34,7 +34,7 @@ def update_garage_door(requested_state):
 
 def toggle_garage_door():
     pass
-    #     GPIO.output(GARAGE_STATE_PIN, GPIO.LOW)
-    #     time.sleep(.5)
-    #     GPIO.output(GARAGE_STATE_PIN, GPIO.HIGH)
+    # GPIO.output(GARAGE_STATE_PIN, GPIO.LOW)
+    # time.sleep(.5)
+    # GPIO.output(GARAGE_STATE_PIN, GPIO.HIGH)
 
