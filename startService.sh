@@ -18,6 +18,10 @@ function cloneServiceFiles {
 
 }
 
+function installDependencies {
+    pip3 install -Ur requirements.txt
+}
+
 function stopService {
     sudo systemctl stop ${GARAGE_SERVICE_FILE}
 }
@@ -37,8 +41,9 @@ function restartDevice {
 }
 
 
-cloneServiceFiles
 stopService
+cloneServiceFiles
+installDependencies
 copyServiceFile
 configureSystemD
 restartDevice
