@@ -8,6 +8,8 @@ function cloneServiceFiles {
     if [[ -d "/home/pi/GarageDoorApi" ]]
     then
         echo "Directory exists."
+        cd /home/pi/GarageDoorApi
+        git pull
     else
         echo "Directory does not exist."
         cd /home/pi/
