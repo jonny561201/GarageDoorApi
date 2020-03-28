@@ -4,6 +4,18 @@
 GARAGE_SERVICE_FILE=garageDoor.service
 
 
+function cloneServiceFiles {
+    if [[ -d "/home/pi/GarageDoorApi" ]]
+    then
+        echo "Directory exists."
+    else
+        echo "Directory does not exist."
+        cd /home/pi/
+        git clone https://github.com/jonny561201/GarageDoorApi.git
+    fi
+
+}
+
 function stopService {
     sudo systemctl stop ${GARAGE_SERVICE_FILE}
 }
@@ -23,6 +35,7 @@ function restartDevice {
 }
 
 
+cloneServiceFiles
 stopService
 copyServiceFile
 configureSystemD
