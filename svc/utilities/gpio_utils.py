@@ -11,6 +11,7 @@ GARAGE_STATE_PIN = 7
 # GPIO.setmode(GPIO.BOARD)
 # GPIO.setup(GARAGE_STATUS_PIN, GPIO.IN, GPIO.PUD_UP)
 # GPIO.setup(GARAGE_STATE_PIN, GPIO.OUT)
+# GPIO.output(GARAGE_STATE_PIN, GPIO.HIGH)
 
 
 # assumes connection to output pin and ground with GPIO.PUD_UP
