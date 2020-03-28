@@ -10,7 +10,7 @@ function stopService {
 
 function copyServiceFile {
     sudo chmod 644 ${GARAGE_SERVICE_FILE}
-    sudo cp ${GARAGE_SERVICE_FILE} /etc/systemd/system/${GARAGE_SERVICE_FILE}
+    sudo yes | cp ${GARAGE_SERVICE_FILE} /etc/systemd/system/${GARAGE_SERVICE_FILE}
 }
 
 function configureSystemD {
