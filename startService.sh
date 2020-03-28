@@ -18,7 +18,12 @@ function configureSystemD {
     sudo systemctl enable ${GARAGE_SERVICE_FILE}
 }
 
+function restartDevice {
+    sudo reboot
+}
+
 
 stopService
 copyServiceFile
 configureSystemD
+restartDevice
