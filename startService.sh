@@ -26,7 +26,7 @@ function installDependencies {
 function stopService {
     echo -e "${YELLOW}---------------Stopping Service---------------${WHITE}"
     sudo systemctl stop ${GARAGE_SERVICE_FILE}
-    rm /lib/systemd/system/${GARAGE_SERVICE_FILE}
+    sudo rm /lib/systemd/system/${GARAGE_SERVICE_FILE}
 }
 
 function copyServiceFile {
