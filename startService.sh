@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
 GARAGE_SERVICE_FILE=garageDoor.service
 YELLOW='\033[1;33m'
