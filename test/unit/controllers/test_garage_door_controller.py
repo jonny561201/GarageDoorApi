@@ -27,6 +27,7 @@ class TestGarageController:
         self.STATE.STOP_EVENT = None
         self.STATE.CLOSED_TIME = None
         self.STATE.OPEN_TIME = None
+        self.STATE.STATUS = None
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
 
     def teardown_method(self, _):
@@ -52,6 +53,12 @@ class TestGarageController:
         get_status(self.JWT_TOKEN)
 
         mock_thread.assert_called_with(self.STATE, monitor_status)
+
+    def test_get_status__should_set_state_of_thread_after_initial_check(self, mock_thread, mock_gpio, mock_jwt):
+        mock_gpio.is_garage_open.return_value = True
+        get_status(self.JWT_TOKEN)
+
+        assert self.STATE.STATUS is True
 
     def test_get_status__should_return_garage_state_status_when_active_thread(self, mock_thread, mock_gpio, mock_jwt):
         self.STATE.ACTIVE_THREAD = MyThread(Event(), print, Automation.TIMING.THIRTY_SECONDS)

@@ -15,7 +15,9 @@ def get_status(bearer_token):
     state = GarageState.get_instance()
     if state.ACTIVE_THREAD is None:
         create_thread(state, monitor_status)
-        return {'isGarageOpen': gpio_utils.is_garage_open(), 'statusDuration': datetime.now(pytz.utc)}
+        status = gpio_utils.is_garage_open()
+        state.STATUS = status
+        return {'isGarageOpen': status, 'statusDuration': datetime.now(pytz.utc)}
     else:
         return {'isGarageOpen': state.STATUS, 'statusDuration': state.OPEN_TIME if state.STATUS else state.CLOSED_TIME}
 
