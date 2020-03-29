@@ -86,7 +86,14 @@ class TestGarageController:
 
         mock_jwt.assert_called_with(self.JWT_TOKEN)
 
-    def test_update_state__should_return_response_(self, mock_thread, mock_gpio, mock_jwt):
+    def test_update_state__should_validate_jwt(self, mock_thread, mock_gpio, mock_jwt):
+        mock_gpio.update_garage_door.return_value = False
+
+        update_state(self.JWT_TOKEN, self.REQUEST)
+
+        mock_jwt.assert_called()
+
+    def test_update_state__should_return_response(self, mock_thread, mock_gpio, mock_jwt):
         mock_gpio.update_garage_door.return_value = False
 
         actual = update_state(self.JWT_TOKEN, self.REQUEST)
