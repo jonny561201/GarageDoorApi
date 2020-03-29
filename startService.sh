@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 GARAGE_SERVICE_FILE=garageDoor.service
 YELLOW='\033[1;33m'
 WHITE='\033[0m'
@@ -27,12 +26,13 @@ function installDependencies {
 function stopService {
     echo -e "${YELLOW}---------------Stopping Service---------------${WHITE}"
     sudo systemctl stop ${GARAGE_SERVICE_FILE}
+    rm /lib/systemd/system/${GARAGE_SERVICE_FILE}
 }
 
 function copyServiceFile {
     echo  -e "${YELLOW}---------------Creating SystemD---------------${WHITE}"
     sudo chmod 644 ${GARAGE_SERVICE_FILE}
-    sudo yes | cp ${GARAGE_SERVICE_FILE} /lib/systemd/system/${GARAGE_SERVICE_FILE}
+    sudo yes | sudo cp ${GARAGE_SERVICE_FILE} /lib/systemd/system/${GARAGE_SERVICE_FILE}
 }
 
 function configureSystemD {
