@@ -13,10 +13,10 @@ function cloneServiceFiles {
     else
         echo -e "${YELLOW}---------------Cloning Service---------------${WHITE}"
         cd /home/pi/
-        git clone https://github.com/jonny561201/GarageDoorApi.git
+        git clone https://github.com/jonny561201/GarageDoorApi.git /home/pi/GarageDoorApi
     fi
-
 }
+
 
 function installDependencies {
      echo -e "${YELLOW}---------------Installing Dependencies---------------${WHITE}"
