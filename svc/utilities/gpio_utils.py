@@ -3,8 +3,11 @@ import time
 
 from werkzeug.exceptions import BadRequest
 
-GARAGE_STATUS_PIN = 11
-GARAGE_STATE_PIN = 7
+FIRST_GARAGE_STATUS_PIN = 11
+FIRST_GARAGE_STATE_PIN = 7
+
+SECOND_GARAGE_STATUS_PIN = 12
+SECOND_GARAGE_STATE_PIN = 8
 
 
 # GPIO.cleanup()
@@ -17,7 +20,8 @@ GARAGE_STATE_PIN = 7
 # assumes connection to output pin and ground with GPIO.PUD_UP
 def is_garage_open(garage_id):
     return True
-    # status = GPIO.input(GARAGE_STATUS_PIN)
+    # status_pin = FIRST_GARAGE_STATUS_PIN if garage_id == 1 else SECOND_GARAGE_STATUS_PIN
+    # status = GPIO.input(status_pin)
     # return True if status == 1 else False
 
 
@@ -34,7 +38,8 @@ def update_garage_door(garage_id, requested_state):
 
 def toggle_garage_door(garage_id):
     pass
-    # GPIO.output(GARAGE_STATE_PIN, GPIO.LOW)
+    # state_pin = FIRST_GARAGE_STATE_PIN if garage_id == 1 else SECOND_GARAGE_STATE_PIN
+    # GPIO.output(state_pin, GPIO.LOW)
     # time.sleep(.2)
-    # GPIO.output(GARAGE_STATE_PIN, GPIO.HIGH)
+    # GPIO.output(state_pin, GPIO.HIGH)
 
