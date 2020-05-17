@@ -8,8 +8,8 @@ GARAGE_BLUEPRINT = Blueprint('garage_blueprint', __name__)
 DEFAULT_HEADERS = {'Content-Type': 'text/json'}
 
 
-@GARAGE_BLUEPRINT.route('/garageDoor/status', methods=['GET'])
-def get_garage_door_status():
+@GARAGE_BLUEPRINT.route('/garageDoor/<garage_id>/status', methods=['GET'])
+def get_garage_door_status(garage_id):
     bearer_token = request.headers.get('Authorization')
     status = garage_door_controller.get_status(bearer_token)
     return Response(json.dumps(status), status=200, headers=DEFAULT_HEADERS)
