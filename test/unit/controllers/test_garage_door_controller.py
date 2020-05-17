@@ -37,7 +37,7 @@ class TestGarageController:
     def test_get_status__should_call_is_garage_door_open_status(self, mock_thread, mock_gpio, mock_jwt):
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
-        mock_gpio.is_garage_open.assert_called()
+        mock_gpio.is_garage_open.assert_called_with(self.GARAGE_ID)
 
     @patch('svc.controllers.garage_door_controller.datetime')
     def test_get_status__should_return_status(self, mock_date, mock_thread, mock_gpio, mock_jwt):
@@ -112,7 +112,7 @@ class TestGarageController:
         expected_request = json.loads(self.REQUEST.decode('UTF-8'))
         update_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
-        mock_gpio.update_garage_door.assert_called_with(expected_request)
+        mock_gpio.update_garage_door.assert_called_with(self.GARAGE_ID, expected_request)
 
     def test_toggle_garage_door_state__should_validate_bearer_token(self, mock_thread, mock_gpio, mock_jwt):
         toggle_door(self.JWT_TOKEN, self.GARAGE_ID)
@@ -122,4 +122,4 @@ class TestGarageController:
     def test_toggle_garage_door_state__should_call_gpio_pins(self, mock_thread, mock_gpio, mock_jwt):
         toggle_door(self.JWT_TOKEN, self.GARAGE_ID)
 
-        mock_gpio.toggle_garage_door.assert_called()
+        mock_gpio.toggle_garage_door.assert_called_with(self.GARAGE_ID)

@@ -15,7 +15,7 @@ def get_status(bearer_token, garage_id):
     state = GarageState.get_instance()
     if state.ACTIVE_THREAD is None:
         create_thread(state, monitor_status)
-        status = gpio_utils.is_garage_open()
+        status = gpio_utils.is_garage_open(garage_id)
         state.STATUS = status
         return {'isGarageOpen': status, 'statusDuration': datetime.now(pytz.utc)}
     else:
@@ -25,10 +25,10 @@ def get_status(bearer_token, garage_id):
 def update_state(bearer_token, garage_id, request):
     is_jwt_valid(bearer_token)
     request_body = json.loads(request.decode('UTF-8'))
-    new_state = gpio_utils.update_garage_door(request_body)
+    new_state = gpio_utils.update_garage_door(garage_id, request_body)
     return {'garageDoorOpen': new_state}
 
 
 def toggle_door(bearer_token, garage_id):
     is_jwt_valid(bearer_token)
-    gpio_utils.toggle_garage_door()
+    gpio_utils.toggle_garage_door(garage_id)
