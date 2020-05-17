@@ -17,6 +17,7 @@ from svc.utilities.event_utils import MyThread
 @patch('svc.controllers.garage_door_controller.gpio_utils')
 @patch('svc.controllers.garage_door_controller.create_thread')
 class TestGarageController:
+    GARAGE_ID = 1
     STATE = GarageState.get_instance()
     JWT_SECRET = 'fake_jwt_secret'
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')
@@ -34,7 +35,7 @@ class TestGarageController:
         os.environ.pop('JWT_SECRET')
 
     def test_get_status__should_call_is_garage_door_open_status(self, mock_thread, mock_gpio, mock_jwt):
-        get_status(self.JWT_TOKEN)
+        get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         mock_gpio.is_garage_open.assert_called()
 
@@ -45,18 +46,18 @@ class TestGarageController:
         mock_gpio.is_garage_open.return_value = True
         expected_body = {"isGarageOpen": True, 'statusDuration': now}
 
-        actual = get_status(self.JWT_TOKEN)
+        actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         assert actual == expected_body
 
     def test_get_status__should_create_thread_when_no_active_thread(self, mock_thread, mock_gpio, mock_jwt):
-        get_status(self.JWT_TOKEN)
+        get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         mock_thread.assert_called_with(self.STATE, monitor_status)
 
     def test_get_status__should_set_state_of_thread_after_initial_check(self, mock_thread, mock_gpio, mock_jwt):
         mock_gpio.is_garage_open.return_value = True
-        get_status(self.JWT_TOKEN)
+        get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         assert self.STATE.STATUS is True
 
@@ -64,7 +65,7 @@ class TestGarageController:
         self.STATE.ACTIVE_THREAD = MyThread(Event(), print, Automation.TIMING.THIRTY_SECONDS)
         self.STATE.STATUS = False
 
-        actual = get_status(self.JWT_TOKEN)
+        actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         assert actual['isGarageOpen'] is False
 
@@ -74,7 +75,7 @@ class TestGarageController:
         self.STATE.STATUS = False
         self.STATE.CLOSED_TIME = now
 
-        actual = get_status(self.JWT_TOKEN)
+        actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         assert actual['statusDuration'] == now
 
@@ -84,41 +85,41 @@ class TestGarageController:
         self.STATE.STATUS = True
         self.STATE.OPEN_TIME = now
 
-        actual = get_status(self.JWT_TOKEN)
+        actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         assert actual['statusDuration'] == now
 
     def test_get_status__should_call_is_jwt_valid(self, mock_thread, mock_gpio, mock_jwt):
-        get_status(self.JWT_TOKEN)
+        get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         mock_jwt.assert_called_with(self.JWT_TOKEN)
 
     def test_update_state__should_validate_jwt(self, mock_thread, mock_gpio, mock_jwt):
         mock_gpio.update_garage_door.return_value = False
 
-        update_state(self.JWT_TOKEN, self.REQUEST)
+        update_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
         mock_jwt.assert_called()
 
     def test_update_state__should_return_response(self, mock_thread, mock_gpio, mock_jwt):
         mock_gpio.update_garage_door.return_value = False
 
-        actual = update_state(self.JWT_TOKEN, self.REQUEST)
+        actual = update_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
         assert actual == {'garageDoorOpen': False}
 
     def test_update_state__should_call_update_gpio(self, mock_thread, mock_gpio, mock_jwt):
         expected_request = json.loads(self.REQUEST.decode('UTF-8'))
-        update_state(self.JWT_TOKEN, self.REQUEST)
+        update_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
         mock_gpio.update_garage_door.assert_called_with(expected_request)
 
     def test_toggle_garage_door_state__should_validate_bearer_token(self, mock_thread, mock_gpio, mock_jwt):
-        toggle_door(self.JWT_TOKEN)
+        toggle_door(self.JWT_TOKEN, self.GARAGE_ID)
 
         mock_jwt.assert_called_with(self.JWT_TOKEN)
 
     def test_toggle_garage_door_state__should_call_gpio_pins(self, mock_thread, mock_gpio, mock_jwt):
-        toggle_door(self.JWT_TOKEN)
+        toggle_door(self.JWT_TOKEN, self.GARAGE_ID)
 
         mock_gpio.toggle_garage_door.assert_called()
