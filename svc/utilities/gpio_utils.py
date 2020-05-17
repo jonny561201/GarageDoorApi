@@ -15,24 +15,24 @@ GARAGE_STATE_PIN = 7
 
 
 # assumes connection to output pin and ground with GPIO.PUD_UP
-def is_garage_open():
+def is_garage_open(garage_id):
     return True
     # status = GPIO.input(GARAGE_STATUS_PIN)
     # return True if status == 1 else False
 
 
 # return true for open and false for closed
-def update_garage_door(requested_state):
+def update_garage_door(garage_id, requested_state):
     try:
-        status = is_garage_open()
+        status = is_garage_open(garage_id)
         if requested_state['garageDoorOpen'] != status:
-            toggle_garage_door()
+            toggle_garage_door(garage_id)
     except KeyError:
         raise BadRequest
     return not status
 
 
-def toggle_garage_door():
+def toggle_garage_door(garage_id):
     pass
     # GPIO.output(GARAGE_STATE_PIN, GPIO.LOW)
     # time.sleep(.2)
