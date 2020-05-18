@@ -21,6 +21,11 @@ class TestGarageService:
         self.STATE.OPEN_TIME = None
         self.STATE.STATUS = None
 
+    def test_monitor_status__should_call_is_garage_open(self, mock_status, mock_date):
+        monitor_status(self.GARAGE_ID)
+
+        mock_status.assert_called_with(self.GARAGE_ID)
+
     def test_monitor_status__should_set_status_to_open_when_garage_open(self, mock_status, mock_date):
         mock_status.return_value = True
 
