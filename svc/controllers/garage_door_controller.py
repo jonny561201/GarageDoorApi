@@ -14,7 +14,8 @@ def get_status(bearer_token, garage_id):
     is_jwt_valid(bearer_token)
     state = GarageState.get_instance()
     if state.ACTIVE_THREAD is None:
-        create_thread(state, monitor_status)
+        # create thread will need the garage id and we need to check the thread above to see if there is a state object for that garage id
+        create_thread(state, monitor_status, garage_id)
         status = gpio_utils.is_garage_open(garage_id)
         state.STATUS = status
         return {'isGarageOpen': status, 'statusDuration': datetime.now(pytz.utc)}

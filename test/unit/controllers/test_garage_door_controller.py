@@ -53,7 +53,7 @@ class TestGarageController:
     def test_get_status__should_create_thread_when_no_active_thread(self, mock_thread, mock_gpio, mock_jwt):
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
-        mock_thread.assert_called_with(self.STATE, monitor_status)
+        mock_thread.assert_called_with(self.STATE, monitor_status, self.GARAGE_ID)
 
     def test_get_status__should_set_state_of_thread_after_initial_check(self, mock_thread, mock_gpio, mock_jwt):
         mock_gpio.is_garage_open.return_value = True
