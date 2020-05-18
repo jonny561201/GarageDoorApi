@@ -9,7 +9,7 @@ from svc.utilities.gpio_utils import is_garage_open
 
 def monitor_status(garage_id):
     status = is_garage_open(garage_id)
-    state = GarageState.get_instance()
+    state = GarageState.get_instance().DOORS[garage_id]
 
     if status and state.OPEN_TIME is None:
         state.STATUS = Automation.GARAGE.OPEN

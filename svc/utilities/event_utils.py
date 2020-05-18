@@ -18,6 +18,6 @@ class MyThread(Thread):
 
 def create_thread(state, fn, garage_id, delay=Automation.TIMING.FIVE_SECONDS):
     stop_event = Event()
-    state['stop_event'] = stop_event
-    state['active_thread'] = MyThread(stop_event, fn, garage_id, delay)
-    state['active_thread'].start()
+    state.STOP_EVENT = stop_event
+    state.ACTIVE_THREAD = MyThread(stop_event, fn, garage_id, delay)
+    state.ACTIVE_THREAD.start()

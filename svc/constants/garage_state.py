@@ -1,15 +1,15 @@
+class DoorState:
+    ACTIVE_THREAD = None
+    STOP_EVENT = None
+    CLOSED_TIME = None
+    OPEN_TIME = None
+    STATUS = None
+
+
 class GarageState:
     __instance = None
-    DOORS = {1: {'status': None,
-                 'open_time': None,
-                 'closed_time': None,
-                 'stop_event': None,
-                 'active_thread': None},
-             2: {'status': None,
-                 'open_time': None,
-                 'closed_time': None,
-                 'stop_event': None,
-                 'active_thread': None}
+    DOORS = {1: DoorState(),
+             2: DoorState(),
              }
 
     def __init__(self):

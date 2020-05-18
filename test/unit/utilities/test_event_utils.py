@@ -22,14 +22,14 @@ class TestEvent:
         mock_event.return_value = event
         create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
-        assert self.STATE['stop_event'] == event
+        assert self.STATE.STOP_EVENT == event
 
     def test_create_thread__should_set_active_thread(self, mock_event, mock_thread):
         thread = Mock()
         mock_thread.return_value = thread
         create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
-        assert self.STATE['active_thread'] == thread
+        assert self.STATE.ACTIVE_THREAD == thread
 
     def test_create_thread__should_start_the_active_thread(self, mock_event, mock_thread):
         thread = Mock()
