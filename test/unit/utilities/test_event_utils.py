@@ -12,49 +12,55 @@ from svc.utilities.event_utils import create_thread
 class TestEvent:
     STATE = None
     FUNCT = print
+    GARAGE_ID = 1
 
     def setup_method(self):
-        self.STATE = GarageState.get_instance()
+        self.STATE = GarageState.get_instance().DOORS[1]
 
     def test_create_thread__should_set_stop_event(self, mock_event, mock_thread):
         event = Event()
         mock_event.return_value = event
-        create_thread(self.STATE, self.FUNCT)
+        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
-        assert self.STATE.STOP_EVENT == event
+        assert self.STATE['stop_event'] == event
 
     def test_create_thread__should_set_active_thread(self, mock_event, mock_thread):
         thread = Mock()
         mock_thread.return_value = thread
-        create_thread(self.STATE, self.FUNCT)
+        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
-        assert self.STATE.ACTIVE_THREAD == thread
+        assert self.STATE['active_thread'] == thread
 
     def test_create_thread__should_start_the_active_thread(self, mock_event, mock_thread):
         thread = Mock()
         mock_thread.return_value = thread
-        create_thread(self.STATE, self.FUNCT)
+        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
         thread.start.assert_called()
 
     def test_create_thread__should_create_thread_with_stop_event(self, mock_event, mock_thread):
         event = Mock()
         mock_event.return_value = event
-        create_thread(self.STATE, self.FUNCT)
+        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
-        mock_thread.assert_called_with(event, ANY, ANY)
+        mock_thread.assert_called_with(event, ANY, ANY, ANY)
 
     def test_create_thread__should_create_thread_with_provided_function(self, mock_event, mock_thread):
-        create_thread(self.STATE, self.FUNCT)
+        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
-        mock_thread.assert_called_with(ANY, self.FUNCT, ANY)
+        mock_thread.assert_called_with(ANY, self.FUNCT, ANY, ANY)
+
+    def test_create_thread__should_create_thread_with_garage_id(self, mock_event, mock_thread):
+        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
+
+        mock_thread.assert_called_with(ANY, ANY, self.GARAGE_ID, ANY)
 
     def test_create_thread__should_create_thread_with_default_delay(self, mock_event, mock_thread):
-        create_thread(self.STATE, self.FUNCT)
+        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
-        mock_thread.assert_called_with(ANY, ANY, Automation.TIMING.FIVE_SECONDS)
+        mock_thread.assert_called_with(ANY, ANY, ANY, Automation.TIMING.FIVE_SECONDS)
 
     def test_create_thread__should_create_thread_with_overridden_delay_value(self, mock_event, mock_thread):
-        create_thread(self.STATE, self.FUNCT, Automation.TIMING.TEN_MINUTE)
+        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID, Automation.TIMING.TEN_MINUTE)
 
-        mock_thread.assert_called_with(ANY, ANY, Automation.TIMING.TEN_MINUTE)
+        mock_thread.assert_called_with(ANY, ANY, ANY, Automation.TIMING.TEN_MINUTE)
