@@ -17,8 +17,8 @@ from svc.utilities.event_utils import MyThread
 @patch('svc.controllers.garage_door_controller.gpio_utils')
 @patch('svc.controllers.garage_door_controller.create_thread')
 class TestGarageController:
-    GARAGE_ID = 1
-    STATE = GarageState.get_instance()
+    GARAGE_ID = 2
+    STATE = GarageState.get_instance().DOORS[GARAGE_ID]
     JWT_SECRET = 'fake_jwt_secret'
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')
     REQUEST = '{"openGarage": "True"}'.encode()
@@ -55,6 +55,11 @@ class TestGarageController:
 
         mock_thread.assert_called_with(self.STATE, monitor_status, self.GARAGE_ID)
 
+    def test_get_status__should_create_thread_when_active_thread_with_different_garage_id(self, mock_thread, mock_gpio, mock_jwt):
+        get_status(self.JWT_TOKEN, self.GARAGE_ID)
+
+        mock_thread.assert_called_with(self.STATE, monitor_status, self.GARAGE_ID)
+
     def test_get_status__should_set_state_of_thread_after_initial_check(self, mock_thread, mock_gpio, mock_jwt):
         mock_gpio.is_garage_open.return_value = True
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
@@ -62,7 +67,7 @@ class TestGarageController:
         assert self.STATE.STATUS is True
 
     def test_get_status__should_return_garage_state_status_when_active_thread(self, mock_thread, mock_gpio, mock_jwt):
-        self.STATE.ACTIVE_THREAD = MyThread(Event(), print, Automation.TIMING.THIRTY_SECONDS)
+        self.STATE.ACTIVE_THREAD = MyThread(Event(), print, self.GARAGE_ID, Automation.TIMING.THIRTY_SECONDS)
         self.STATE.STATUS = False
 
         actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
@@ -70,7 +75,7 @@ class TestGarageController:
         assert actual['isGarageOpen'] is False
 
     def test_get_status__should_return_open_garage_status_date_when_active_thread(self, mock_thread, mock_gpio, mock_jwt):
-        self.STATE.ACTIVE_THREAD = MyThread(Event(), print, Automation.TIMING.THIRTY_SECONDS)
+        self.STATE.ACTIVE_THREAD = MyThread(Event(), print, self.GARAGE_ID, Automation.TIMING.THIRTY_SECONDS)
         now = datetime.now()
         self.STATE.STATUS = False
         self.STATE.CLOSED_TIME = now
@@ -80,7 +85,7 @@ class TestGarageController:
         assert actual['statusDuration'] == now
 
     def test_get_status__should_return_close_garage_status_date_when_active_thread(self, mock_thread, mock_gpio, mock_jwt):
-        self.STATE.ACTIVE_THREAD = MyThread(Event(), print, Automation.TIMING.THIRTY_SECONDS)
+        self.STATE.ACTIVE_THREAD = MyThread(Event(), print, self.GARAGE_ID, Automation.TIMING.THIRTY_SECONDS)
         now = datetime.now()
         self.STATE.STATUS = True
         self.STATE.OPEN_TIME = now

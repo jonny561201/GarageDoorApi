@@ -9,8 +9,7 @@ class DoorState:
 class GarageState:
     __instance = None
     DOORS = {1: DoorState(),
-             2: DoorState(),
-             }
+             2: DoorState()}
 
     def __init__(self):
         if GarageState.__instance is not None:
