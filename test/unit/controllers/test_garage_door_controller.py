@@ -17,7 +17,7 @@ from svc.utilities.event_utils import MyThread
 @patch('svc.controllers.garage_door_controller.gpio_utils')
 @patch('svc.controllers.garage_door_controller.create_thread')
 class TestGarageController:
-    GARAGE_ID = 2
+    GARAGE_ID = '2'
     STATE = GarageState.get_instance().DOORS[GARAGE_ID]
     JWT_SECRET = 'fake_jwt_secret'
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')

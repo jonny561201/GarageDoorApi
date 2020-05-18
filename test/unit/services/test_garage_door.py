@@ -12,7 +12,7 @@ from svc.services.garage_door import monitor_status
 @patch('svc.services.garage_door.is_garage_open')
 class TestGarageService:
 
-    GARAGE_ID = 1
+    GARAGE_ID = '1'
     DATE = datetime.now(pytz.utc)
     STATE = GarageState.get_instance().DOORS[GARAGE_ID]
 

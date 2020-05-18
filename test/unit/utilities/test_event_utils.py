@@ -12,10 +12,10 @@ from svc.utilities.event_utils import create_thread
 class TestEvent:
     STATE = None
     FUNCT = print
-    GARAGE_ID = 1
+    GARAGE_ID = '1'
 
     def setup_method(self):
-        self.STATE = GarageState.get_instance().DOORS[1]
+        self.STATE = GarageState.get_instance().DOORS[self.GARAGE_ID]
 
     def test_create_thread__should_set_stop_event(self, mock_event, mock_thread):
         event = Event()
