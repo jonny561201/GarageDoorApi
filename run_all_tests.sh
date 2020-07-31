@@ -9,8 +9,6 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 function runUnitTests {
     echo -e "${YELLOW}----------Running Unit Tests----------${WHITE}"
-    echo ${CURRENT_DIR}
-    source ./venv/Scripts/activate
     if [[ "$OSTYPE" == "msys" ]]; then
       python -m pytest -s ${CURRENT_DIR}/test/unit
       UNIT_TEST=$?
