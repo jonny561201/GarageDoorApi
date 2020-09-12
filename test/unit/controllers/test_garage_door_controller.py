@@ -34,24 +34,6 @@ class TestGarageController:
     def teardown_method(self, _):
         os.environ.pop('JWT_SECRET')
 
-    def test_get_status__should_call_is_garage_door_open_status(self, mock_thread, mock_gpio, mock_jwt):
-        get_status(self.JWT_TOKEN, self.GARAGE_ID)
-
-        mock_gpio.is_garage_open.assert_called_with(self.GARAGE_ID)
-
-    @patch('svc.controllers.garage_door_controller.datetime')
-    def test_get_status__should_return_status(self, mock_date, mock_thread, mock_gpio, mock_jwt):
-        now = datetime.now()
-        mock_date.now.return_value = now
-        mock_gpio.is_garage_open.return_value = True
-        coords = {'lat': 12.2, 'lon': 84.3}
-        mock_gpio.get_garage_coordinates.return_value = coords
-        expected_body = {"isGarageOpen": True, 'statusDuration': now, 'coordinates': coords}
-
-        actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
-
-        assert actual == expected_body
-
     def test_get_status__should_create_thread_when_no_active_thread(self, mock_thread, mock_gpio, mock_jwt):
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
@@ -61,12 +43,6 @@ class TestGarageController:
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         mock_thread.assert_called_with(self.STATE, monitor_status, self.GARAGE_ID)
-
-    def test_get_status__should_set_state_of_thread_after_initial_check(self, mock_thread, mock_gpio, mock_jwt):
-        mock_gpio.is_garage_open.return_value = True
-        get_status(self.JWT_TOKEN, self.GARAGE_ID)
-
-        assert self.STATE.STATUS is True
 
     def test_get_status__should_return_garage_state_status_when_active_thread(self, mock_thread, mock_gpio, mock_jwt):
         self.STATE.ACTIVE_THREAD = MyThread(Event(), print, self.GARAGE_ID, Automation.TIMING.THIRTY_SECONDS)

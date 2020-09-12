@@ -1,7 +1,4 @@
 import json
-from datetime import datetime
-
-import pytz
 
 from svc.constants.garage_state import GarageState
 from svc.services.garage_door import monitor_status
@@ -16,13 +13,9 @@ def get_status(bearer_token, garage_id):
     coords = gpio_utils.get_garage_coordinates()
     if state.ACTIVE_THREAD is None:
         create_thread(state, monitor_status, garage_id)
-        status = gpio_utils.is_garage_open(garage_id)
-        state.STATUS = status
-        return {'isGarageOpen': status, 'statusDuration': datetime.now(pytz.utc), 'coordinates': coords}
-    else:
-        return {'isGarageOpen': state.STATUS,
-                'statusDuration': state.OPEN_TIME if state.STATUS else state.CLOSED_TIME,
-                'coordinates': coords}
+    return {'isGarageOpen': state.STATUS,
+            'statusDuration': state.OPEN_TIME if state.STATUS else state.CLOSED_TIME,
+            'coordinates': coords}
 
 
 def update_state(bearer_token, garage_id, request):
