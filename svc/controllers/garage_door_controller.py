@@ -10,12 +10,11 @@ from svc.utilities.jwt_utils import is_jwt_valid
 def get_status(bearer_token, garage_id):
     is_jwt_valid(bearer_token)
     state = GarageState.get_instance().DOORS[garage_id]
-    coords = gpio_utils.get_garage_coordinates()
     if state.ACTIVE_THREAD is None:
         create_thread(state, monitor_status, garage_id)
     return {'isGarageOpen': state.STATUS,
             'statusDuration': state.OPEN_TIME if state.STATUS else state.CLOSED_TIME,
-            'coordinates': coords}
+            'coordinates': gpio_utils.get_garage_coordinates()}
 
 
 def update_state(bearer_token, garage_id, request):
