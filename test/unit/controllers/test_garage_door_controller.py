@@ -44,7 +44,9 @@ class TestGarageController:
         now = datetime.now()
         mock_date.now.return_value = now
         mock_gpio.is_garage_open.return_value = True
-        expected_body = {"isGarageOpen": True, 'statusDuration': now}
+        coords = {'lat': 12.2, 'lon': 84.3}
+        mock_gpio.get_garage_coordinates.return_value = coords
+        expected_body = {"isGarageOpen": True, 'statusDuration': now, 'coordinates': coords}
 
         actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
@@ -103,6 +105,14 @@ class TestGarageController:
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
         mock_gpio.get_garage_coordinates.assert_called()
+
+    def test_get_status__should_return_gpio_coords_in_get_status_response(self, mock_thread, mock_gpio, mock_jwt):
+        coords = {'latitude': 12.2, 'longitude': -94.23}
+        self.STATE.ACTIVE_THREAD = MyThread(Event(), print, self.GARAGE_ID, Automation.TIMING.THIRTY_SECONDS)
+        mock_gpio.get_garage_coordinates.return_value = coords
+        actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
+
+        assert actual['coordinates'] == coords
 
     def test_update_state__should_validate_jwt(self, mock_thread, mock_gpio, mock_jwt):
         mock_gpio.update_garage_door.return_value = False
