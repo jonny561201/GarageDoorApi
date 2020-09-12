@@ -64,3 +64,9 @@ class TestEvent:
         create_thread(self.STATE, self.FUNCT, self.GARAGE_ID, Automation.TIMING.TEN_MINUTE)
 
         mock_thread.assert_called_with(ANY, ANY, ANY, Automation.TIMING.TEN_MINUTE)
+
+    def test_create_thread__should_initially_call_function_on_start(self, mock_event, mock_thread):
+        funct = Mock()
+        create_thread(self.STATE, funct, self.GARAGE_ID, Automation.TIMING.FIVE_SECONDS)
+
+        funct.assert_called_with(self.GARAGE_ID)
