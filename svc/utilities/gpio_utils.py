@@ -43,3 +43,6 @@ def toggle_garage_door(garage_id):
     # time.sleep(.2)
     # GPIO.output(state_pin, GPIO.HIGH)
 
+
+def get_garage_coordinates():
+    return {'latitude': 23.1234, 'longitude': -11.1234}
