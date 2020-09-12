@@ -99,6 +99,11 @@ class TestGarageController:
 
         mock_jwt.assert_called_with(self.JWT_TOKEN)
 
+    def test_get_status__should_call_gpio_util_to_get_coordinates(self, mock_thread,mock_gpio, mock_jwt):
+        get_status(self.JWT_TOKEN, self.GARAGE_ID)
+
+        mock_gpio.get_garage_coordinates.assert_called()
+
     def test_update_state__should_validate_jwt(self, mock_thread, mock_gpio, mock_jwt):
         mock_gpio.update_garage_door.return_value = False
 
