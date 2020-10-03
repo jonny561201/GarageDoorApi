@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class Settings:
@@ -12,6 +13,10 @@ class Settings:
         else:
             Settings.__instance = self
             Settings.__instance.__get_settings()
+
+    @property
+    def jwt_secret(self):
+        return self.settings.get('DevJwtSecret') if self.dev_mode else os.environ.get('JWT_SECRET')
 
     @staticmethod
     def get_instance():

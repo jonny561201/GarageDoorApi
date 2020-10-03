@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 
 import jwt
@@ -16,6 +17,11 @@ class TestJwt:
         self.JWT_BODY = {'fakeBody': 'valueValue'}
         self.SETTINGS = Settings.get_instance()
         self.SETTINGS.dev_mode = True
+        self.SETTINGS.settings = {'DevJwtSecret': self.JWT_SECRET}
+        os.environ.update({'JWT_SECRET': self.JWT_SECRET})
+
+    def teardown_method(self):
+        os.environ.pop('JWT_SECRET')
 
     def test_is_jwt_valid__should_not_fail_if_it_can_be_decrypted(self):
         jwt_token = jwt.encode(self.JWT_BODY, self.JWT_SECRET, algorithm='HS256').decode('UTF-8')
@@ -64,6 +70,7 @@ class TestJwt:
         is_jwt_valid(jwt_token)
 
     def test_is_jwt_valid__should_raise_exception_if_secret_is_not_set(self):
+        os.environ.update({'JWT_SECRET': ''})
         self.SETTINGS.dev_mode = False
         jwt_body = {'fakeBody': 'valueValue'}
         jwt_secret = 'testSecret'

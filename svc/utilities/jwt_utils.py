@@ -1,5 +1,3 @@
-import os
-
 import jwt
 from jwt import DecodeError, ExpiredSignatureError, InvalidSignatureError
 from werkzeug.exceptions import Unauthorized
@@ -13,13 +11,12 @@ def is_jwt_valid(jwt_token):
     _parse_jwt_token(jwt_token)
 
 
-#TODO: move JWT Secret to settings file
 def _parse_jwt_token(jwt_token):
     try:
         stripped_token = jwt_token.replace('Bearer ', '')
         settings = Settings.get_instance()
         if settings.dev_mode:
             return
-        jwt.decode(stripped_token, os.environ['JWT_SECRET'], algorithms=["HS256"])
+        jwt.decode(stripped_token, settings.jwt_secret, algorithms=["HS256"])
     except (InvalidSignatureError, ExpiredSignatureError, DecodeError, KeyError) as er:
         raise Unauthorized
