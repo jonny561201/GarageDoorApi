@@ -18,6 +18,10 @@ class Settings:
     def jwt_secret(self):
         return self.settings.get('DevJwtSecret') if self.dev_mode else os.environ.get('JWT_SECRET')
 
+    @property
+    def dev_coordinates(self):
+        return self.settings.get('DevCoordinates')
+
     @staticmethod
     def get_instance():
         if Settings.__instance is None:

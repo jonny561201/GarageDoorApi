@@ -3,6 +3,8 @@ import time
 
 from werkzeug.exceptions import BadRequest
 
+from svc.constants.settings_state import Settings
+
 FIRST_GARAGE_STATUS_PIN = 11
 FIRST_GARAGE_STATE_PIN = 7
 
@@ -45,4 +47,5 @@ def toggle_garage_door(garage_id):
 
 
 def get_garage_coordinates():
-    return {'latitude': 41.621208, 'longitude': -93.831599}
+    settings = Settings.get_instance()
+    return settings.dev_coordinates if settings.dev_mode else {'latitude': 41.5868, 'longitude': -93.6250}

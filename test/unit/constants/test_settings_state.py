@@ -17,6 +17,12 @@ class TestState:
     def test_jwt_secret__should_return_env_var_value(self):
         assert self.SETTINGS.jwt_secret == self.JWT_SECRET
 
+    def test_dev_coordinates__should_return_dictionary_if_dev_mode(self):
+        coordinates = {'latitude': 40.123, 'longitude': -93.123}
+        self.SETTINGS.dev_mode = True
+        self.SETTINGS.settings = {'DevCoordinates': coordinates}
+        assert self.SETTINGS.dev_coordinates == coordinates
+
     def test_jwt_secret__should_pull_from_dictionary_if_dev_mode(self):
         jwt_secret = 'other_secret'
         self.SETTINGS.dev_mode = True
