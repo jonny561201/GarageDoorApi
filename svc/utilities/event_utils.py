@@ -4,21 +4,21 @@ from svc.constants.home_automation import Automation
 
 
 class MyThread(Thread):
-    def __init__(self, event, sched_function, garage_id, function_interval):
+    def __init__(self, event, sched_function, function_interval):
         Thread.__init__(self)
-        self.garage_id = garage_id
         self.stopped = event
         self.function = sched_function
         self.interval = function_interval
 
     def run(self):
         while not self.stopped.wait(self.interval):
-            self.function(self.garage_id)
+            self.function()
 
 
-def create_thread(state, fn, garage_id, delay=Automation.TIMING.FIVE_SECONDS):
+# stop_event.set() will kill the process
+def create_thread(state, fn, delay=Automation.TIMING.FIVE_SECONDS):
     stop_event = Event()
     state.STOP_EVENT = stop_event
-    fn(garage_id)
-    state.ACTIVE_THREAD = MyThread(stop_event, fn, garage_id, delay)
+    fn()
+    state.ACTIVE_THREAD = MyThread(stop_event, fn, delay)
     state.ACTIVE_THREAD.start()

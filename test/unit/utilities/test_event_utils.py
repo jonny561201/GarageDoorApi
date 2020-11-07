@@ -43,30 +43,25 @@ class TestEvent:
         mock_event.return_value = event
         create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
 
-        mock_thread.assert_called_with(event, ANY, ANY, ANY)
+        mock_thread.assert_called_with(event, ANY, ANY)
 
     def test_create_thread__should_create_thread_with_provided_function(self, mock_event, mock_thread):
-        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
+        create_thread(self.STATE, self.FUNCT)
 
-        mock_thread.assert_called_with(ANY, self.FUNCT, ANY, ANY)
-
-    def test_create_thread__should_create_thread_with_garage_id(self, mock_event, mock_thread):
-        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
-
-        mock_thread.assert_called_with(ANY, ANY, self.GARAGE_ID, ANY)
+        mock_thread.assert_called_with(ANY, self.FUNCT, ANY)
 
     def test_create_thread__should_create_thread_with_default_delay(self, mock_event, mock_thread):
-        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID)
+        create_thread(self.STATE, self.FUNCT)
 
-        mock_thread.assert_called_with(ANY, ANY, ANY, Automation.TIMING.FIVE_SECONDS)
+        mock_thread.assert_called_with(ANY, ANY, Automation.TIMING.FIVE_SECONDS)
 
     def test_create_thread__should_create_thread_with_overridden_delay_value(self, mock_event, mock_thread):
-        create_thread(self.STATE, self.FUNCT, self.GARAGE_ID, Automation.TIMING.TEN_MINUTE)
+        create_thread(self.STATE, self.FUNCT, Automation.TIMING.TEN_MINUTE)
 
-        mock_thread.assert_called_with(ANY, ANY, ANY, Automation.TIMING.TEN_MINUTE)
+        mock_thread.assert_called_with(ANY, ANY, Automation.TIMING.TEN_MINUTE)
 
     def test_create_thread__should_initially_call_function_on_start(self, mock_event, mock_thread):
         funct = Mock()
-        create_thread(self.STATE, funct, self.GARAGE_ID, Automation.TIMING.FIVE_SECONDS)
+        create_thread(self.STATE, funct, Automation.TIMING.FIVE_SECONDS)
 
-        funct.assert_called_with(self.GARAGE_ID)
+        funct.assert_called()
