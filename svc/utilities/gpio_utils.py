@@ -45,4 +45,4 @@ def toggle_garage_door(garage_id):
 
 
 def get_garage_coordinates():
-    return {'latitude': 23.1234, 'longitude': -11.1234}
+    return {'latitude': 41.621208, 'longitude': -93.831599}
