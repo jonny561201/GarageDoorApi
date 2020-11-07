@@ -2,14 +2,12 @@ from datetime import datetime
 
 import pytz
 
-from svc.constants.garage_state import GarageState
 from svc.constants.home_automation import Automation
 from svc.utilities.gpio_utils import is_garage_open
 
 
-def monitor_status(garage_id):
+def monitor_status(state, garage_id):
     status = is_garage_open(garage_id)
-    state = GarageState.get_instance().DOORS[garage_id]
 
     if status and state.OPEN_TIME is None:
         state.STATUS = Automation.GARAGE.OPEN
