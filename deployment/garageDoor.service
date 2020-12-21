@@ -1,0 +1,13 @@
+[Unit]
+Description=Home Automation Garage Door API Service
+After=network.target
+
+[Service]
+EnvironmentFile=/home/pi/GarageDoorApi/serviceEnvVariables
+ExecStart=/home/pi/.local/bin/uwsgi --ini ./deployment/wsgi.ini
+WorkingDirectory=/home/pi/GarageDoorApi
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
