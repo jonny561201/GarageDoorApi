@@ -15,5 +15,5 @@ class Timing:
 
 class Automation:
     APP_NAME = "Soaring Leaf Home Automation"
-    TIMING = Timing()
-    GARAGE = Garage()
+    TIMING = Timing
+    GARAGE = Garage
