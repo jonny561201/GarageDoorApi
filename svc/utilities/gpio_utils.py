@@ -48,4 +48,4 @@ def toggle_garage_door(garage_id):
 
 def get_garage_coordinates():
     settings = Settings.get_instance()
-    return settings.dev_coordinates if settings.dev_mode else {'latitude': 41.5868, 'longitude': -93.6250}
+    return settings.dev_coordinates
