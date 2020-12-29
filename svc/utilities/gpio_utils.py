@@ -26,7 +26,7 @@ SECOND_GARAGE_STATE_PIN = 33
 # assumes connection to output pin and ground with GPIO.PUD_UP
 def is_garage_open(garage_id):
     return True
-    # status_pin = FIRST_GARAGE_STATUS_PIN if garage_id == 1 else SECOND_GARAGE_STATUS_PIN
+    # status_pin = FIRST_GARAGE_STATUS_PIN if garage_id == '1' else SECOND_GARAGE_STATUS_PIN
     # status = GPIO.input(status_pin)
     # return True if status == 1 else False
 
@@ -44,7 +44,7 @@ def update_garage_door(garage_id, requested_state):
 
 def toggle_garage_door(garage_id):
     pass
-    # state_pin = FIRST_GARAGE_STATE_PIN if garage_id == 1 else SECOND_GARAGE_STATE_PIN
+    # state_pin = FIRST_GARAGE_STATE_PIN if garage_id == '1' else SECOND_GARAGE_STATE_PIN
     # GPIO.output(state_pin, GPIO.HIGH)
     # time.sleep(.3)
     # GPIO.output(state_pin, GPIO.LOW)
