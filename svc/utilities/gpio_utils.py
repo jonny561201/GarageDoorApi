@@ -6,17 +6,21 @@ from werkzeug.exceptions import BadRequest
 from svc.constants.settings_state import Settings
 
 FIRST_GARAGE_STATUS_PIN = 11
-FIRST_GARAGE_STATE_PIN = 7
+FIRST_GARAGE_STATE_PIN = 31
 
 SECOND_GARAGE_STATUS_PIN = 12
-SECOND_GARAGE_STATE_PIN = 8
+SECOND_GARAGE_STATE_PIN = 33
 
 
 # GPIO.cleanup()
 # GPIO.setmode(GPIO.BOARD)
-# GPIO.setup(GARAGE_STATUS_PIN, GPIO.IN, GPIO.PUD_UP)
-# GPIO.setup(GARAGE_STATE_PIN, GPIO.OUT)
-# GPIO.output(GARAGE_STATE_PIN, GPIO.HIGH)
+# GPIO.setup(FIRST_GARAGE_STATUS_PIN, GPIO.IN, GPIO.PUD_UP)
+# GPIO.setup(SECOND_GARAGE_STATUS_PIN, GPIO.IN, GPIO.PUD_UP)
+# GPIO.setup(FIRST_GARAGE_STATE_PIN, GPIO.OUT)
+# GPIO.setup(SECOND_GARAGE_STATE_PIN, GPIO.OUT)
+
+# GPIO.output(FIRST_GARAGE_STATE_PIN, GPIO.LOW)
+# GPIO.output(SECOND_GARAGE_STATE_PIN, GPIO.LOW)
 
 
 # assumes connection to output pin and ground with GPIO.PUD_UP
@@ -41,9 +45,9 @@ def update_garage_door(garage_id, requested_state):
 def toggle_garage_door(garage_id):
     pass
     # state_pin = FIRST_GARAGE_STATE_PIN if garage_id == 1 else SECOND_GARAGE_STATE_PIN
-    # GPIO.output(state_pin, GPIO.LOW)
-    # time.sleep(.2)
     # GPIO.output(state_pin, GPIO.HIGH)
+    # time.sleep(.3)
+    # GPIO.output(state_pin, GPIO.LOW)
 
 
 def get_garage_coordinates():
