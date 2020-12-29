@@ -20,7 +20,7 @@ class Settings:
 
     @property
     def dev_coordinates(self):
-        return self.settings.get('DevCoordinates')
+        return self.settings.get('DevCoordinates') if self.dev_mode else {'latitude': 41.5868, 'longitude': -93.6250}
 
     @staticmethod
     def get_instance():
