@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/home/pi/GarageDoorApi/serviceEnvVariables
-ExecStart=/usr/bin/python3 -u app.py
+ExecStart=/home/pi/.local/bin/uwsgi --ini /home/pi/.local/bin/deployment/wsgi.ini
 WorkingDirectory=/home/pi/GarageDoorApi
 Restart=always
 User=pi
