@@ -6,17 +6,23 @@ from svc.constants.settings_state import Settings
 class TestState:
     SETTINGS = None
     JWT_SECRET = 'FakeSecret'
+    FILE_NAME = 'test.json'
 
     def setup_method(self):
-        os.environ.update({'JWT_SECRET': self.JWT_SECRET})
+        os.environ.update({'JWT_SECRET': self.JWT_SECRET, 'FILE_NAME': self.FILE_NAME})
         self.SETTINGS = Settings.get_instance()
 
     def teardown_method(self):
         os.environ.pop('JWT_SECRET')
+        os.environ.pop('FILE_NAME')
 
     def test_jwt_secret__should_return_env_var_value(self):
         self.SETTINGS.dev_mode = False
         assert self.SETTINGS.jwt_secret == self.JWT_SECRET
+
+    def test_file_name__should_return_env_var_value(self):
+        self.SETTINGS.dev_mode = False
+        assert self.SETTINGS.file_name == self.FILE_NAME
 
     def test_dev_coordinates__should_return_default_value(self):
         self.SETTINGS.dev_mode = False

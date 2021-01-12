@@ -19,6 +19,10 @@ class Settings:
         return self.settings.get('DevJwtSecret') if self.dev_mode else os.environ.get('JWT_SECRET')
 
     @property
+    def file_name(self):
+        return os.environ.get('FILE_NAME')
+
+    @property
     def dev_coordinates(self):
         return self.settings.get('DevCoordinates') if self.dev_mode else {'latitude': 41.621191, 'longitude': -93.831609}
 
