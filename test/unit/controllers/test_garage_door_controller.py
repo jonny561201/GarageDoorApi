@@ -23,7 +23,7 @@ class TestGarageController:
     def teardown_method(self, _):
         os.environ.pop('JWT_SECRET')
 
-    def test_get_status__should_return_garage_state_status_when_active_thread(self, mock_gpio, mock_jwt, mock_duration):
+    def test_get_status__should_return_garage_status_when_active_thread(self, mock_gpio, mock_jwt, mock_duration):
         mock_gpio.is_garage_open.return_value = False
 
         actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
