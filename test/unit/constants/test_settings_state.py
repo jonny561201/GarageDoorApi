@@ -39,3 +39,9 @@ class TestState:
         self.SETTINGS.dev_mode = True
         self.SETTINGS.settings = {'DevJwtSecret': jwt_secret}
         assert self.SETTINGS.jwt_secret == jwt_secret
+
+    def test_file_name__should_pull_from_dictionary_if_dev_mode(self):
+        file_name = 'other_file.json'
+        self.SETTINGS.dev_mode = True
+        self.SETTINGS.settings = {'FileName': file_name}
+        assert self.SETTINGS.file_name == file_name
