@@ -19,6 +19,11 @@ function cloneServiceFiles {
     fi
 }
 
+function startVirtualEnv {
+    echo -e "${YELLOW}---------------starting VirtualEnv---------------${WHITE}"
+    source ./venv/bin/activate
+}
+
 function installDependencies {
     echo -e "${YELLOW}---------------Installing Dependencies---------------${WHITE}"
     pip3 install -Ur requirements.txt
@@ -74,6 +79,7 @@ function createFile {
 
 stopService
 cloneServiceFiles
+startVirtualEnv
 installDependencies
 createEnvironmentVariableFile
 copyServiceFile
