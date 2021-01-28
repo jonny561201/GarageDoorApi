@@ -3,3 +3,4 @@ PyJWT==1.7.1
 pytz==2020.4
 requests==2.25.1
 uwsgi==2.0.19.1
+RPi.GPIO==0.7.0
