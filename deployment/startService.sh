@@ -43,7 +43,7 @@ function stopService {
 
 function copyServiceFile {
     echo  -e "${YELLOW}---------------Creating SystemD---------------${WHITE}"
-    sudo chmod 644 ./deployment/${GARAGE_DOOR_SERVICE_FILE}
+    sudo chmod 666 ./deployment/${GARAGE_DOOR_SERVICE_FILE}
     sudo yes | sudo cp ./deployment/${GARAGE_DOOR_SERVICE_FILE} /lib/systemd/system/${GARAGE_DOOR_SERVICE_FILE}
 }
 
