@@ -73,7 +73,7 @@ function createFile {
     read JWT_SECRET
 
     echo "JWT_SECRET=${JWT_SECRET}" > serviceEnvVariables
-    echo "FILE_NAME=/home/pi/garage_duration.json" > serviceEnvVariables
+    echo "FILE_NAME=/home/pi/garage_duration.json" >> serviceEnvVariables
 }
 
 
