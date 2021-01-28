@@ -20,8 +20,14 @@ function cloneServiceFiles {
 }
 
 function startVirtualEnv {
-    echo -e "${YELLOW}---------------starting VirtualEnv---------------${WHITE}"
-    source ./venv/bin/activate
+    if [[ ! -d "/home/pi/GarageDoorApi/venv" ]]; then
+      pushd "/home/pi/GarageDoorApi"
+      pip3 install virtualenv
+      virtualenv venv
+      popd
+    fi
+      echo -e "${YELLOW}---------------starting VirtualEnv---------------${WHITE}"
+      source ./venv/bin/activate
 }
 
 function installDependencies {
