@@ -24,7 +24,7 @@ function startVirtualEnv {
       echo -e "${YELLOW}----------Creating VirtualEnv----------"
       pushd "/home/pi/GarageDoorApi"
       pip3 install virtualenv
-      virtualenv venv
+      sudo virtualenv venv
       popd
     fi
       echo -e "${YELLOW}---------------Starting VirtualEnv---------------${WHITE}"
