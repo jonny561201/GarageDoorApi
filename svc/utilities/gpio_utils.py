@@ -46,7 +46,7 @@ def toggle_garage_door(garage_id):
     pass
     # state_pin = FIRST_GARAGE_STATE_PIN if garage_id == '1' else SECOND_GARAGE_STATE_PIN
     # GPIO.output(state_pin, GPIO.HIGH)
-    # time.sleep(.3)
+    # time.sleep(.5)
     # GPIO.output(state_pin, GPIO.LOW)
 
 
