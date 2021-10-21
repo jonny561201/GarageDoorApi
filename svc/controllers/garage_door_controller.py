@@ -16,7 +16,7 @@ def update_state(bearer_token, garage_id, request):
     is_jwt_valid(bearer_token)
     request_body = json.loads(request.decode('UTF-8'))
     new_state = gpio_utils.update_garage_door(garage_id, request_body)
-    return {'garageDoorOpen': new_state}
+    return {'isGarageOpen': new_state}
 
 
 def toggle_door(bearer_token, garage_id):

@@ -67,7 +67,7 @@ class TestGarageController:
 
         actual = update_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
-        assert actual == {'garageDoorOpen': False}
+        assert actual == {'isGarageOpen': False}
 
     def test_update_state__should_call_update_gpio(self, mock_gpio, mock_jwt, mock_duration):
         expected_request = json.loads(self.REQUEST.decode('UTF-8'))
