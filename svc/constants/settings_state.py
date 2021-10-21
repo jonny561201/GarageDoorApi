@@ -20,7 +20,7 @@ class Settings:
 
     @property
     def file_name(self):
-        return self.settings.get('FileName') if self.dev_mode else os.environ.get('FILE_NAME')
+        return self.settings.get('FileName') if self.dev_mode else os.environ.get('FILE_NAME', 'garageStatus.json')
 
     @property
     def dev_coordinates(self):

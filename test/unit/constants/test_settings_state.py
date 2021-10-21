@@ -13,8 +13,11 @@ class TestState:
         self.SETTINGS = Settings.get_instance()
 
     def teardown_method(self):
-        os.environ.pop('JWT_SECRET')
-        os.environ.pop('FILE_NAME')
+        try:
+            os.environ.pop('JWT_SECRET')
+            os.environ.pop('FILE_NAME')
+        except KeyError:
+            print('\nEnv vars already removed')
 
     def test_jwt_secret__should_return_env_var_value(self):
         self.SETTINGS.dev_mode = False
@@ -27,6 +30,11 @@ class TestState:
     def test_dev_coordinates__should_return_default_value(self):
         self.SETTINGS.dev_mode = False
         assert self.SETTINGS.dev_coordinates == {'latitude': 41.621191, 'longitude': -93.831609}
+
+    def test_file_name__should_provide_default_name_when_environment_variable_not_set(self):
+        os.environ.pop('FILE_NAME')
+        self.SETTINGS.dev_mode = False
+        assert self.SETTINGS.file_name == 'garageStatus.json'
 
     def test_dev_coordinates__should_return_dictionary_if_dev_mode(self):
         coordinates = {'latitude': 40.123, 'longitude': -93.123}
