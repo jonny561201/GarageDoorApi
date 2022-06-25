@@ -1,5 +1,5 @@
 flask==2.1.2
-PyJWT==1.7.1
+PyJWT==2.4.0
 pytz==2020.4
 requests==2.25.1
 uwsgi==2.0.19.1
