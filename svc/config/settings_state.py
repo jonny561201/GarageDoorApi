@@ -1,42 +1,49 @@
 import json
 import os
 
+from svc.config.singleton import Singleton
 
+
+@Singleton
 class Settings:
-    __instance = None
-    settings = None
-    dev_mode = False
+    _settings = None
 
     def __init__(self):
-        if Settings.__instance is not None:
-            raise Exception
-        else:
-            Settings.__instance = self
-            Settings.__instance.__get_settings()
+        self.__get_settings()
+        self.Coordinates = Coordinates(self._settings)
+
+    @property
+    def environment(self):
+        return self._settings.get('Environment') if self._settings is not None else 'local'
 
     @property
     def jwt_secret(self):
-        return self.settings.get('DevJwtSecret') if self.dev_mode else os.environ.get('JWT_SECRET')
+        return os.environ.get('JWT_SECRET') if os.environ.get('JWT_SECRET') is not None else self._settings.get('JwtSecret')
 
     @property
     def file_name(self):
-        return self.settings.get('FileName') if self.dev_mode else os.environ.get('FILE_NAME', 'garageStatus.json')
-
-    @property
-    def dev_coordinates(self):
-        return self.settings.get('DevCoordinates') if self.dev_mode else {'latitude': 41.621191, 'longitude': -93.831609}
-
-    @staticmethod
-    def get_instance():
-        if Settings.__instance is None:
-            Settings.__instance = Settings()
-        return Settings.__instance
+        return self._settings.get('FileName') if self._settings is not None else os.environ.get('FILE_NAME', 'garageStatus.json')
 
     def __get_settings(self):
         try:
-            file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'settings.json')
+            environment = os.environ.get('PYTHON_ENVIRONMENT', 'local')
+            file_path = os.path.join(os.path.dirname(__file__), '..', '..', f'settings.{environment}.json')
             with open(file_path, "r") as reader:
-                self.settings = json.loads(reader.read())
-                self.dev_mode = self.settings.get("Development", False)
+                self._settings = json.loads(reader.read())
         except FileNotFoundError:
-            self.settings = {}
+            self._settings = {}
+
+
+class Coordinates:
+    _settings = {}
+
+    def __init__(self, settings):
+        self._settings = settings.get('Coordinates', {})
+
+    @property
+    def latitude(self):
+        return self._settings.get('latitude')
+
+    @property
+    def longitude(self):
+        return self._settings.get('longitude')

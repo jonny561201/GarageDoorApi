@@ -17,7 +17,7 @@ class TestJwt:
         self.JWT_BODY = {'fakeBody': 'valueValue'}
         self.SETTINGS = Settings.get_instance()
         self.SETTINGS.dev_mode = True
-        self.SETTINGS.settings = {'DevJwtSecret': self.JWT_SECRET}
+        self.SETTINGS._settings = {'DevJwtSecret': self.JWT_SECRET}
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
 
     def teardown_method(self):
