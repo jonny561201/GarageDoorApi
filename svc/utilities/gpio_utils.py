@@ -1,9 +1,8 @@
 # import RPi.GPIO as GPIO
-import time
 
 from werkzeug.exceptions import BadRequest
 
-from svc.constants.settings_state import Settings
+from svc.config.settings_state import Settings
 
 FIRST_GARAGE_STATUS_PIN = 11
 FIRST_GARAGE_STATE_PIN = 31

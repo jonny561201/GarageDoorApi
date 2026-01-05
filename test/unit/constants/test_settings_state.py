@@ -1,6 +1,6 @@
 import os
 
-from svc.constants.settings_state import Settings
+from svc.config.settings_state import Settings
 
 
 class TestState:

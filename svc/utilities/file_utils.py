@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytz
 
-from svc.constants.settings_state import Settings
+from svc.config.settings_state import Settings
 
 
 def get_door_duration(garage_id):

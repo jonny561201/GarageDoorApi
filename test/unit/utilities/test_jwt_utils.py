@@ -5,7 +5,7 @@ import jwt
 import pytest
 from werkzeug.exceptions import Unauthorized
 
-from svc.constants.settings_state import Settings
+from svc.config.settings_state import Settings
 from svc.utilities.jwt_utils import is_jwt_valid
 
 
