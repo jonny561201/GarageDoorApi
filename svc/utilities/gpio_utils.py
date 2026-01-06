@@ -51,4 +51,4 @@ def toggle_garage_door(garage_id):
 
 def get_garage_coordinates():
     settings = Settings.get_instance()
-    return settings.dev_coordinates
+    return settings.Coordinates

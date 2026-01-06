@@ -5,6 +5,7 @@ from datetime import datetime
 import jwt
 from mock import patch
 
+from config.settings_state import Coordinates
 from svc.controllers.garage_door_controller import get_status, update_state, toggle_door
 
 
@@ -49,11 +50,12 @@ class TestGarageController:
         mock_gpio.get_garage_coordinates.assert_called()
 
     def test_get_status__should_return_gpio_coordinates(self, mock_gpio, mock_jwt, mock_duration):
-        coords = {'latitude': 12.2, 'longitude': -94.23}
+        coords = Coordinates({'latitude': 12.2, 'longitude': -94.23})
         mock_gpio.get_garage_coordinates.return_value = coords
         actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
-        assert actual['coordinates'] == coords
+        assert actual['coordinates']['latitude'] == coords.longitude
+        assert actual['coordinates']['longitude'] == coords.latitude
 
     def test_update_state__should_validate_jwt(self, mock_gpio, mock_jwt, mock_duration):
         mock_gpio.update_garage_door.return_value = False

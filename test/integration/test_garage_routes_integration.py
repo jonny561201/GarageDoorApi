@@ -9,13 +9,12 @@ from svc.manager import app
 
 class TestGarageDoorRoutesIntegration:
     GARAGE_ID = 1
-    TEST_CLIENT = None
     JWT_SECRET = 'testSecret'
 
     def setup_method(self):
+        os.environ.update({'JWT_SECRET': self.JWT_SECRET})
         flask_app = app
         self.TEST_CLIENT = flask_app.test_client()
-        os.environ.update({'JWT_SECRET': self.JWT_SECRET})
 
     def teardown_method(self):
         os.environ.pop('JWT_SECRET')
@@ -29,8 +28,7 @@ class TestGarageDoorRoutesIntegration:
     def test_get_garage_door_status__should_return_success_with_valid_jwt(self, mock_file):
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
-        url = f'garageDoor/{self.GARAGE_ID}/status'
-        actual = self.TEST_CLIENT.get(url, headers=headers)
+        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=headers)
 
         assert actual.status_code == 200
 
@@ -38,8 +36,7 @@ class TestGarageDoorRoutesIntegration:
         post_body = {}
         headers = {}
 
-        url = f'garageDoor/{self.GARAGE_ID}/state'
-        actual = self.TEST_CLIENT.post(url, data=post_body, headers=headers)
+        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=post_body, headers=headers)
 
         assert actual.status_code == 401
 
@@ -48,8 +45,7 @@ class TestGarageDoorRoutesIntegration:
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
 
-        url = f'garageDoor/{self.GARAGE_ID}/state'
-        actual = self.TEST_CLIENT.post(url, data=json.dumps(post_body), headers=headers)
+        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=json.dumps(post_body), headers=headers)
 
         assert actual.status_code == 200
 
@@ -58,8 +54,7 @@ class TestGarageDoorRoutesIntegration:
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
 
-        url = f'garageDoor/{self.GARAGE_ID}/state'
-        actual = self.TEST_CLIENT.post(url, data=json.dumps(post_body), headers=headers)
+        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=json.dumps(post_body), headers=headers)
 
         assert actual.status_code == 400
 
@@ -67,8 +62,7 @@ class TestGarageDoorRoutesIntegration:
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
 
-        url = f'garageDoor/{self.GARAGE_ID}/toggle'
-        actual = self.TEST_CLIENT.get(url, headers=headers)
+        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/toggle', headers=headers)
 
         assert actual.status_code == 200
 
@@ -76,7 +70,6 @@ class TestGarageDoorRoutesIntegration:
         bearer_token = jwt.encode({}, 'bad_secret', algorithm='HS256')
         headers = {'Authorization': bearer_token}
 
-        url = f'garageDoor/{self.GARAGE_ID}/toggle'
-        actual = self.TEST_CLIENT.get(url, headers=headers)
+        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/toggle', headers=headers)
 
         assert actual.status_code == 401

@@ -7,9 +7,10 @@ from svc.utilities.jwt_utils import is_jwt_valid
 
 def get_status(bearer_token, garage_id):
     is_jwt_valid(bearer_token)
-    return {'isGarageOpen': gpio_utils.is_garage_open(garage_id),
+    coordinates = gpio_utils.get_garage_coordinates()
+    return {'isGarageOpen': (gpio_utils.is_garage_open(garage_id)),
             'statusDuration': get_door_duration(garage_id),
-            'coordinates': gpio_utils.get_garage_coordinates()}
+            'coordinates': {'latitude': coordinates.latitude, 'longitude': coordinates.longitude}}
 
 
 def update_state(bearer_token, garage_id, request):
