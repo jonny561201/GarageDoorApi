@@ -1,10 +1,10 @@
-import os
 from datetime import datetime
 
 import jwt
 from flask import json
 from mock import patch
 
+from config.settings_state import Settings
 from svc.manager import app
 
 
@@ -13,20 +13,19 @@ class TestGarageDoorRoutesIntegration:
     JWT_SECRET = 'testSecret'
 
     def setup_method(self):
-        os.environ.update({'JWT_SECRET': self.JWT_SECRET})
+        instance = Settings.get_instance()
+        instance._settings = {'JwtSecret': self.JWT_SECRET}
         flask_app = app
         self.TEST_CLIENT = flask_app.test_client()
-
-    def teardown_method(self):
-        os.environ.pop('JWT_SECRET')
 
     def test_get_garage_door_status__should_return_unauthorized_with_no_header(self):
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status')
 
         assert actual.status_code == 401
 
-    @patch('svc.utilities.file_utils.get_door_duration')
+    @patch('svc.controllers.garage_door_controller.get_door_duration')
     def test_get_garage_door_status__should_return_success_with_valid_jwt(self, mock_file):
+        mock_file.return_value = datetime.now().isoformat()
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=headers)
