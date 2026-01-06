@@ -93,15 +93,7 @@ class TestGarageDoorRoutesIntegration:
 
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/toggle', headers=headers)
 
-        assert actual.status_code == 200
-
-    def test_toggle_garage_door__success_should_return_json_mime(self):
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
-
-        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/toggle', headers=headers)
-
-        assert actual.mimetype == 'application/json'
+        assert actual.status_code == 204
 
     def test_toggle_garage_door__should_return_unauthorized_when_invalid_jwt(self):
         bearer_token = jwt.encode({}, 'bad_secret', algorithm='HS256')

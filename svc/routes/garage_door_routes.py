@@ -26,4 +26,4 @@ def update_garage_door_state(garage_id):
 def toggle_garage_door(garage_id):
     bearer_token = request.headers.get('Authorization')
     garage_door_controller.toggle_door(bearer_token, garage_id)
-    return Response(status=200, mimetype=Mime.JSON)
+    return Response(status=204)
