@@ -5,7 +5,7 @@ from flask import request
 from svc.controllers import garage_door_controller
 
 GARAGE_BLUEPRINT = Blueprint('garage_blueprint', __name__, url_prefix='/garageDoor')
-DEFAULT_HEADERS = {'Content-Type': 'text/json'}
+DEFAULT_HEADERS = {'Content-Type': 'application/json'}
 
 
 @GARAGE_BLUEPRINT.route('/<garage_id>/status', methods=['GET'])
