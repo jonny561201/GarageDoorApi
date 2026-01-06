@@ -1,15 +1,13 @@
-
 class Singleton:
+    _instance = None
 
     def __init__(self, decorated):
         self._decorated = decorated
 
     def get_instance(self):
-        try:
-            return self._instance
-        except AttributeError:
-            self._instance = self._decorated()
-            return self._instance
+        if Singleton._instance is None:
+            Singleton._instance = self._decorated()
+        return Singleton._instance
 
     def __call__(self):
         raise TypeError('Singletons must be accessed through `get_instance()`.')
