@@ -1,7 +1,7 @@
 from mock import patch
 
-from svc.utilities.gpio_utils import update_garage_door
-
+from svc.config.settings_state import Settings
+from svc.utilities.gpio_utils import update_garage_door, get_garage_coordinates
 
 GARAGE_ID = 2
 
@@ -64,3 +64,13 @@ def test_update_garage_door__should_return_true_when_opening(mock_status, mock_t
     actual = update_garage_door(GARAGE_ID, request)
 
     assert actual is True
+
+
+def test_get_garage_coordinates__should_return_settings_coords():
+    instance = Settings.get_instance()
+    instance.Coordinates._settings = {'latitude': 10.0, 'longitude': 20.0}
+
+    actual = get_garage_coordinates()
+
+    assert actual.latitude == 10.0
+    assert actual.longitude == 20.0
