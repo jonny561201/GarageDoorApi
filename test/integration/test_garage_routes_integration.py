@@ -4,7 +4,7 @@ import jwt
 from flask import json
 from mock import patch
 
-from config.settings_state import Settings
+from svc.config.settings_state import Settings
 from svc.manager import app
 
 
