@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "garage-door-api"
+version = "1.0.0"
+description = "Flask APIs for operating a garage door with JWT-based security."
+authors = [
+    { name = "Jon Graf", email = "jgraf@gmail.com" }
+]
+license = "MIT"
+readme = "README.md"
+urls = { "repository" = "https://github.com/jonny561201/GarageDoorApi" }
+requires-python = ">=3.9"
+
+dependencies = [
+    "flask>=2.3.0",
+    "pyjwt>=2.6.0"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4.0",
+    "mock==3.0.5"
+]

@@ -1,5 +1,4 @@
 from flask import Response, Blueprint
-from flask import json
 from flask import request
 
 from svc.constants.home_automation import Mime
