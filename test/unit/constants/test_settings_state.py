@@ -4,7 +4,7 @@ from svc.config.settings_state import Settings
 
 
 class TestStateEnvVar:
-    JWT_SECRET = 'FakeSecret'
+    JWT_SECRET = 'this_is_a_test_secret'
     FILE_NAME = 'test.json'
 
     def setup_method(self):
@@ -20,14 +20,6 @@ class TestStateEnvVar:
 
     def test_jwt_secret__should_return_env_var_value(self):
         assert self.SETTINGS.jwt_secret == self.JWT_SECRET
-
-    def test_file_name__should_return_env_var_value(self):
-        self.SETTINGS._settings = None
-        assert self.SETTINGS.file_name == self.FILE_NAME
-
-    def test_file_name__should_provide_default_name_when_environment_variable_not_set(self):
-        os.environ.pop('FILE_NAME')
-        assert self.SETTINGS.file_name == 'garageStatus.json'
 
 
 class TestSettingsState:
@@ -50,8 +42,17 @@ class TestSettingsState:
         assert self.SETTINGS.Coordinates.latitude == self.COORDINATES['latitude']
         assert self.SETTINGS.Coordinates.longitude == self.COORDINATES['longitude']
 
+    def test_coordinates__should_default_when_settings_not_provided(self):
+        self.SETTINGS.Coordinates._settings = {}
+        assert self.SETTINGS.Coordinates.latitude == 41.621191
+        assert self.SETTINGS.Coordinates.longitude == -93.831609
+
     def test_jwt_secret__should_return(self):
         assert self.SETTINGS.jwt_secret == self.VALUES['JwtSecret']
 
     def test_file_name__should_return(self):
         assert self.SETTINGS.file_name == self.VALUES['FileName']
+
+    def test_file_name__should_provide_default(self):
+        self.SETTINGS._settings = None
+        assert self.SETTINGS.file_name == 'garageStatus.json'
