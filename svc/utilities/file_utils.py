@@ -11,10 +11,11 @@ def get_door_duration(garage_id):
     try:
         with open(file_name, 'r', encoding='utf-8') as file:
             content = json.load(file)
-            return content[garage_id]
+            garage_date = content[garage_id]
+            return datetime.fromisoformat(garage_date)
     except (FileNotFoundError, TypeError):
-        now = datetime.now(pytz.utc)
-        content = {'1': f'{now :%Y-%m-%d %H:%M:%S%z}', '2': f'{now :%Y-%m-%d %H:%M:%S%z}'}
+        now = datetime.now(tz=pytz.utc)
+        content = {'1': now.isoformat(), '2': now.isoformat()}
         with open(file_name, "w+") as file:
             json.dump(content, file)
-        return content[garage_id]
+        return now
