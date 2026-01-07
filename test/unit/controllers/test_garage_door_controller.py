@@ -5,7 +5,7 @@ from datetime import datetime
 import jwt
 from mock import patch
 
-from config.settings_state import Coordinates
+from svc.config.settings_state import Coordinates
 from svc.controllers.garage_door_controller import get_status, update_state, toggle_door
 
 
