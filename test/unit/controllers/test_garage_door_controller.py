@@ -29,7 +29,7 @@ class TestGarageController:
 
         actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
-        assert actual['isGarageOpen'] is False
+        assert actual.isGarageOpen is False
 
     def test_get_status__should_return_open_garage_status_date(self, mock_gpio, mock_jwt, mock_duration):
         now = datetime.now()
@@ -37,7 +37,7 @@ class TestGarageController:
 
         actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
-        assert actual['statusDuration'] == now
+        assert actual.statusDuration == now
 
     def test_get_status__should_call_is_jwt_valid(self, mock_gpio, mock_jwt, mock_duration):
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
@@ -54,8 +54,8 @@ class TestGarageController:
         mock_gpio.get_garage_coordinates.return_value = coords
         actual = get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
-        assert actual['coordinates']['latitude'] == coords.longitude
-        assert actual['coordinates']['longitude'] == coords.latitude
+        assert actual.coordinates.latitude == coords.latitude
+        assert actual.coordinates.longitude == coords.longitude
 
     def test_update_state__should_validate_jwt(self, mock_gpio, mock_jwt, mock_duration):
         mock_gpio.update_garage_door.return_value = False

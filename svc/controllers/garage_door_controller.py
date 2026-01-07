@@ -1,5 +1,6 @@
 import json
 
+from svc.models.status import GarageStatus, GarageCoordinates
 from svc.utilities import gpio_utils
 from svc.utilities.file_utils import get_door_duration
 from svc.utilities.jwt_utils import is_jwt_valid
@@ -8,9 +9,11 @@ from svc.utilities.jwt_utils import is_jwt_valid
 def get_status(bearer_token, garage_id):
     is_jwt_valid(bearer_token)
     coordinates = gpio_utils.get_garage_coordinates()
-    return {'isGarageOpen': gpio_utils.is_garage_open(garage_id),
-            'statusDuration': get_door_duration(garage_id),
-            'coordinates': {'latitude': coordinates.latitude, 'longitude': coordinates.longitude}}
+    door_open = gpio_utils.is_garage_open(garage_id)
+    duration = get_door_duration(garage_id)
+    coordinates = GarageCoordinates(coordinates.latitude, coordinates.longitude)
+
+    return GarageStatus(isGarageOpen=door_open, coordinates=coordinates, statusDuration=duration)
 
 
 def update_state(bearer_token, garage_id, request):

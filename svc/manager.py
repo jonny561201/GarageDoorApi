@@ -1,6 +1,6 @@
 from flask import Flask
 
-from svc.routes.garage_door_routes import GARAGE_BLUEPRINT
+from svc.endpoints.garage_door_routes import GARAGE_BLUEPRINT
 
 
 app = Flask(__name__)
