@@ -38,7 +38,7 @@ def update_door_worker(ch, method, properties, body: bytes):
         if action == 'toggle':
             gpio_utils.toggle_garage_door(garage_id)
         else:
-            gpio_utils.update_garage_door(garage_id, request)
+            gpio_utils.update_garage_door_v2(garage_id, request)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:

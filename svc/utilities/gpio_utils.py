@@ -41,6 +41,16 @@ def update_garage_door(garage_id, requested_state):
     return not status
 
 
+def update_garage_door_v2(garage_id, requested_state):
+    try:
+        status = is_garage_open(garage_id)
+        if requested_state['open'] != status:
+            toggle_garage_door(garage_id)
+    except KeyError:
+        raise BadRequest
+    return not status
+
+
 def toggle_garage_door(garage_id):
     pass
     # state_pin = FIRST_GARAGE_STATE_PIN if garage_id == '1' else SECOND_GARAGE_STATE_PIN
