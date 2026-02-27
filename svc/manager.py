@@ -1,8 +1,12 @@
 from flask import Flask
 
+from svc.config.settings_state import Settings
+from svc.controllers.garage_door_controller import update_door_worker
 from svc.endpoints.garage_door_routes import GARAGE_BLUEPRINT
-
+from svc.utilities.rabbitmq_client import RabbitMQClient
 
 app = Flask(__name__)
 app.register_blueprint(GARAGE_BLUEPRINT)
 
+client = RabbitMQClient(Settings.get_instance())
+client.start_consumer(update_door_worker)
