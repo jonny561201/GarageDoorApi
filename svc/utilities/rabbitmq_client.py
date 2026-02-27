@@ -54,17 +54,3 @@ class RabbitMQClient:
             self._connection.close() if self._connection else None
             self._connection = None
             self._channel = None
-
-
-
-# thread = RabbitMQClient(Settings.get_instance())
-# def sample(channel, method, properties, body):
-#     print('Received message')
-#     print(body)
-#
-# thread.start_consumer(sample)
-# time.sleep(2)
-# thread.stop_consumer()
-
-
-

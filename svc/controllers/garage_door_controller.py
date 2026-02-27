@@ -27,3 +27,19 @@ def update_state(bearer_token, garage_id, request):
 def toggle_door(bearer_token, garage_id):
     is_jwt_valid(bearer_token)
     gpio_utils.toggle_garage_door(garage_id)
+
+
+def update_door_worker(ch, method, properties, body: bytes):
+    try:
+        request = json.loads(body)
+        garage_id = request.get('id')
+        action = request.get('action')
+
+        if action == 'toggle':
+            gpio_utils.toggle_garage_door(garage_id)
+        else:
+            gpio_utils.update_garage_door(garage_id, request)
+
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+    except Exception:
+        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
