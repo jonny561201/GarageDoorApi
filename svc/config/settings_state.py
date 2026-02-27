@@ -11,6 +11,7 @@ class Settings:
     def __init__(self):
         self.__get_settings()
         self.Coordinates = Coordinates(self._settings)
+        self.Queue = Queue(self._settings)
 
     @property
     def environment(self):
@@ -47,3 +48,37 @@ class Coordinates:
     @property
     def longitude(self):
         return self._settings.get('longitude', -93.831609)
+
+
+class Queue:
+
+    def __init__(self, settings):
+        self._settings = settings.get('Queue') if settings is not None else None
+
+    @property
+    def user_name(self):
+        return _get_setting('QUEUE_USER_NAME', 'User', self._settings)
+
+    @property
+    def password(self):
+        return _get_setting('QUEUE_PASSWORD', 'Password', self._settings)
+
+    @property
+    def host(self):
+        return _get_setting('QUEUE_HOST', 'Host', self._settings)
+
+    @property
+    def port(self):
+        return _get_setting('QUEUE_PORT', 'Port', self._settings)
+
+    @property
+    def vhost(self):
+        return _get_setting('QUEUE_VHOST', 'VHost', self._settings)
+
+    @property
+    def exchange(self):
+        return _get_setting('QUEUE_EXCHANGE', 'Exchange', self._settings)
+
+def _get_setting(env_var, setting_key, settings):
+    env_var_value = os.environ.get(env_var)
+    return env_var_value if env_var_value is not None else settings.get(setting_key)
