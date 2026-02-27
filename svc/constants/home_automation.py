@@ -10,6 +10,7 @@ class Mime:
 class Garage:
     OPEN = True
     CLOSED = False
+    QUEUE = 'home-automation-garage'
 
 
 class Timing:
