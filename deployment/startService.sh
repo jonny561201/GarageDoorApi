@@ -78,9 +78,15 @@ function createEnvironmentVariableFile {
 function createFile {
     echo -e "Enter JWT_SECRET:${WHITE}"
     read JWT_SECRET
+    echo -e "Enter Queue Username:${WHITE}"
+    read QUEUE_USERNAME
+    echo -e "Enter Queue Password:${WHITE}"
+    read QUEUE_PASSWORD
 
     echo "PYTHON_ENVIRONMENT=production" > serviceEnvVariables
     echo "JWT_SECRET=${JWT_SECRET}" >> serviceEnvVariables
+    echo "QUEUE_USER_NAME=${QUEUE_USERNAME}" >> serviceEnvVariables
+    echo "QUEUE_PASSWORD=${QUEUE_PASSWORD}" >> serviceEnvVariables
 }
 
 
