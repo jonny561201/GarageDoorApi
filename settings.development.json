@@ -2,7 +2,7 @@
   "Environment": "dev",
   "FileName": "temperatureFile.json",
   "Coordinates": {"latitude": 41.621191, "longitude": -93.831609},
-    "Queue": {
+  "Queue": {
     "Port": 5672,
     "Host": "localhost",
     "VHost": "home-automation-dev",
