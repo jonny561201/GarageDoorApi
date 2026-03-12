@@ -65,19 +65,20 @@ class Queue:
 
     @property
     def host(self):
-        return _get_setting('QUEUE_HOST', 'Host', self._settings)
+        return self._settings.get('Host')
 
     @property
     def port(self):
-        return _get_setting('QUEUE_PORT', 'Port', self._settings)
+        return self._settings.get('Port')
 
     @property
     def vhost(self):
-        return _get_setting('QUEUE_VHOST', 'VHost', self._settings)
+        return self._settings.get('VHost')
 
     @property
     def exchange(self):
-        return _get_setting('QUEUE_EXCHANGE', 'Exchange', self._settings)
+        return self._settings.get('Exchange')
+
 
 def _get_setting(env_var, setting_key, settings):
     env_var_value = os.environ.get(env_var)
