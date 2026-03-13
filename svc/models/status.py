@@ -1,6 +1,10 @@
 from dataclasses import dataclass
+from datetime import datetime
 
-from dataclasses_json import dataclass_json
+from dataclasses_json import dataclass_json, cfg
+
+cfg.global_config.encoders[datetime] = datetime.isoformat
+cfg.global_config.decoders[datetime] = datetime.fromisoformat
 
 
 @dataclass_json
@@ -14,5 +18,5 @@ class GarageCoordinates:
 @dataclass
 class GarageStatus:
     isGarageOpen: bool
-    statusDuration: str
+    statusDuration: datetime
     coordinates: GarageCoordinates
