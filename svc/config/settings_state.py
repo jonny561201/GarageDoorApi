@@ -53,7 +53,7 @@ class Coordinates:
 class Queue:
 
     def __init__(self, settings):
-        self._settings = settings.get('Queue') if settings is not None else None
+        self._settings = settings.get('Queue', {}) if settings is not None else None
 
     @property
     def user_name(self):
