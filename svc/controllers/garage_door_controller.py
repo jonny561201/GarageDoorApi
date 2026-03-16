@@ -22,7 +22,7 @@ def get_status(bearer_token, garage_id):
 def update_door_state(bearer_token: str, garage_id: str, request):
     is_jwt_valid(bearer_token)
     request_body = json.loads(request.decode('UTF-8'))
-    status = _update_door_state(garage_id, request_body)
+    status = _update_garage_door(garage_id, request_body)
 
     return GarageUpdate(isGarageOpen=status)
 
@@ -42,14 +42,14 @@ def update_door_worker(ch, method, properties, body: bytes):
         if action == 'toggle':
             gpio_utils.toggle_garage_door(garage_id)
         else:
-            _update_door_state(garage_id, request)
+            _update_garage_door(garage_id, request)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
 
-def _update_door_state(garage_id: str, request: dict):
+def _update_garage_door(garage_id: str, request: dict):
     try:
         status = gpio_utils.is_garage_open(garage_id)
         if request['open'] != status:
