@@ -1,9 +1,10 @@
-import json
 import os
 from datetime import datetime
 
 import jwt
+import pytest
 from mock import patch
+from werkzeug.exceptions import BadRequest
 
 from svc.config.settings_state import Coordinates
 from svc.controllers.garage_door_controller import get_status, update_door_state, toggle_door
@@ -16,7 +17,7 @@ class TestGarageController:
     GARAGE_ID = '2'
     JWT_SECRET = 'fake_jwt_secret'
     JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')
-    REQUEST = '{"openGarage": "True"}'.encode()
+    REQUEST = '{"open": true}'.encode()
 
     def setup_method(self):
         os.environ.update({'JWT_SECRET': self.JWT_SECRET})
@@ -65,22 +66,30 @@ class TestGarageController:
         mock_jwt.assert_called()
 
     def test_update_door_state__should_return_response(self, mock_gpio, mock_jwt, mock_file):
-        mock_gpio.update_garage_door.return_value = False
+        mock_gpio.is_garage_open.return_value = True
 
         actual = update_door_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
-        assert actual.isGarageOpen ==  False
+        assert actual.isGarageOpen ==  True
 
-    def test_update_door_state__should_call_update_gpio(self, mock_gpio, mock_jwt, mock_file):
-        expected_request = json.loads(self.REQUEST.decode('UTF-8'))
-        update_door_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
+    def test_update_door_state__should_call_toggle_when_state_is_different_than_request(self, mock_gpio, mock_jwt, mock_file):
+        mock_gpio.is_garage_open.return_value = False
+        actual = update_door_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
-        mock_gpio.update_garage_door.assert_called_with(self.GARAGE_ID, expected_request)
+        mock_gpio.toggle_garage_door.assert_called_with(self.GARAGE_ID)
+        assert actual.isGarageOpen == True
 
-    def test_update_door_state_should_call_update_door_duration(self, mock_gpio, mock_jwt, mock_file):
-        update_door_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
+    def test_update_door_state__should_not_toggle_when_state_is_same_as_request(self, mock_gpio, mock_jwt, mock_file):
+        mock_gpio.is_garage_open.return_value = True
+        actual = update_door_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
-        mock_file.update_door_duration.assert_called_with(self.GARAGE_ID)
+        mock_gpio.toggle_garage_door.assert_not_called()
+        assert actual.isGarageOpen == True
+
+    def test_update_door_state__should_raise_bad_request_when_key_not_found(self, mock_gpio, mock_jwt, mock_file):
+        bad_request = '{"fake": true}'.encode()
+        with pytest.raises(BadRequest):
+            update_door_state(self.JWT_TOKEN, self.GARAGE_ID, bad_request)
 
     def test_toggle_garage__should_validate_bearer_token(self, mock_gpio, mock_jwt, mock_file):
         toggle_door(self.JWT_TOKEN, self.GARAGE_ID)

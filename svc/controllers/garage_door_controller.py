@@ -1,5 +1,7 @@
 import json
 
+from werkzeug.exceptions import BadRequest
+
 from svc.models.status import GarageStatus, GarageCoordinates
 from svc.models.update import GarageUpdate
 from svc.utilities import gpio_utils
@@ -17,12 +19,12 @@ def get_status(bearer_token, garage_id):
     return GarageStatus(isGarageOpen=door_open, coordinates=coordinates, statusDuration=duration)
 
 
-def update_door_state(bearer_token, garage_id, request):
+def update_door_state(bearer_token: str, garage_id: str, request):
     is_jwt_valid(bearer_token)
     request_body = json.loads(request.decode('UTF-8'))
-    new_state = gpio_utils.update_garage_door(garage_id, request_body)
-    file_utils.update_door_duration(garage_id)
-    return GarageUpdate(isGarageOpen=new_state)
+    status = _update_door_state(garage_id, request_body)
+
+    return GarageUpdate(isGarageOpen=status)
 
 
 def toggle_door(bearer_token, garage_id):
@@ -40,8 +42,21 @@ def update_door_worker(ch, method, properties, body: bytes):
         if action == 'toggle':
             gpio_utils.toggle_garage_door(garage_id)
         else:
-            gpio_utils.update_garage_door_v2(garage_id, request)
+            _update_door_state(garage_id, request)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+
+
+def _update_door_state(garage_id: str, request: dict):
+    try:
+        status = gpio_utils.is_garage_open(garage_id)
+        if request['open'] != status:
+            gpio_utils.toggle_garage_door(garage_id)
+            file_utils.update_door_duration(garage_id)
+            return not status
+    except KeyError:
+        raise BadRequest
+
+    return status
