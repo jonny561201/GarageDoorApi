@@ -3,23 +3,7 @@
 from werkzeug.exceptions import BadRequest
 
 from svc.config.settings_state import Settings
-
-FIRST_GARAGE_STATUS_PIN = 11
-FIRST_GARAGE_STATE_PIN = 31
-
-SECOND_GARAGE_STATUS_PIN = 12
-SECOND_GARAGE_STATE_PIN = 33
-
-
-# GPIO.cleanup()
-# GPIO.setmode(GPIO.BOARD)
-# GPIO.setup(FIRST_GARAGE_STATUS_PIN, GPIO.IN, GPIO.PUD_UP)
-# GPIO.setup(SECOND_GARAGE_STATUS_PIN, GPIO.IN, GPIO.PUD_UP)
-# GPIO.setup(FIRST_GARAGE_STATE_PIN, GPIO.OUT)
-# GPIO.setup(SECOND_GARAGE_STATE_PIN, GPIO.OUT)
-
-# GPIO.output(FIRST_GARAGE_STATE_PIN, GPIO.LOW)
-# GPIO.output(SECOND_GARAGE_STATE_PIN, GPIO.LOW)
+from svc.constants.home_automation import Automation
 
 
 # assumes connection to output pin and ground with GPIO.PUD_UP
