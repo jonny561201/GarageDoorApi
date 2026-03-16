@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import pytz
 
@@ -22,7 +23,7 @@ def update_door_duration(garage_id: str):
     try:
         with open(file_name, 'r+', encoding='utf-8') as file:
             content = json.load(file)
-            content[garage_id] = datetime.now(tz=pytz.utc).isoformat()
+            content[garage_id] = datetime.now(tz=ZoneInfo('US/Central')).isoformat()
             file.seek(0)
             json.dump(content, file)
             file.truncate()
@@ -31,7 +32,7 @@ def update_door_duration(garage_id: str):
 
 
 def __create_file_if_not_exist(file_name):
-    now = datetime.now(tz=pytz.utc)
+    now = datetime.now(tz=ZoneInfo('US/Central'))
     content = {'1': now.isoformat(), '2': now.isoformat()}
     with open(file_name, "w+") as file:
         json.dump(content, file)
