@@ -8,6 +8,7 @@ from svc.config.settings_state import Settings
 from svc.manager import app
 
 
+@patch('svc.controllers.garage_door_controller.file_utils')
 class TestGarageDoorRoutesIntegration:
     GARAGE_ID = 1
     JWT_SECRET = 'testSecret'
@@ -18,41 +19,38 @@ class TestGarageDoorRoutesIntegration:
         flask_app = app
         self.TEST_CLIENT = flask_app.test_client()
 
-    def test_get_garage_door_status__should_return_unauthorized_with_no_header(self):
+    def test_get_garage_door_status__should_return_unauthorized_with_no_header(self, mock_file):
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status')
 
         assert actual.status_code == 401
 
-    @patch('svc.controllers.garage_door_controller.get_door_duration')
     def test_get_garage_door_status__should_return_success_with_valid_jwt(self, mock_file):
-        mock_file.return_value = datetime.now().isoformat()
+        mock_file.get_door_duration.return_value = datetime.now()
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=headers)
 
         assert actual.status_code == 200
 
-    @patch('svc.controllers.garage_door_controller.get_door_duration')
     def test_get_garage_door_status__success_should_include_json_mime(self, mock_file):
-        mock_file.return_value = datetime.now().isoformat()
+        mock_file.get_door_duration.return_value = datetime.now()
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=headers)
 
         assert actual.mimetype == 'application/json'
 
-    @patch('svc.controllers.garage_door_controller.get_door_duration')
     def test_get_garage_door_status__should_include_response(self, mock_file):
-        duration = datetime.now().isoformat()
-        mock_file.return_value = duration
+        duration = datetime.now()
+        mock_file.get_door_duration.return_value = duration
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=headers)
 
-        assert json.loads(actual.data) == {'isGarageOpen': True, 'statusDuration': duration,
+        assert json.loads(actual.data) == {'isGarageOpen': True, 'statusDuration': duration.isoformat(),
                                            'coordinates': {'latitude': 41.621191, 'longitude': -93.831609}}
 
-    def test_update_garage_door_state__should_return_unauthorized_without_jwt(self):
+    def test_update_garage_door_state__should_return_unauthorized_without_jwt(self, mock_file):
         post_body = {}
         headers = {}
 
@@ -60,7 +58,7 @@ class TestGarageDoorRoutesIntegration:
 
         assert actual.status_code == 401
 
-    def test_update_garage_door_state__should_return_success(self):
+    def test_update_garage_door_state__should_return_success(self, mock_file):
         post_body = {'garageDoorOpen': True}
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
@@ -69,7 +67,7 @@ class TestGarageDoorRoutesIntegration:
 
         assert actual.status_code == 200
 
-    def test_update_garage_door_state__success_should_include_json_mime(self):
+    def test_update_garage_door_state__success_should_include_json_mime(self, mock_file):
         post_body = {'garageDoorOpen': True}
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
@@ -78,7 +76,7 @@ class TestGarageDoorRoutesIntegration:
 
         assert actual.mimetype == 'application/json'
 
-    def test_update_garage_door_state__should_return_bad_request_when_malformed_json(self):
+    def test_update_garage_door_state__should_return_bad_request_when_malformed_json(self, mock_file):
         post_body = {'badKey': 'fakerequest'}
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
@@ -87,7 +85,7 @@ class TestGarageDoorRoutesIntegration:
 
         assert actual.status_code == 400
 
-    def test_toggle_garage_door__should_return_success(self):
+    def test_toggle_garage_door__should_return_success(self, mock_file):
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
 
@@ -95,7 +93,7 @@ class TestGarageDoorRoutesIntegration:
 
         assert actual.status_code == 204
 
-    def test_toggle_garage_door__should_return_unauthorized_when_invalid_jwt(self):
+    def test_toggle_garage_door__should_return_unauthorized_when_invalid_jwt(self, mock_file):
         bearer_token = jwt.encode({}, 'bad_secret', algorithm='HS256')
         headers = {'Authorization': bearer_token}
 
