@@ -6,7 +6,7 @@ import pytz
 from svc.config.settings_state import Settings
 
 
-def get_door_duration(garage_id):
+def get_door_duration(garage_id: str):
     file_name = Settings.get_instance().file_name
     try:
         with open(file_name, 'r', encoding='utf-8') as file:
@@ -14,8 +14,25 @@ def get_door_duration(garage_id):
             garage_date = content[garage_id]
             return datetime.fromisoformat(garage_date)
     except (FileNotFoundError, TypeError):
-        now = datetime.now(tz=pytz.utc)
-        content = {'1': now.isoformat(), '2': now.isoformat()}
-        with open(file_name, "w+") as file:
+       __create_file_if_not_exist(file_name)
+
+
+def update_door_duration(garage_id: str):
+    file_name = Settings.get_instance().file_name
+    try:
+        with open(file_name, 'r+', encoding='utf-8') as file:
+            content = json.load(file)
+            content[garage_id] = datetime.now(tz=pytz.utc).isoformat()
+            file.seek(0)
             json.dump(content, file)
-        return now
+            file.truncate()
+    except (FileNotFoundError, TypeError):
+        __create_file_if_not_exist(file_name)
+
+
+def __create_file_if_not_exist(file_name):
+    now = datetime.now(tz=pytz.utc)
+    content = {'1': now.isoformat(), '2': now.isoformat()}
+    with open(file_name, "w+") as file:
+        json.dump(content, file)
+    return now
