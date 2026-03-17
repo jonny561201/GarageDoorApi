@@ -19,12 +19,12 @@ class TestJwt:
         self.SETTINGS._settings = {'JwtSecret': self.JWT_SECRET}
 
     def test_is_jwt_valid__should_succeed_if_token_can_be_decrypted(self):
-        jwt_token = jwt.encode(self.JWT_BODY, self.JWT_SECRET, algorithm='HS256').decode('UTF-8')
+        jwt_token = jwt.encode(self.JWT_BODY, self.JWT_SECRET, algorithm='HS256')
 
         is_jwt_valid(jwt_token)
 
     def test_is_jwt_valid__should_raise_unauthorized_if_it_cannot_be_decrypted(self):
-        jwt_token = jwt.encode(self.JWT_BODY, 'badSecret', algorithm='HS256').decode('UTF-8')
+        jwt_token = jwt.encode(self.JWT_BODY, 'badSecret', algorithm='HS256')
 
         with pytest.raises(Unauthorized):
             is_jwt_valid(jwt_token)
@@ -32,7 +32,7 @@ class TestJwt:
     def test_is_jwt_valid__should_raise_unauthorized_if_token_has_expired(self):
         expired_date = datetime.now() - timedelta(hours=1)
         self.JWT_BODY['exp'] = expired_date
-        jwt_token = jwt.encode(self.JWT_BODY, self.JWT_SECRET, algorithm='HS256').decode('UTF-8')
+        jwt_token = jwt.encode(self.JWT_BODY, self.JWT_SECRET, algorithm='HS256')
 
         with pytest.raises(Unauthorized):
             is_jwt_valid(jwt_token)
@@ -51,14 +51,14 @@ class TestJwt:
 
     def test_is_jwt_valid__should_succeed_when_provided_bearer_text_in_token(self):
         jwt_body = {'fakeBody': 'valueValue'}
-        token = jwt.encode(jwt_body, self.JWT_SECRET, algorithm='HS256').decode('UTF-8')
+        token = jwt.encode(jwt_body, self.JWT_SECRET, algorithm='HS256')
         bearer_token = f'Bearer {token}'
 
         is_jwt_valid(bearer_token)
 
     def test_is_jwt_valid__should_succeed_using_secret_from_settings_to_encode_token(self):
         jwt_body = {'fakeBody': 'valueValue'}
-        token = jwt.encode(jwt_body, self.JWT_SECRET, algorithm='HS256').decode('UTF-8')
+        token = jwt.encode(jwt_body, self.JWT_SECRET, algorithm='HS256')
 
         is_jwt_valid(token)
 
@@ -66,7 +66,7 @@ class TestJwt:
         os.environ.update({'JWT_SECRET': ''})
         jwt_body = {'fakeBody': 'valueValue'}
         jwt_secret = 'testSecret'
-        jwt_token = jwt.encode(jwt_body, jwt_secret, algorithm='HS256').decode('UTF-8')
+        jwt_token = jwt.encode(jwt_body, jwt_secret, algorithm='HS256')
 
         with pytest.raises(Unauthorized):
             is_jwt_valid(jwt_token)

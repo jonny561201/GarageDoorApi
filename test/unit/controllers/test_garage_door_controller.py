@@ -16,7 +16,7 @@ from svc.controllers.garage_door_controller import get_status, update_door_state
 class TestGarageController:
     GARAGE_ID = '2'
     JWT_SECRET = 'fake_jwt_secret'
-    JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256').decode('UTF-8')
+    JWT_TOKEN = jwt.encode({}, JWT_SECRET, algorithm='HS256')
     REQUEST = '{"open": true}'.encode()
 
     def setup_method(self):
