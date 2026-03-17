@@ -59,7 +59,7 @@ class TestGarageDoorRoutesIntegration:
         assert actual.status_code == 401
 
     def test_update_garage_door_state__should_return_success(self, mock_file):
-        post_body = {'garageDoorOpen': True}
+        post_body = {'open': True}
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
 
@@ -68,7 +68,7 @@ class TestGarageDoorRoutesIntegration:
         assert actual.status_code == 200
 
     def test_update_garage_door_state__success_should_include_json_mime(self, mock_file):
-        post_body = {'garageDoorOpen': True}
+        post_body = {'open': True}
         bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
         headers = {'Authorization': bearer_token}
 
