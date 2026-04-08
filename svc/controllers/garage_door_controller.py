@@ -25,11 +25,7 @@ def get_all_statuses(bearer_token):
     coordinates = GarageCoordinates(raw_coordinates.latitude, raw_coordinates.longitude)
 
     garage_ids = ['1', '2']
-    doors = []
-    for garage_id in garage_ids:
-        door_open = gpio_utils.is_garage_open(garage_id)
-        duration = file_utils.get_door_duration(garage_id)
-        doors.append(GarageDoorStatus(garageId=garage_id, isGarageOpen=door_open, statusDuration=duration))
+    doors = [_create_door_status(garage_id) for garage_id in garage_ids]
 
     return AllGarageStatus(coordinates=coordinates, doors=doors)
 
@@ -75,3 +71,9 @@ def _update_garage_door(garage_id: str, request: dict):
         raise BadRequest
 
     return status
+
+
+def _create_door_status(garage_id):
+    door_open = gpio_utils.is_garage_open(garage_id)
+    duration = file_utils.get_door_duration(garage_id)
+    return GarageDoorStatus(garageId=garage_id, isGarageOpen=door_open, statusDuration=duration)
