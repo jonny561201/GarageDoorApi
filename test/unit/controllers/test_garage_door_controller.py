@@ -7,7 +7,7 @@ from mock import patch
 from werkzeug.exceptions import BadRequest
 
 from svc.config.settings_state import Coordinates
-from svc.controllers.garage_door_controller import get_status, update_door_state, toggle_door
+from svc.controllers.garage_door_controller import get_status, update_door_state, toggle_door, get_all_statuses
 
 
 @patch('svc.controllers.garage_door_controller.file_utils')
@@ -105,3 +105,46 @@ class TestGarageController:
         toggle_door(self.JWT_TOKEN, self.GARAGE_ID)
 
         mock_file.update_door_duration.assert_called_with(self.GARAGE_ID)
+
+    def test_get_all_statuses__should_validate_jwt(self, mock_gpio, mock_jwt, mock_file):
+        mock_file.get_door_duration.return_value = datetime.now()
+        get_all_statuses(self.JWT_TOKEN)
+
+        mock_jwt.assert_called_once_with(self.JWT_TOKEN)
+
+    def test_get_all_statuses__should_return_two_doors(self, mock_gpio, mock_jwt, mock_file):
+        mock_file.get_door_duration.return_value = datetime.now()
+        mock_gpio.is_garage_open.return_value = False
+
+        actual = get_all_statuses(self.JWT_TOKEN)
+
+        assert len(actual.doors) == 2
+        assert actual.doors[0].garageId == '1'
+        assert actual.doors[1].garageId == '2'
+
+    def test_get_all_statuses__should_call_coordinates_once(self, mock_gpio, mock_jwt, mock_file):
+        mock_file.get_door_duration.return_value = datetime.now()
+
+        get_all_statuses(self.JWT_TOKEN)
+
+        mock_gpio.get_garage_coordinates.assert_called_once()
+
+    def test_get_all_statuses__should_return_coordinates_on_top_level(self, mock_gpio, mock_jwt, mock_file):
+        mock_file.get_door_duration.return_value = datetime.now()
+        coords = Coordinates({'latitude': 12.2, 'longitude': -94.23})
+        mock_gpio.get_garage_coordinates.return_value = coords
+
+        actual = get_all_statuses(self.JWT_TOKEN)
+
+        assert actual.coordinates.latitude == coords.latitude
+        assert actual.coordinates.longitude == coords.longitude
+
+    def test_get_all_statuses__should_return_open_status_per_door(self, mock_gpio, mock_jwt, mock_file):
+        mock_file.get_door_duration.return_value = datetime.now()
+        mock_gpio.is_garage_open.side_effect = [True, False]
+
+        actual = get_all_statuses(self.JWT_TOKEN)
+
+        assert actual.doors[0].isGarageOpen is True
+        assert actual.doors[1].isGarageOpen is False
+
