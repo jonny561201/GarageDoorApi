@@ -51,8 +51,6 @@ Don't add comments unless I tell you to do so.
 - svc/endpoints/ contains Flask blueprint route definitions — one file per domain (e.g., thermostat_routes.py).
 - svc/controllers/ contains business logic functions — one file per domain (e.g., thermostat_controller.py).
 - svc/models/ contains @dataclass_json/@dataclass DTOs for API request/response shapes.
-- svc/db/models/ contains SQLAlchemy ORM model definitions.
-- svc/db/repositories/ contains database access classes using the repository pattern.
 - svc/services/ contains functions for external API integrations.
 - svc/utilities/ contains shared stateless helper functions.
 - svc/constants/ contains constant values organized by domain using nested classes.
