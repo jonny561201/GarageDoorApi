@@ -12,7 +12,7 @@ class Settings:
         self.__get_settings()
         self.Coordinates = Coordinates(self._settings)
         self.Queue = Queue(self._settings)
-        self.Auth = Authority(self._settings)
+        self.Authority = Authority(self._settings)
 
     @property
     def environment(self):
