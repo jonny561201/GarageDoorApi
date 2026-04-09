@@ -1,72 +1,117 @@
-import os
-from datetime import datetime, timedelta
-
-import jwt
 import pytest
-from werkzeug.exceptions import Unauthorized
+from jwt import DecodeError, ExpiredSignatureError, InvalidSignatureError
+from mock import patch
+from werkzeug.exceptions import Unauthorized, Forbidden
 
 from svc.config.settings_state import Settings
-from svc.utilities.jwt_utils import is_jwt_valid
+from svc.utilities.jwt_utils import AuthClient
 
 
-class TestJwt:
-    JWT_BODY = None
-    JWT_SECRET = 'testSecret'
+@patch('svc.utilities.jwt_utils.PyJWKClient')
+@patch('svc.utilities.jwt_utils.jwt')
+class TestAuthClient:
+    DOMAIN = 'dev-test.us.auth0.com'
+    AUDIENCE = 'https://fake.domain.com'
+    USER_ID = 'fake_user_id'
+    TOKEN = 'IM_A_FAKE_TOKEN'
 
     def setup_method(self):
-        self.JWT_BODY = {'fakeBody': 'valueValue'}
         self.SETTINGS = Settings.get_instance()
-        self.SETTINGS._settings = {'JwtSecret': self.JWT_SECRET}
+        self.SETTINGS.Authority._settings = {'Domain': self.DOMAIN, 'Audience': self.AUDIENCE}
+        AuthClient._instance = None
 
-    def test_is_jwt_valid__should_succeed_if_token_can_be_decrypted(self):
-        jwt_token = jwt.encode(self.JWT_BODY, self.JWT_SECRET, algorithm='HS256')
+    def test_verify_jwt__should_return_decoded_claims(self, mock_jwt, mock_jwks):
+        claims = {'sub': self.USER_ID, 'roles': ['lighting']}
+        mock_jwt.decode.return_value = claims
+        client = AuthClient.get_instance()
 
-        is_jwt_valid(jwt_token)
+        actual = client.verify_jwt(self.TOKEN)
 
-    def test_is_jwt_valid__should_raise_unauthorized_if_it_cannot_be_decrypted(self):
-        jwt_token = jwt.encode(self.JWT_BODY, 'badSecret', algorithm='HS256')
+        assert actual == claims
 
-        with pytest.raises(Unauthorized):
-            is_jwt_valid(jwt_token)
+    def test_verify_jwt__should_call_jwks_client_with_token(self, mock_jwt, mock_jwks):
+        client = AuthClient.get_instance()
 
-    def test_is_jwt_valid__should_raise_unauthorized_if_token_has_expired(self):
-        expired_date = datetime.now() - timedelta(hours=1)
-        self.JWT_BODY['exp'] = expired_date
-        jwt_token = jwt.encode(self.JWT_BODY, self.JWT_SECRET, algorithm='HS256')
+        client.verify_jwt(self.TOKEN)
 
-        with pytest.raises(Unauthorized):
-            is_jwt_valid(jwt_token)
+        mock_jwks.return_value.get_signing_key_from_jwt.assert_called_once_with(self.TOKEN)
 
-    def test_is_jwt_valid__should_raise_unauthorized_if_token_is_none(self):
-        jwt_token = None
+    def test_verify_jwt__should_decode_with_signing_key_and_settings(self, mock_jwt, mock_jwks):
+        signing_key = mock_jwks.return_value.get_signing_key_from_jwt.return_value
+        client = AuthClient.get_instance()
 
-        with pytest.raises(Unauthorized):
-            is_jwt_valid(jwt_token)
+        client.verify_jwt(self.TOKEN)
 
-    def test_is_jwt_valid__should_raise_unauthorized_if_token_is_invalid_string(self):
-        jwt_token = 'abc123'
+        mock_jwt.decode.assert_called_once_with(
+            self.TOKEN,
+            signing_key.key,
+            algorithms=["RS256"],
+            audience=self.AUDIENCE,
+            issuer=f"https://{self.DOMAIN}/",
+        )
 
-        with pytest.raises(Unauthorized):
-            is_jwt_valid(jwt_token)
-
-    def test_is_jwt_valid__should_succeed_when_provided_bearer_text_in_token(self):
-        jwt_body = {'fakeBody': 'valueValue'}
-        token = jwt.encode(jwt_body, self.JWT_SECRET, algorithm='HS256')
-        bearer_token = f'Bearer {token}'
-
-        is_jwt_valid(bearer_token)
-
-    def test_is_jwt_valid__should_succeed_using_secret_from_settings_to_encode_token(self):
-        jwt_body = {'fakeBody': 'valueValue'}
-        token = jwt.encode(jwt_body, self.JWT_SECRET, algorithm='HS256')
-
-        is_jwt_valid(token)
-
-    def test_is_jwt_valid__should_raise_exception_if_secret_is_not_set(self):
-        os.environ.update({'JWT_SECRET': ''})
-        jwt_body = {'fakeBody': 'valueValue'}
-        jwt_secret = 'testSecret'
-        jwt_token = jwt.encode(jwt_body, jwt_secret, algorithm='HS256')
+    def test_verify_jwt__should_raise_unauthorized_on_invalid_signature(self, mock_jwt, mock_jwks):
+        mock_jwt.decode.side_effect = InvalidSignatureError()
+        client = AuthClient.get_instance()
 
         with pytest.raises(Unauthorized):
-            is_jwt_valid(jwt_token)
+            client.verify_jwt(self.TOKEN)
+
+    def test_verify_jwt__should_raise_unauthorized_on_expired_token(self, mock_jwt, mock_jwks):
+        mock_jwt.decode.side_effect = ExpiredSignatureError()
+        client = AuthClient.get_instance()
+
+        with pytest.raises(Unauthorized):
+            client.verify_jwt(self.TOKEN)
+
+    def test_verify_jwt__should_raise_unauthorized_on_decode_error(self, mock_jwt, mock_jwks):
+        mock_jwt.decode.side_effect = DecodeError()
+        client = AuthClient.get_instance()
+
+        with pytest.raises(Unauthorized):
+            client.verify_jwt(self.TOKEN)
+
+    def test_verify_jwt__should_raise_unauthorized_on_key_error(self, mock_jwt, mock_jwks):
+        mock_jwt.decode.side_effect = KeyError()
+        client = AuthClient.get_instance()
+
+        with pytest.raises(Unauthorized):
+            client.verify_jwt(self.TOKEN)
+
+    def test_verify_and_authorize__should_return_claims_when_roles_match(self, mock_jwt, mock_jwks):
+        claims = {'sub': self.USER_ID, 'roles': ['lighting', 'security']}
+        mock_jwt.decode.return_value = claims
+        client = AuthClient.get_instance()
+        actual = client.verify_and_authorize(self.TOKEN, 'lighting')
+
+        assert actual == claims
+
+    def test_verify_and_authorize__should_return_claims_when_all_required_roles_present(self, mock_jwt, mock_jwks):
+        claims = {'sub': self.USER_ID, 'roles': ['lighting', 'security', 'thermostat']}
+        mock_jwt.decode.return_value = claims
+        client = AuthClient.get_instance()
+        actual = client.verify_and_authorize(self.TOKEN, 'lighting', 'security')
+
+        assert actual == claims
+
+    def test_verify_and_authorize__should_raise_forbidden_when_role_missing(self, mock_jwt, mock_jwks):
+        claims = {'sub': self.USER_ID, 'roles': ['lighting']}
+        mock_jwt.decode.return_value = claims
+        client = AuthClient.get_instance()
+        with pytest.raises(Forbidden):
+            client.verify_and_authorize(self.TOKEN, 'security')
+
+    def test_verify_and_authorize__should_raise_forbidden_when_roles_claim_missing(self, mock_jwt, mock_jwks):
+        claims = {'sub': self.USER_ID}
+        mock_jwt.decode.return_value = claims
+        client = AuthClient.get_instance()
+        with pytest.raises(Forbidden):
+            client.verify_and_authorize(self.TOKEN, 'lighting')
+
+    def test_verify_and_authorize__should_succeed_with_no_required_roles(self, mock_jwt, mock_jwks):
+        claims = {'sub': self.USER_ID, 'roles': []}
+        mock_jwt.decode.return_value = claims
+        client = AuthClient.get_instance()
+        actual = client.verify_and_authorize(self.TOKEN)
+
+        assert actual == claims
