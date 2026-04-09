@@ -6,11 +6,11 @@ from svc.models.status import GarageStatus, GarageCoordinates, GarageDoorStatus,
 from svc.models.update import GarageUpdate
 from svc.utilities import gpio_utils
 from svc.utilities import file_utils
-from svc.utilities.jwt_utils import is_jwt_valid
+from svc.utilities.jwt_utils import AuthClient
 
 
 def get_status(bearer_token, garage_id):
-    is_jwt_valid(bearer_token)
+    AuthClient.get_instance().verify_jwt(bearer_token)
     coordinates = gpio_utils.get_garage_coordinates()
     door_open = gpio_utils.is_garage_open(garage_id)
     duration = file_utils.get_door_duration(garage_id)
@@ -20,7 +20,7 @@ def get_status(bearer_token, garage_id):
 
 
 def get_all_statuses(bearer_token):
-    is_jwt_valid(bearer_token)
+    AuthClient.get_instance().verify_jwt(bearer_token)
     raw_coordinates = gpio_utils.get_garage_coordinates()
     coordinates = GarageCoordinates(raw_coordinates.latitude, raw_coordinates.longitude)
 
@@ -31,7 +31,7 @@ def get_all_statuses(bearer_token):
 
 
 def update_door_state(bearer_token: str, garage_id: str, request):
-    is_jwt_valid(bearer_token)
+    AuthClient.get_instance().verify_jwt(bearer_token)
     request_body = json.loads(request.decode('UTF-8'))
     status = _update_garage_door(garage_id, request_body)
 
@@ -39,7 +39,7 @@ def update_door_state(bearer_token: str, garage_id: str, request):
 
 
 def toggle_door(bearer_token, garage_id):
-    is_jwt_valid(bearer_token)
+    AuthClient.get_instance().verify_jwt(bearer_token)
     gpio_utils.toggle_garage_door(garage_id)
     file_utils.update_door_duration(garage_id)
 

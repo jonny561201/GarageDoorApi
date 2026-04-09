@@ -11,7 +11,7 @@ from svc.controllers.garage_door_controller import get_status, update_door_state
 
 
 @patch('svc.controllers.garage_door_controller.file_utils')
-@patch('svc.controllers.garage_door_controller.is_jwt_valid')
+@patch('svc.controllers.garage_door_controller.AuthClient')
 @patch('svc.controllers.garage_door_controller.gpio_utils')
 class TestGarageController:
     GARAGE_ID = '2'
@@ -43,7 +43,7 @@ class TestGarageController:
     def test_get_status__should_call_is_jwt_valid(self, mock_gpio, mock_jwt, mock_file):
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
 
-        mock_jwt.assert_called_with(self.JWT_TOKEN)
+        mock_jwt.get_instance.return_value.verify_jwt.assert_called_with(self.JWT_TOKEN)
 
     def test_get_status__should_call_gpio_util_to_get_coordinates(self,mock_gpio, mock_jwt, mock_file):
         get_status(self.JWT_TOKEN, self.GARAGE_ID)
@@ -63,7 +63,7 @@ class TestGarageController:
 
         update_door_state(self.JWT_TOKEN, self.GARAGE_ID, self.REQUEST)
 
-        mock_jwt.assert_called()
+        mock_jwt.get_instance.return_value.verify_jwt.assert_called()
 
     def test_update_door_state__should_return_response(self, mock_gpio, mock_jwt, mock_file):
         mock_gpio.is_garage_open.return_value = True
@@ -94,7 +94,7 @@ class TestGarageController:
     def test_toggle_garage__should_validate_bearer_token(self, mock_gpio, mock_jwt, mock_file):
         toggle_door(self.JWT_TOKEN, self.GARAGE_ID)
 
-        mock_jwt.assert_called_with(self.JWT_TOKEN)
+        mock_jwt.get_instance.return_value.verify_jwt.assert_called_with(self.JWT_TOKEN)
 
     def test_toggle_garage__should_call_gpio_pins(self, mock_gpio, mock_jwt, mock_file):
         toggle_door(self.JWT_TOKEN, self.GARAGE_ID)
@@ -110,7 +110,7 @@ class TestGarageController:
         mock_file.get_door_duration.return_value = datetime.now()
         get_all_statuses(self.JWT_TOKEN)
 
-        mock_jwt.assert_called_once_with(self.JWT_TOKEN)
+        mock_jwt.get_instance.return_value.verify_jwt.assert_called_once_with(self.JWT_TOKEN)
 
     def test_get_all_statuses__should_return_two_doors(self, mock_gpio, mock_jwt, mock_file):
         mock_file.get_door_duration.return_value = datetime.now()

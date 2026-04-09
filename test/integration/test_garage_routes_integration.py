@@ -4,6 +4,7 @@ import jwt
 from flask import json
 from mock import patch
 
+from integration.integration_helper import mock_jwks_token
 from svc.config.settings_state import Settings
 from svc.manager import app
 
@@ -11,11 +12,10 @@ from svc.manager import app
 @patch('svc.controllers.garage_door_controller.file_utils')
 class TestGarageDoorRoutesIntegration:
     GARAGE_ID = 1
-    JWT_SECRET = 'testSecret'
 
     def setup_method(self):
-        instance = Settings.get_instance()
-        instance._settings = {'JwtSecret': self.JWT_SECRET}
+        token = mock_jwks_token()
+        self.HEADERS = {'Authorization': token}
         flask_app = app
         self.TEST_CLIENT = flask_app.test_client()
 
@@ -26,26 +26,20 @@ class TestGarageDoorRoutesIntegration:
 
     def test_get_garage_door_status__should_return_success_with_valid_jwt(self, mock_file):
         mock_file.get_door_duration.return_value = datetime.now()
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
-        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=headers)
+        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=self.HEADERS)
 
         assert actual.status_code == 200
 
     def test_get_garage_door_status__success_should_include_json_mime(self, mock_file):
         mock_file.get_door_duration.return_value = datetime.now()
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
-        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=headers)
+        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=self.HEADERS)
 
         assert actual.mimetype == 'application/json'
 
     def test_get_garage_door_status__should_include_response(self, mock_file):
         duration = datetime.now()
         mock_file.get_door_duration.return_value = duration
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
-        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=headers)
+        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=self.HEADERS)
 
         assert json.loads(actual.data) == {'garageId': str(self.GARAGE_ID), 'isGarageOpen': True, 'statusDuration': duration.isoformat(),
                                            'coordinates': {'latitude': 41.621191, 'longitude': -93.831609}}
@@ -60,36 +54,27 @@ class TestGarageDoorRoutesIntegration:
 
     def test_update_garage_door_state__should_return_success(self, mock_file):
         post_body = {'open': True}
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
 
-        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=json.dumps(post_body), headers=headers)
+        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=json.dumps(post_body), headers=self.HEADERS)
 
         assert actual.status_code == 200
 
     def test_update_garage_door_state__success_should_include_json_mime(self, mock_file):
         post_body = {'open': True}
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
 
-        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=json.dumps(post_body), headers=headers)
+        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=json.dumps(post_body), headers=self.HEADERS)
 
         assert actual.mimetype == 'application/json'
 
     def test_update_garage_door_state__should_return_bad_request_when_malformed_json(self, mock_file):
         post_body = {'badKey': 'fakerequest'}
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
 
-        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=json.dumps(post_body), headers=headers)
+        actual = self.TEST_CLIENT.post(f'garageDoor/{self.GARAGE_ID}/state', data=json.dumps(post_body), headers=self.HEADERS)
 
         assert actual.status_code == 400
 
     def test_toggle_garage_door__should_return_success(self, mock_file):
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
-
-        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/toggle', headers=headers)
+        actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/toggle', headers=self.HEADERS)
 
         assert actual.status_code == 204
 
@@ -108,29 +93,23 @@ class TestGarageDoorRoutesIntegration:
 
     def test_get_all_statuses__should_return_success_with_valid_jwt(self, mock_file):
         mock_file.get_door_duration.return_value = datetime.now()
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
 
-        actual = self.TEST_CLIENT.get('garageDoor/status', headers=headers)
+        actual = self.TEST_CLIENT.get('garageDoor/status', headers=self.HEADERS)
 
         assert actual.status_code == 200
 
     def test_get_all_statuses__should_return_json_mime(self, mock_file):
         mock_file.get_door_duration.return_value = datetime.now()
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
 
-        actual = self.TEST_CLIENT.get('garageDoor/status', headers=headers)
+        actual = self.TEST_CLIENT.get('garageDoor/status', headers=self.HEADERS)
 
         assert actual.mimetype == 'application/json'
 
     def test_get_all_statuses__should_return_list_of_two_statuses(self, mock_file):
         duration = datetime.now()
         mock_file.get_door_duration.return_value = duration
-        bearer_token = jwt.encode({}, self.JWT_SECRET, algorithm='HS256')
-        headers = {'Authorization': bearer_token}
 
-        actual = self.TEST_CLIENT.get('garageDoor/status', headers=headers)
+        actual = self.TEST_CLIENT.get('garageDoor/status', headers=self.HEADERS)
 
         result = json.loads(actual.data)
         assert result['coordinates'] == {'latitude': 41.621191, 'longitude': -93.831609}
