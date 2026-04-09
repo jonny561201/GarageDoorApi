@@ -1,5 +1,9 @@
 {
   "Environment": "prod",
+  "Authority": {
+    "Domain": "dev-mx0anv661qiyofk8.us.auth0.com",
+    "Audience": "https://soaringleafsolutions.com"
+  },
   "FileName": "/home/pi/garage_duration.json",
   "Coordinates": {"latitude": 41.621191, "longitude": -93.831609},
   "Queue": {
