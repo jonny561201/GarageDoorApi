@@ -1,9 +1,5 @@
 {
   "Environment": "dev",
-  "Authority": {
-    "Domain": "dev-mx0anv661qiyofk8.us.auth0.com",
-    "Audience": "http://localhost:5000"
-  },
   "GarageFile": "temperatureFile.json",
   "ApiKeyFile": "apiKey.json",
   "Coordinates": {"latitude": 41.621191, "longitude": -93.831609},

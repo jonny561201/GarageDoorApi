@@ -12,7 +12,6 @@ class Settings:
         self.__get_settings()
         self.Coordinates = Coordinates(self._settings)
         self.Queue = Queue(self._settings)
-        self.Authority = Authority(self._settings)
 
     @property
     def environment(self):
@@ -34,20 +33,6 @@ class Settings:
                 self._settings = json.loads(reader.read())
         except FileNotFoundError:
             self._settings = {}
-
-
-class Authority:
-
-    def __init__(self, settings):
-        self._settings = settings.get('Authority', {}) if settings is not None else {}
-
-    @property
-    def domain(self):
-        return self._settings.get('Domain')
-
-    @property
-    def audience(self):
-        return self._settings.get('Audience')
 
 
 class Coordinates:
