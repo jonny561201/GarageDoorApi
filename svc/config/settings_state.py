@@ -24,7 +24,7 @@ class Settings:
 
     @property
     def file_name(self):
-        return self._settings.get('FileName') if self._settings is not None else 'garageStatus.json'
+        return self._settings.get('GarageFile') if self._settings is not None else 'garageStatus.json'
 
     def __get_settings(self):
         try:

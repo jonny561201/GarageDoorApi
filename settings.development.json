@@ -4,7 +4,7 @@
     "Domain": "dev-mx0anv661qiyofk8.us.auth0.com",
     "Audience": "http://localhost:5000"
   },
-  "FileName": "temperatureFile.json",
+  "GarageFile": "temperatureFile.json",
   "Coordinates": {"latitude": 41.621191, "longitude": -93.831609},
   "Queue": {
     "Port": 5672,
