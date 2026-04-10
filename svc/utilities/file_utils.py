@@ -2,12 +2,24 @@ import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-import pytz
-
 from svc.config.settings_state import Settings
 
 
 def get_api_key():
+    file_name = Settings.get_instance().api_key_file
+    try:
+        with open(file_name, 'r+', encoding='utf-8') as file:
+            content = json.load(file)
+        return content['api_key']
+    except (FileNotFoundError, TypeError):
+        return None
+
+
+def save_api_key(api_key):
+    file_name = Settings.get_instance().api_key_file
+    with open(file_name, 'w+', encoding='utf-8') as file:
+        content = {'api_key': api_key}
+        json.dump(content, file)
 
 
 def get_door_duration(garage_id: str):
