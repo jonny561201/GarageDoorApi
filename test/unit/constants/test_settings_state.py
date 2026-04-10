@@ -1,30 +1,9 @@
-import os
-
 from svc.config.settings_state import Settings
-
-
-class TestStateEnvVar:
-    JWT_SECRET = 'this_is_a_test_secret'
-    FILE_NAME = 'test.json'
-
-    def setup_method(self):
-        os.environ.update({'JWT_SECRET': self.JWT_SECRET, 'FILE_NAME': self.FILE_NAME})
-        self.SETTINGS = Settings.get_instance()
-
-    def teardown_method(self):
-        try:
-            os.environ.pop('JWT_SECRET')
-            os.environ.pop('FILE_NAME')
-        except KeyError:
-            print('\nEnv vars already removed')
-
-    def test_jwt_secret__should_return_env_var_value(self):
-        assert self.SETTINGS.jwt_secret == self.JWT_SECRET
 
 
 class TestSettingsState:
     COORDINATES = {'latitude': 40.123, 'longitude': -93.123}
-    VALUES = {'GarageFile': 'other_file.json', 'JwtSecret': 'other_secret', 'Environment': 'test'}
+    VALUES = {'GarageFile': 'other_file.json', 'JwtSecret': 'other_secret', 'Environment': 'test', 'ApiKeyFile': 'test.json'}
     QUEUE = {'Host': 'test_host', 'Port': 1234, 'VHost': 'test_vhost', 'Exchange': 'test_exchange'}
 
     def setup_method(self):
@@ -49,15 +28,15 @@ class TestSettingsState:
         assert self.SETTINGS.Coordinates.latitude == 41.621191
         assert self.SETTINGS.Coordinates.longitude == -93.831609
 
-    def test_jwt_secret__should_return(self):
-        assert self.SETTINGS.jwt_secret == self.VALUES['JwtSecret']
+    def test_garage_file__should_return(self):
+        assert self.SETTINGS.garage_file == self.VALUES['GarageFile']
 
-    def test_file_name__should_return(self):
-        assert self.SETTINGS.file_name == self.VALUES['GarageFile']
+    def test_api_key_file__should_return(self):
+        assert self.SETTINGS.api_key_file == self.VALUES['ApiKeyFile']
 
     def test_file_name__should_provide_default(self):
         self.SETTINGS._settings = None
-        assert self.SETTINGS.file_name == 'garageStatus.json'
+        assert self.SETTINGS.garage_file == 'garageStatus.json'
 
     def test_queue_host__should_return(self):
         assert self.SETTINGS.Queue.host == self.QUEUE['Host']

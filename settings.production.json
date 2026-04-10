@@ -5,6 +5,7 @@
     "Audience": "https://soaringleafsolutions.com"
   },
   "GarageFile": "/home/pi/garage_duration.json",
+  "ApiKeyFile": "/home/pi/apiKey.json",
   "Coordinates": {"latitude": 41.621191, "longitude": -93.831609},
   "Queue": {
     "Port": 5672,

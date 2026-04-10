@@ -7,8 +7,11 @@ import pytz
 from svc.config.settings_state import Settings
 
 
+def get_api_key():
+
+
 def get_door_duration(garage_id: str):
-    file_name = Settings.get_instance().file_name
+    file_name = Settings.get_instance().garage_file
     try:
         with open(file_name, 'r', encoding='utf-8') as file:
             content = json.load(file)
@@ -19,7 +22,7 @@ def get_door_duration(garage_id: str):
 
 
 def update_door_duration(garage_id: str):
-    file_name = Settings.get_instance().file_name
+    file_name = Settings.get_instance().garage_file
     try:
         with open(file_name, 'r+', encoding='utf-8') as file:
             content = json.load(file)

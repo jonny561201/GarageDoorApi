@@ -19,12 +19,12 @@ class Settings:
         return self._settings.get('Environment') if self._settings is not None else 'local'
 
     @property
-    def jwt_secret(self):
-        return os.environ.get('JWT_SECRET') if os.environ.get('JWT_SECRET') is not None else self._settings.get('JwtSecret')
+    def garage_file(self):
+        return self._settings.get('GarageFile') if self._settings is not None else 'garageStatus.json'
 
     @property
-    def file_name(self):
-        return self._settings.get('GarageFile') if self._settings is not None else 'garageStatus.json'
+    def api_key_file(self):
+        return self._settings.get('ApiKeyFile') if self._settings is not None else 'apiKey.json'
 
     def __get_settings(self):
         try:

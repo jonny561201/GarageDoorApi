@@ -5,6 +5,7 @@
     "Audience": "http://localhost:5000"
   },
   "GarageFile": "temperatureFile.json",
+  "ApiKeyFile": "apiKey.json",
   "Coordinates": {"latitude": 41.621191, "longitude": -93.831609},
   "Queue": {
     "Port": 5672,
