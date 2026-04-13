@@ -14,13 +14,14 @@ class MdnsRegistration:
         self._service_info = None
 
     def register(self):
+        print('registering Mdns Registration')
         ip_address = _get_local_ip()
         self._service_info = ServiceInfo(
             type_=self.SERVICE_TYPE,
             name=self.SERVICE_NAME,
             addresses=[socket.inet_aton(ip_address)],
             port=self._port,
-            properties={'service': 'garage-door'},
+            properties={'service': 'garage-door', 'max_nodes': '2'},
         )
         self._zeroconf = Zeroconf()
         self._zeroconf.register_service(self._service_info)
