@@ -40,7 +40,7 @@ class TestGarageDoorRoutesIntegration:
         mock_file.get_door_duration.return_value = duration
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status', headers=self.HEADERS)
 
-        assert json.loads(actual.data) == {'garageId': str(self.GARAGE_ID), 'isGarageOpen': True, 'statusDuration': duration.isoformat(),
+        assert json.loads(actual.data) == {'garageId': str(self.GARAGE_ID), 'isGarageOpen': True, 'duration': duration.isoformat(),
                                            'coordinates': {'latitude': 41.621191, 'longitude': -93.831609}}
 
     def test_update_garage_door_state__should_return_unauthorized_without_api_key(self, mock_key, mock_file):

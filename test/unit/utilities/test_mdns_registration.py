@@ -25,7 +25,7 @@ class TestMdnsRegistration:
             name=MdnsRegistration.SERVICE_NAME,
             addresses=[socket.inet_aton('192.168.1.50')],
             port=self.PORT,
-            properties={'service': 'garage-door'},
+            properties={'service': 'garage-door', 'max_nodes': '2'},
         )
 
     @patch('svc.utilities.mdns_registration._get_local_ip')

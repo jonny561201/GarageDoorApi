@@ -16,7 +16,7 @@ def get_status(api_key, garage_id):
     duration = file_utils.get_door_duration(garage_id)
     coordinates = GarageCoordinates(coordinates.latitude, coordinates.longitude)
 
-    return GarageStatus(garageId=garage_id, isGarageOpen=door_open, coordinates=coordinates, statusDuration=duration)
+    return GarageStatus(garageId=garage_id, isGarageOpen=door_open, coordinates=coordinates, duration=duration)
 
 
 def get_all_statuses(api_key):
@@ -76,4 +76,4 @@ def _update_garage_door(garage_id: str, request: dict):
 def _create_door_status(garage_id):
     door_open = gpio_utils.is_garage_open(garage_id)
     duration = file_utils.get_door_duration(garage_id)
-    return GarageDoorStatus(garageId=garage_id, isGarageOpen=door_open, statusDuration=duration)
+    return GarageDoorStatus(garageId=garage_id, isGarageOpen=door_open, duration=duration)

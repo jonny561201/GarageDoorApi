@@ -20,7 +20,7 @@ class GarageCoordinates:
 class GarageStatus:
     garageId: str
     isGarageOpen: bool
-    statusDuration: datetime
+    duration: datetime
     coordinates: GarageCoordinates
 
 
@@ -29,7 +29,7 @@ class GarageStatus:
 class GarageDoorStatus:
     garageId: str
     isGarageOpen: bool
-    statusDuration: datetime
+    duration: datetime
 
 
 @dataclass_json

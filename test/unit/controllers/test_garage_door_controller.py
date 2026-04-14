@@ -29,7 +29,7 @@ class TestGarageController:
 
         actual = get_status(self.API_KEY, self.GARAGE_ID)
 
-        assert actual.statusDuration == now
+        assert actual.duration == now
 
     def test_get_status__should_validate_api_key(self, mock_gpio, mock_validate, mock_file):
         get_status(self.API_KEY, self.GARAGE_ID)
