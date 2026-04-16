@@ -3,7 +3,7 @@ from functools import partial
 import pika
 
 from svc.config.settings_state import Settings
-from svc.constants.home_automation import Automation
+from svc.constants.home_automation import Garage
 from svc.utilities.event_client import MyThread
 
 
@@ -48,7 +48,7 @@ class RabbitMQClient:
             raise Exception(f'Broker Unavailable: \n {str(exc)}')
         try:
             self._channel = self._connection.channel()
-            self._channel.basic_consume(queue=Automation.GARAGE.QUEUE, on_message_callback=worker_function, auto_ack=False)
+            self._channel.basic_consume(queue=Garage.QUEUE, on_message_callback=worker_function, auto_ack=False)
             self._channel.start_consuming()
         finally:
             self._connection.close() if self._connection else None
