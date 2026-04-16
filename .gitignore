@@ -7,4 +7,6 @@
 **.DS_Store
 variables.sh
 settings.local.json
-garageStatus.json
+*garageStatus.json
+*apiKey.json
+localGarageStatus.json
