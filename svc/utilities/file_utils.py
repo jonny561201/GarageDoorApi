@@ -11,7 +11,7 @@ def get_api_key():
         with open(file_name, 'r+', encoding='utf-8') as file:
             content = json.load(file)
         return content['api_key']
-    except (FileNotFoundError, TypeError):
+    except FileNotFoundError:
         return None
 
 
@@ -29,7 +29,7 @@ def get_door_duration(garage_id: str):
             content = json.load(file)
             garage_date = content[garage_id]
             return datetime.fromisoformat(garage_date)
-    except (FileNotFoundError, TypeError):
+    except FileNotFoundError:
        __create_file_if_not_exist(file_name)
 
 
@@ -42,7 +42,7 @@ def update_door_duration(garage_id: str):
             file.seek(0)
             json.dump(content, file)
             file.truncate()
-    except (FileNotFoundError, TypeError):
+    except FileNotFoundError:
         __create_file_if_not_exist(file_name)
 
 
