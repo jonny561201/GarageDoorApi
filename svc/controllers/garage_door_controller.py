@@ -52,6 +52,7 @@ def update_door_worker(ch, method, properties, body: bytes):
 
         if action == 'toggle':
             gpio_utils.toggle_garage_door(garage_id)
+            file_utils.update_door_duration(garage_id)
         else:
             _update_garage_door(garage_id, request)
 
