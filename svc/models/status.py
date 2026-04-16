@@ -1,11 +1,11 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List
 
-from dataclasses_json import dataclass_json, cfg
+from dataclasses_json import dataclass_json, config
 
-cfg.global_config.encoders[datetime] = datetime.isoformat
-cfg.global_config.decoders[datetime] = datetime.fromisoformat
+
+_ISO_DATETIME = config(encoder=datetime.isoformat, decoder=datetime.fromisoformat)
 
 
 @dataclass_json
@@ -20,7 +20,7 @@ class GarageCoordinates:
 class GarageStatus:
     garageId: str
     isGarageOpen: bool
-    duration: datetime
+    duration: datetime = field(metadata=_ISO_DATETIME)
     coordinates: GarageCoordinates
 
 
@@ -29,7 +29,7 @@ class GarageStatus:
 class GarageDoorStatus:
     garageId: str
     isGarageOpen: bool
-    duration: datetime
+    duration: datetime = field(metadata=_ISO_DATETIME)
 
 
 @dataclass_json
