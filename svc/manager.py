@@ -8,12 +8,19 @@ from svc.utilities.mdns_registration import MdnsRegistration
 from svc.utilities.rabbitmq_client import RabbitMQClient
 
 
-app = Flask(__name__)
-app.register_blueprint(GARAGE_BLUEPRINT)
-app.register_blueprint(APP_BLUEPRINT)
+def create_app():
+    app = Flask(__name__)
 
-app.mdns = MdnsRegistration(port=5001)
-app.mdns.register()
+    app.register_blueprint(GARAGE_BLUEPRINT)
+    app.register_blueprint(APP_BLUEPRINT)
 
-client = RabbitMQClient(Settings.get_instance())
-client.start_consumer(update_door_worker)
+    app.mdns = MdnsRegistration(port=5001)
+
+    return app
+
+
+def start_services(app):
+    app.mdns.register()
+
+    client = RabbitMQClient(Settings.get_instance())
+    client.start_consumer(update_door_worker)

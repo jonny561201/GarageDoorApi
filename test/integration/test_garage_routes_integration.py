@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import json
 from mock import patch
 
-from svc.manager import app
+from svc.manager import create_app
 
 
 FAKE_API_KEY = 'fake_test_api_key_1234567890'
@@ -16,7 +16,8 @@ class TestGarageDoorRoutesIntegration:
 
     def setup_method(self):
         self.HEADERS = {'X-API-Key': FAKE_API_KEY}
-        self.TEST_CLIENT = app.test_client()
+        self.APP = create_app()
+        self.TEST_CLIENT = self.APP.test_client()
 
     def test_get_garage_door_status__should_return_unauthorized_with_no_header(self, mock_key, mock_file):
         actual = self.TEST_CLIENT.get(f'garageDoor/{self.GARAGE_ID}/status')

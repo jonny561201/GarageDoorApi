@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 
 from svc.constants.home_automation import Automation
-from svc.manager import app
+from svc.manager import create_app, start_services
 
 
 GPIO.cleanup()
@@ -13,6 +13,9 @@ GPIO.setup(Automation.GARAGE.SECOND_UPDATE_PIN, GPIO.OUT)
 
 GPIO.output(Automation.GARAGE.FIRST_UPDATE_PIN, GPIO.LOW)
 GPIO.output(Automation.GARAGE.SECOND_UPDATE_PIN, GPIO.LOW)
+
+app = create_app()
+start_services(app)
 
 if __name__ == '__main__':
     app.run()
