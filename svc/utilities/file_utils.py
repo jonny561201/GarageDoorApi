@@ -30,7 +30,7 @@ def get_door_duration(garage_id: str):
             garage_date = content[garage_id]
             return datetime.fromisoformat(garage_date)
     except FileNotFoundError:
-       __create_file_if_not_exist(file_name)
+        return __create_file_if_not_exist(file_name)
 
 
 def update_door_duration(garage_id: str):
