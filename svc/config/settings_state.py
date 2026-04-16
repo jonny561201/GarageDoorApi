@@ -26,13 +26,10 @@ class Settings:
         return self._settings.get('ApiKeyFile') if self._settings is not None else 'apiKey.json'
 
     def __get_settings(self):
-        try:
-            environment = os.environ.get('PYTHON_ENVIRONMENT', 'local')
-            file_path = os.path.join(os.path.dirname(__file__), '..', '..', f'settings.{environment}.json')
-            with open(file_path, "r") as reader:
-                self._settings = json.loads(reader.read())
-        except FileNotFoundError:
-            self._settings = {}
+        environment = os.environ.get('PYTHON_ENVIRONMENT', 'local')
+        file_path = os.path.join(os.path.dirname(__file__), '..', '..', f'settings.{environment}.json')
+        with open(file_path, "r") as reader:
+            self._settings = json.loads(reader.read())
 
 
 class Coordinates:
