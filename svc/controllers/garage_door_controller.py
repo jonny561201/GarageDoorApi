@@ -59,8 +59,10 @@ def update_door_worker(ch, method, properties, body: bytes):
         if action == 'toggle':
             gpio_utils.toggle_garage_door(garage_id)
             file_utils.update_door_duration(garage_id)
-        else:
+        elif action == 'update':
             _update_garage_door(garage_id, request)
+        elif action == 'schedule':
+            schedule_utils.schedule_close(garage_id, request)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
