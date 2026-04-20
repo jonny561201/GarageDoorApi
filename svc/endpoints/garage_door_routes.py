@@ -1,3 +1,5 @@
+import json
+
 from flask import Response, Blueprint
 from flask import request
 
@@ -34,3 +36,10 @@ def toggle_garage_door(garage_id):
     api_key = request.headers.get('X-API-Key')
     garage_door_controller.toggle_door(api_key, garage_id)
     return Response(status=204)
+
+
+@GARAGE_BLUEPRINT.route('/<garage_id>/schedule', methods=['DELETE'])
+def cancel_garage_schedule(garage_id):
+    api_key = request.headers.get('X-API-Key')
+    result = garage_door_controller.cancel_schedule(api_key, garage_id)
+    return Response(json.dumps(result), status=200, mimetype=Mime.JSON)

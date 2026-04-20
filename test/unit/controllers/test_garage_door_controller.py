@@ -1,11 +1,13 @@
+import json
 from datetime import datetime
 
 import pytest
-from mock import patch
+from mock import MagicMock, patch
 from werkzeug.exceptions import BadRequest
 
 from svc.config.settings_state import Coordinates
-from svc.controllers.garage_door_controller import get_status, update_door_state, toggle_door, get_all_statuses
+from svc.controllers.garage_door_controller import get_status, update_door_state, toggle_door, get_all_statuses, \
+    update_door_worker, cancel_schedule
 
 
 @patch('svc.controllers.garage_door_controller.file_utils')
@@ -139,3 +141,65 @@ class TestGarageController:
         assert actual.doors[0].isGarageOpen is True
         assert actual.doors[1].isGarageOpen is False
 
+
+@patch('svc.controllers.garage_door_controller.schedule_utils')
+@patch('svc.controllers.garage_door_controller.file_utils')
+@patch('svc.controllers.garage_door_controller.gpio_utils')
+class TestUpdateDoorWorker:
+    GARAGE_ID = '1'
+
+    def _delivery(self):
+        method = MagicMock()
+        method.delivery_tag = 'tag'
+        channel = MagicMock()
+        return channel, method
+
+    def _body(self, payload):
+        return json.dumps(payload).encode('UTF-8')
+
+    def test_schedule__should_delegate_to_schedule_utils(self, mock_gpio, mock_file, mock_schedule):
+        channel, method = self._delivery()
+        payload = {'id': self.GARAGE_ID, 'action': 'schedule', 'delay_seconds': 300}
+        body = self._body(payload)
+
+        update_door_worker(channel, method, None, body)
+
+        mock_schedule.schedule_close.assert_called_once_with(self.GARAGE_ID, payload)
+        channel.basic_ack.assert_called_once_with(delivery_tag='tag')
+
+    def test_schedule__should_nack_when_schedule_close_raises(self, mock_gpio, mock_file, mock_schedule):
+        channel, method = self._delivery()
+        mock_schedule.schedule_close.side_effect = BadRequest
+        body = self._body({'id': self.GARAGE_ID, 'action': 'schedule'})
+
+        update_door_worker(channel, method, None, body)
+
+        channel.basic_nack.assert_called_once_with(delivery_tag='tag', requeue=False)
+
+
+@patch('svc.controllers.garage_door_controller.schedule_utils')
+@patch('svc.controllers.garage_door_controller.validate_api_key')
+class TestCancelSchedule:
+    GARAGE_ID = '1'
+    API_KEY = 'fake_api_key'
+
+    def test_cancel_schedule__should_validate_api_key(self, mock_validate, mock_schedule):
+        mock_schedule.cancel.return_value = False
+
+        cancel_schedule(self.API_KEY, self.GARAGE_ID)
+
+        mock_validate.assert_called_once_with(self.API_KEY)
+
+    def test_cancel_schedule__should_return_cancelled_true_when_schedule_existed(self, mock_validate, mock_schedule):
+        mock_schedule.cancel.return_value = True
+
+        actual = cancel_schedule(self.API_KEY, self.GARAGE_ID)
+
+        assert actual == {'cancelled': True}
+
+    def test_cancel_schedule__should_return_cancelled_false_when_no_schedule(self, mock_validate, mock_schedule):
+        mock_schedule.cancel.return_value = False
+
+        actual = cancel_schedule(self.API_KEY, self.GARAGE_ID)
+
+        assert actual == {'cancelled': False}

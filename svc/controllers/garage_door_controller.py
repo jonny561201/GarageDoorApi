@@ -6,6 +6,7 @@ from svc.models.status import GarageStatus, GarageCoordinates, GarageDoorStatus,
 from svc.models.update import GarageUpdate
 from svc.utilities import gpio_utils
 from svc.utilities import file_utils
+from svc.utilities import schedule_utils
 from svc.utilities.api_key_utils import validate_api_key
 
 
@@ -42,6 +43,11 @@ def toggle_door(api_key, garage_id):
     validate_api_key(api_key)
     gpio_utils.toggle_garage_door(garage_id)
     file_utils.update_door_duration(garage_id)
+
+
+def cancel_schedule(api_key, garage_id):
+    validate_api_key(api_key)
+    return {'cancelled': schedule_utils.cancel(garage_id)}
 
 
 def update_door_worker(ch, method, properties, body: bytes):

@@ -116,4 +116,26 @@ class TestGarageDoorRoutesIntegration:
         assert result['doors'][0]['garageId'] == '1'
         assert result['doors'][1]['garageId'] == '2'
 
+    def test_cancel_schedule__should_return_unauthorized_without_api_key(self, mock_key, mock_file):
+        actual = self.TEST_CLIENT.delete(f'garageDoor/{self.GARAGE_ID}/schedule')
 
+        assert actual.status_code == 401
+
+    @patch('svc.controllers.garage_door_controller.schedule_utils')
+    def test_cancel_schedule__should_return_cancelled_result(self, mock_schedule, mock_key, mock_file):
+        mock_schedule.cancel.return_value = True
+
+        actual = self.TEST_CLIENT.delete(f'garageDoor/{self.GARAGE_ID}/schedule', headers=self.HEADERS)
+
+        assert actual.status_code == 200
+        assert actual.mimetype == 'application/json'
+        assert json.loads(actual.data) == {'cancelled': True}
+
+    @patch('svc.controllers.garage_door_controller.schedule_utils')
+    def test_cancel_schedule__should_return_not_cancelled_when_no_schedule(self, mock_schedule, mock_key, mock_file):
+        mock_schedule.cancel.return_value = False
+
+        actual = self.TEST_CLIENT.delete(f'garageDoor/{self.GARAGE_ID}/schedule', headers=self.HEADERS)
+
+        assert actual.status_code == 200
+        assert json.loads(actual.data) == {'cancelled': False}
