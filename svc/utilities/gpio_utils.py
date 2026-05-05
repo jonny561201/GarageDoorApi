@@ -1,4 +1,5 @@
 import time
+import random
 
 # import RPi.GPIO as GPIO
 
@@ -8,7 +9,7 @@ from svc.constants.home_automation import Garage
 
 # assumes connection to output pin and ground with GPIO.PUD_UP
 def is_garage_open(garage_id):
-    return True
+    return bool(random.getrandbits(1))
     # status_pin = Garage.FIRST_STATUS_PIN if garage_id == '1' else Garage.SECOND_STATUS_PIN
     # status = GPIO.input(status_pin)
     # return True if status == 1 else False
