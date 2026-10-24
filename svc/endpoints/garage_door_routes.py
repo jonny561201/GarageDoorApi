@@ -1,6 +1,6 @@
 import json
 
-from flask import Response, Blueprint
+from flask import Response, Blueprint, stream_with_context
 from flask import request
 
 from svc.constants.home_automation import Mime
@@ -15,6 +15,14 @@ def get_all_garage_door_statuses():
     api_key = request.headers.get('X-API-Key')
     statuses = garage_door_controller.get_all_statuses(api_key)
     return Response(statuses.to_json(), status=200, mimetype=Mime.JSON)
+
+
+@GARAGE_BLUEPRINT.route('/events', methods=['GET'])
+def stream_garage_door_statuses():
+    api_key = request.headers.get('X-API-Key')
+    stream = garage_door_controller.stream_statuses(api_key)
+    headers = {'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'}
+    return Response(stream_with_context(stream), status=200, mimetype=Mime.EVENT_STREAM, headers=headers)
 
 
 @GARAGE_BLUEPRINT.route('/<garage_id>/status', methods=['GET'])

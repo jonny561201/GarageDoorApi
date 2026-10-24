@@ -2,6 +2,8 @@ import json
 
 from werkzeug.exceptions import BadRequest
 
+from svc.config.door_events import DoorEvents
+from svc.constants.home_automation import Garage
 from svc.models.status import GarageStatus, GarageCoordinates, GarageDoorStatus, AllGarageStatus
 from svc.models.update import GarageUpdate
 from svc.utilities import gpio_utils
@@ -22,13 +24,12 @@ def get_status(api_key, garage_id):
 
 def get_all_statuses(api_key):
     validate_api_key(api_key)
-    raw_coordinates = gpio_utils.get_garage_coordinates()
-    coordinates = GarageCoordinates(raw_coordinates.latitude, raw_coordinates.longitude)
+    return _build_all_statuses()
 
-    garage_ids = ['1', '2']
-    doors = [_create_door_status(garage_id) for garage_id in garage_ids]
 
-    return AllGarageStatus(coordinates=coordinates, doors=doors)
+def stream_statuses(api_key):
+    validate_api_key(api_key)
+    return _status_stream()
 
 
 def update_door_state(api_key: str, garage_id: str, request):
@@ -42,7 +43,6 @@ def update_door_state(api_key: str, garage_id: str, request):
 def toggle_door(api_key, garage_id):
     validate_api_key(api_key)
     gpio_utils.toggle_garage_door(garage_id)
-    file_utils.update_door_duration(garage_id)
 
 
 def cancel_schedule(api_key, garage_id):
@@ -58,7 +58,6 @@ def update_door_worker(ch, method, properties, body: bytes):
 
         if action == 'toggle':
             gpio_utils.toggle_garage_door(garage_id)
-            file_utils.update_door_duration(garage_id)
         elif action == 'update':
             _update_garage_door(garage_id, request)
         elif action == 'schedule':
@@ -74,12 +73,36 @@ def _update_garage_door(garage_id: str, request: dict):
         status = gpio_utils.is_garage_open(garage_id)
         if request['open'] != status:
             gpio_utils.toggle_garage_door(garage_id)
-            file_utils.update_door_duration(garage_id)
             return not status
     except KeyError:
         raise BadRequest
 
     return status
+
+
+def _build_all_statuses():
+    raw_coordinates = gpio_utils.get_garage_coordinates()
+    coordinates = GarageCoordinates(raw_coordinates.latitude, raw_coordinates.longitude)
+    doors = [_create_door_status(garage_id) for garage_id in Garage.DOOR_IDS]
+
+    return AllGarageStatus(coordinates=coordinates, doors=doors)
+
+
+def _status_stream():
+    events = DoorEvents.get_instance()
+    seen_version = events.current_version()
+    yield _format_status_event()
+    while True:
+        version = events.wait_for_change(seen_version, Garage.STREAM_HEARTBEAT_SECONDS)
+        if version is None:
+            yield ': ping\n\n'
+        else:
+            seen_version = version
+            yield _format_status_event()
+
+
+def _format_status_event():
+    return f'event: status\ndata: {_build_all_statuses().to_json()}\n\n'
 
 
 def _create_door_status(garage_id):

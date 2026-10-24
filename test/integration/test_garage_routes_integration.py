@@ -116,6 +116,30 @@ class TestGarageDoorRoutesIntegration:
         assert result['doors'][0]['garageId'] == '1'
         assert result['doors'][1]['garageId'] == '2'
 
+    def test_stream_statuses__should_return_unauthorized_with_no_header(self, mock_key, mock_file):
+        actual = self.TEST_CLIENT.get('garageDoor/events')
+
+        assert actual.status_code == 401
+
+    def test_stream_statuses__should_return_unauthorized_with_invalid_api_key(self, mock_key, mock_file):
+        actual = self.TEST_CLIENT.get('garageDoor/events', headers={'X-API-Key': 'bad_key'})
+
+        assert actual.status_code == 401
+
+    def test_stream_statuses__should_stream_status_event_with_event_stream_mime(self, mock_key, mock_file):
+        mock_file.get_door_duration.return_value = datetime.now()
+
+        actual = self.TEST_CLIENT.get('garageDoor/events', headers=self.HEADERS, buffered=False)
+        first_chunk = next(actual.response).decode('UTF-8')
+        actual.close()
+
+        assert actual.status_code == 200
+        assert actual.mimetype == 'text/event-stream'
+        assert actual.headers['Cache-Control'] == 'no-cache'
+        assert actual.headers['X-Accel-Buffering'] == 'no'
+        result = json.loads(first_chunk.split('data: ', 1)[1])
+        assert len(result['doors']) == 2
+
     def test_cancel_schedule__should_return_unauthorized_without_api_key(self, mock_key, mock_file):
         actual = self.TEST_CLIENT.delete(f'garageDoor/{self.GARAGE_ID}/schedule')
 

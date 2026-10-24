@@ -4,6 +4,7 @@ from svc.config.settings_state import Settings
 from svc.controllers.garage_door_controller import update_door_worker
 from svc.endpoints.app_routes import APP_BLUEPRINT
 from svc.endpoints.garage_door_routes import GARAGE_BLUEPRINT
+from svc.utilities.door_watcher import start_door_watcher
 from svc.utilities.mdns_registration import MdnsRegistration
 from svc.utilities.rabbitmq_client import RabbitMQClient
 
@@ -21,6 +22,7 @@ def create_app():
 
 def start_services(app):
     app.mdns.register()
+    start_door_watcher()
 
     client = RabbitMQClient(Settings.get_instance())
     client.start_consumer(update_door_worker)
