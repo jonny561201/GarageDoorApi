@@ -1,3 +1,4 @@
+import logging
 from functools import partial
 
 import pika
@@ -42,15 +43,18 @@ class RabbitMQClient:
         return pika.BlockingConnection(params)
 
     def _consume(self, worker_function):
-        try:
-            self._connection = self._open_connection()
-        except Exception as exc:
-            raise Exception(f'Broker Unavailable: \n {str(exc)}')
-        try:
-            self._channel = self._connection.channel()
-            self._channel.basic_consume(queue=Garage.QUEUE, on_message_callback=worker_function, auto_ack=False)
-            self._channel.start_consuming()
-        finally:
-            self._connection.close() if self._connection else None
-            self._connection = None
-            self._channel = None
+        thread = MyThread.get_instance()
+        while not thread.stopped.is_set():
+            try:
+                self._connection = self._open_connection()
+                self._channel = self._connection.channel()
+                self._channel.queue_declare(queue=Garage.QUEUE, durable=True)
+                self._channel.basic_consume(queue=Garage.QUEUE, on_message_callback=worker_function, auto_ack=False)
+                self._channel.start_consuming()
+            except Exception:
+                logging.exception('Queue consumer disconnected')
+            finally:
+                self._connection.close() if self._connection != None and self._connection.is_open else None
+                self._connection = None
+                self._channel = None
+            thread.stopped.wait(Garage.RECONNECT_SECONDS)
