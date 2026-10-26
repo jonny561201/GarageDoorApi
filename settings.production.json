@@ -6,7 +6,7 @@
   "Queue": {
     "Port": 5672,
     "Host": "localhost",
-    "VHost": "home-automation-dev",
+    "VHost": "home-automation-prod",
     "Exchange": "home-automation"
   }
 }
