@@ -35,7 +35,10 @@ def stream_statuses(api_key):
 def update_door_state(api_key: str, garage_id: str, request):
     validate_api_key(api_key)
     request_body = json.loads(request.decode('UTF-8'))
-    status = _update_garage_door(garage_id, request_body)
+    try:
+        status = gpio_utils.set_garage_door(garage_id, request_body['open'])
+    except KeyError:
+        raise BadRequest
 
     return GarageUpdate(isGarageOpen=status)
 
@@ -48,36 +51,6 @@ def toggle_door(api_key, garage_id):
 def cancel_schedule(api_key, garage_id):
     validate_api_key(api_key)
     return {'cancelled': schedule_utils.cancel(garage_id)}
-
-
-def update_door_worker(ch, method, properties, body: bytes):
-    try:
-        request = json.loads(body)
-        garage_id = request.get('id')
-        action = request.get('action')
-
-        if action == 'toggle':
-            gpio_utils.toggle_garage_door(garage_id)
-        elif action == 'update':
-            _update_garage_door(garage_id, request)
-        elif action == 'schedule':
-            schedule_utils.schedule_close(garage_id, request)
-
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-    except Exception:
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-
-
-def _update_garage_door(garage_id: str, request: dict):
-    try:
-        status = gpio_utils.is_garage_open(garage_id)
-        if request['open'] != status:
-            gpio_utils.toggle_garage_door(garage_id)
-            return not status
-    except KeyError:
-        raise BadRequest
-
-    return status
 
 
 def _build_all_statuses():

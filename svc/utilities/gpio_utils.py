@@ -23,6 +23,14 @@ def toggle_garage_door(garage_id):
     # GPIO.output(state_pin, GPIO.LOW)
 
 
+def set_garage_door(garage_id, should_open):
+    status = is_garage_open(garage_id)
+    if should_open != status:
+        toggle_garage_door(garage_id)
+        return not status
+    return status
+
+
 def get_garage_coordinates():
     settings = Settings.get_instance()
     return settings.Coordinates

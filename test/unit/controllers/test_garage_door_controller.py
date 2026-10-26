@@ -7,7 +7,7 @@ from werkzeug.exceptions import BadRequest, Unauthorized
 
 from svc.config.settings_state import Coordinates
 from svc.controllers.garage_door_controller import get_status, update_door_state, toggle_door, get_all_statuses, \
-    update_door_worker, cancel_schedule, stream_statuses
+    cancel_schedule, stream_statuses
 
 
 @patch('svc.controllers.garage_door_controller.file_utils')
@@ -59,25 +59,16 @@ class TestGarageController:
         mock_validate.assert_called_with(self.API_KEY)
 
     def test_update_door_state__should_return_response(self, mock_gpio, mock_validate, mock_file):
-        mock_gpio.is_garage_open.return_value = True
+        mock_gpio.set_garage_door.return_value = True
 
         actual = update_door_state(self.API_KEY, self.GARAGE_ID, self.REQUEST)
 
         assert actual.isGarageOpen == True
 
-    def test_update_door_state__should_call_toggle_when_state_is_different_than_request(self, mock_gpio, mock_validate, mock_file):
-        mock_gpio.is_garage_open.return_value = False
-        actual = update_door_state(self.API_KEY, self.GARAGE_ID, self.REQUEST)
+    def test_update_door_state__should_set_garage_door_to_requested_state(self, mock_gpio, mock_validate, mock_file):
+        update_door_state(self.API_KEY, self.GARAGE_ID, self.REQUEST)
 
-        mock_gpio.toggle_garage_door.assert_called_with(self.GARAGE_ID)
-        assert actual.isGarageOpen == True
-
-    def test_update_door_state__should_not_toggle_when_state_is_same_as_request(self, mock_gpio, mock_validate, mock_file):
-        mock_gpio.is_garage_open.return_value = True
-        actual = update_door_state(self.API_KEY, self.GARAGE_ID, self.REQUEST)
-
-        mock_gpio.toggle_garage_door.assert_not_called()
-        assert actual.isGarageOpen == True
+        mock_gpio.set_garage_door.assert_called_with(self.GARAGE_ID, True)
 
     def test_update_door_state__should_raise_bad_request_when_key_not_found(self, mock_gpio, mock_validate, mock_file):
         bad_request = '{"fake": true}'.encode()
@@ -147,50 +138,6 @@ class TestGarageController:
 
         assert actual.doors[0].isGarageOpen is True
         assert actual.doors[1].isGarageOpen is False
-
-
-@patch('svc.controllers.garage_door_controller.schedule_utils')
-@patch('svc.controllers.garage_door_controller.file_utils')
-@patch('svc.controllers.garage_door_controller.gpio_utils')
-class TestUpdateDoorWorker:
-    GARAGE_ID = '1'
-
-    def _delivery(self):
-        method = MagicMock()
-        method.delivery_tag = 'tag'
-        channel = MagicMock()
-        return channel, method
-
-    def _body(self, payload):
-        return json.dumps(payload).encode('UTF-8')
-
-    def test_schedule__should_delegate_to_schedule_utils(self, mock_gpio, mock_file, mock_schedule):
-        channel, method = self._delivery()
-        payload = {'id': self.GARAGE_ID, 'action': 'schedule', 'delay_seconds': 300}
-        body = self._body(payload)
-
-        update_door_worker(channel, method, None, body)
-
-        mock_schedule.schedule_close.assert_called_once_with(self.GARAGE_ID, payload)
-        channel.basic_ack.assert_called_once_with(delivery_tag='tag')
-
-    def test_toggle__should_toggle_without_updating_door_duration(self, mock_gpio, mock_file, mock_schedule):
-        channel, method = self._delivery()
-        body = self._body({'id': self.GARAGE_ID, 'action': 'toggle'})
-
-        update_door_worker(channel, method, None, body)
-
-        mock_gpio.toggle_garage_door.assert_called_once_with(self.GARAGE_ID)
-        mock_file.update_door_duration.assert_not_called()
-
-    def test_schedule__should_nack_when_schedule_close_raises(self, mock_gpio, mock_file, mock_schedule):
-        channel, method = self._delivery()
-        mock_schedule.schedule_close.side_effect = BadRequest
-        body = self._body({'id': self.GARAGE_ID, 'action': 'schedule'})
-
-        update_door_worker(channel, method, None, body)
-
-        channel.basic_nack.assert_called_once_with(delivery_tag='tag', requeue=False)
 
 
 @patch('svc.controllers.garage_door_controller.schedule_utils')

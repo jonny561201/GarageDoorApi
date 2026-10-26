@@ -1,7 +1,7 @@
 from flask import Flask
 
 from svc.config.settings_state import Settings
-from svc.controllers.garage_door_controller import update_door_worker
+from svc.controllers.door_queue_controller import update_door_worker
 from svc.endpoints.app_routes import APP_BLUEPRINT
 from svc.endpoints.garage_door_routes import GARAGE_BLUEPRINT
 from svc.utilities.door_watcher import start_door_watcher
