@@ -16,8 +16,7 @@ def schedule_close(garage_id, request):
 
     def fire():
         session.clear_timer(garage_id)
-        if gpio_utils.is_garage_open(garage_id):
-            gpio_utils.toggle_garage_door(garage_id)
+        gpio_utils.set_garage_door(garage_id, False)
 
     timer = threading.Timer(delay_seconds, fire)
     timer.daemon = True

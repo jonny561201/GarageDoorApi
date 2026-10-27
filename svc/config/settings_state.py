@@ -6,7 +6,6 @@ from svc.config.singleton import Singleton
 
 @Singleton
 class Settings:
-    _settings = None
 
     def __init__(self):
         self.__get_settings()
@@ -15,15 +14,15 @@ class Settings:
 
     @property
     def environment(self):
-        return self._settings.get('Environment') if self._settings is not None else 'local'
+        return self._settings.get('Environment', 'local')
 
     @property
     def garage_file(self):
-        return self._settings.get('GarageFile') if self._settings is not None else 'garageStatus.json'
+        return self._settings.get('GarageFile', 'garageStatus.json')
 
     @property
     def api_key_file(self):
-        return self._settings.get('ApiKeyFile') if self._settings is not None else 'apiKey.json'
+        return self._settings.get('ApiKeyFile', 'apiKey.json')
 
     def __get_settings(self):
         environment = os.environ.get('PYTHON_ENVIRONMENT', 'local')
@@ -33,7 +32,6 @@ class Settings:
 
 
 class Coordinates:
-    _settings = {}
 
     def __init__(self, settings):
         self._settings = settings.get('Coordinates', {})
@@ -50,7 +48,7 @@ class Coordinates:
 class Queue:
 
     def __init__(self, settings):
-        self._settings = settings.get('Queue', {}) if settings is not None else None
+        self._settings = settings.get('Queue', {})
 
     @property
     def user_name(self):

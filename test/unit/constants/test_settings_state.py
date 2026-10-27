@@ -1,4 +1,4 @@
-from svc.config.settings_state import Settings
+from svc.config.settings_state import Settings, Queue
 
 
 class TestSettingsState:
@@ -16,7 +16,7 @@ class TestSettingsState:
         assert self.SETTINGS.environment == self.VALUES['Environment']
 
     def test_environment__should_default_to_local(self):
-        self.SETTINGS._settings = None
+        self.SETTINGS._settings = {}
         assert self.SETTINGS.environment == 'local'
 
     def test_coordinates__should_return(self):
@@ -35,7 +35,7 @@ class TestSettingsState:
         assert self.SETTINGS.api_key_file == self.VALUES['ApiKeyFile']
 
     def test_file_name__should_provide_default(self):
-        self.SETTINGS._settings = None
+        self.SETTINGS._settings = {}
         assert self.SETTINGS.garage_file == 'garageStatus.json'
 
     def test_queue_host__should_return(self):
@@ -49,3 +49,24 @@ class TestSettingsState:
 
     def test_queue_exchange__should_return(self):
         assert self.SETTINGS.Queue.exchange == self.QUEUE['Exchange']
+
+
+
+class TestQueueSettings:
+    SETTINGS = {'Queue': {'User': 'file_user', 'Password': 'file_password'}}
+
+    def test_user_name__should_use_env_var_when_present(self, monkeypatch):
+        monkeypatch.setenv('QUEUE_USER_NAME', 'env_user')
+        assert Queue(self.SETTINGS).user_name == 'env_user'
+
+    def test_user_name__should_use_settings_file_when_env_var_missing(self, monkeypatch):
+        monkeypatch.delenv('QUEUE_USER_NAME', raising=False)
+        assert Queue(self.SETTINGS).user_name == 'file_user'
+
+    def test_password__should_use_env_var_when_present(self, monkeypatch):
+        monkeypatch.setenv('QUEUE_PASSWORD', 'env_password')
+        assert Queue(self.SETTINGS).password == 'env_password'
+
+    def test_password__should_use_settings_file_when_env_var_missing(self, monkeypatch):
+        monkeypatch.delenv('QUEUE_PASSWORD', raising=False)
+        assert Queue(self.SETTINGS).password == 'file_password'
