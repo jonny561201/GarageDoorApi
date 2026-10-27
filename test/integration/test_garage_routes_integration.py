@@ -9,6 +9,7 @@ from svc.manager import create_app
 FAKE_API_KEY = 'fake_test_api_key_1234567890'
 
 
+@patch('svc.utilities.gpio_utils.is_garage_open', new=lambda garage_id: True)
 @patch('svc.controllers.garage_door_controller.file_utils')
 @patch('svc.utilities.api_key_utils.get_api_key', return_value=FAKE_API_KEY)
 class TestGarageDoorRoutesIntegration:

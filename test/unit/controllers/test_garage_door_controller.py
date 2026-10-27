@@ -52,8 +52,6 @@ class TestGarageController:
         assert actual.coordinates.longitude == coords.longitude
 
     def test_update_door_state__should_validate_api_key(self, mock_gpio, mock_validate, mock_file):
-        mock_gpio.update_garage_door.return_value = False
-
         update_door_state(self.API_KEY, self.GARAGE_ID, self.REQUEST)
 
         mock_validate.assert_called_with(self.API_KEY)

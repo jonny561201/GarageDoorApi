@@ -21,22 +21,6 @@ class RabbitMQClient:
         t.initialize(bound_worker)
         t.start()
 
-    def stop_consumer(self):
-        if not self._connection or not self._channel:
-            return
-
-        try:
-            self._connection.add_callback_threadsafe(lambda: self._channel.stop_consuming())
-        except Exception:
-            pass
-
-        t = MyThread.get_instance()
-        t.stop()
-        try:
-            t.join(5)
-        except RuntimeError:
-            pass
-
     def _open_connection(self):
         credentials = pika.PlainCredentials(self.settings.user_name, self.settings.password)
         params = pika.ConnectionParameters(host=self.settings.host, port=self.settings.port, virtual_host=self.settings.vhost, credentials=credentials, socket_timeout=2)
@@ -54,7 +38,8 @@ class RabbitMQClient:
             except Exception:
                 logging.exception('Queue consumer disconnected')
             finally:
-                self._connection.close() if self._connection != None and self._connection.is_open else None
+                if self._connection is not None and self._connection.is_open:
+                    self._connection.close()
                 self._connection = None
                 self._channel = None
             thread.stopped.wait(Garage.RECONNECT_SECONDS)
